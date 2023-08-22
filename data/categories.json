@@ -1,0 +1,217 @@
+{
+    "data": [
+        {
+            "objectID": 2560,
+            "parentID": 479,
+            "objectName": "3D очки",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 1152,
+            "parentID": 858,
+            "objectName": "3D-принтеры",
+            "parentName": "Оргтехника",
+            "isVisible": true
+        },
+        {
+            "objectID": 1151,
+            "parentID": 479,
+            "objectName": "3D-ручки",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 7771,
+            "parentID": 760,
+            "objectName": "AKF системы",
+            "parentName": "Автомобильные товары",
+            "isVisible": true
+        },
+        {
+            "objectID": 4034,
+            "parentID": 6260,
+            "objectName": "AV-ресиверы",
+            "parentName": "Телевизоры и аудиотехника",
+            "isVisible": true
+        },
+        {
+            "objectID": 1928,
+            "parentID": 49,
+            "objectName": "BB-кремы",
+            "parentName": "Красота",
+            "isVisible": true
+        },
+        {
+            "objectID": 4035,
+            "parentID": 6260,
+            "objectName": "Blu-Ray проигрыватели",
+            "parentName": "Телевизоры и аудиотехника",
+            "isVisible": true
+        },
+        {
+            "objectID": 1927,
+            "parentID": 49,
+            "objectName": "CC-кремы",
+            "parentName": "Красота",
+            "isVisible": true
+        },
+        {
+            "objectID": 4036,
+            "parentID": 479,
+            "objectName": "CD проигрыватели",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 3454,
+            "parentID": 49,
+            "objectName": "DD-кремы",
+            "parentName": "Красота",
+            "isVisible": true
+        },
+        {
+            "objectID": 4018,
+            "parentID": 6260,
+            "objectName": "DJ контроллеры",
+            "parentName": "Телевизоры и аудиотехника",
+            "isVisible": true
+        },
+        {
+            "objectID": 2808,
+            "parentID": 6260,
+            "objectName": "DVD-плееры",
+            "parentName": "Телевизоры и аудиотехника",
+            "isVisible": true
+        },
+        {
+            "objectID": 1001,
+            "parentID": 6237,
+            "objectName": "Flash-накопители",
+            "parentName": "Периферия и аксессуары",
+            "isVisible": true
+        },
+        {
+            "objectID": 764,
+            "parentID": 6240,
+            "objectName": "FM-трансмиттеры",
+            "parentName": "Автоэлектроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 5926,
+            "parentID": 479,
+            "objectName": "GPS-трекеры",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 6241,
+            "parentID": 6260,
+            "objectName": "Hi-Fi плееры",
+            "parentName": "Телевизоры и аудиотехника",
+            "isVisible": true
+        },
+        {
+            "objectID": 3468,
+            "parentID": 1081,
+            "objectName": "L-карнитины",
+            "parentName": "Спортивное питание и косметика",
+            "isVisible": true
+        },
+        {
+            "objectID": 5541,
+            "parentID": 6257,
+            "objectName": "Mesh системы",
+            "parentName": "Сетевое оборудование",
+            "isVisible": true
+        },
+        {
+            "objectID": 5847,
+            "parentID": 3324,
+            "objectName": "MIDI-контроллеры",
+            "parentName": "Профессиональные музыкальные инструменты",
+            "isVisible": true
+        },
+        {
+            "objectID": 1313,
+            "parentID": 6260,
+            "objectName": "MP3 плееры",
+            "parentName": "Телевизоры и аудиотехника",
+            "isVisible": true
+        },
+        {
+            "objectID": 4031,
+            "parentID": 479,
+            "objectName": "NFC-браслеты",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 5669,
+            "parentID": 479,
+            "objectName": "NFC брелоки",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 6016,
+            "parentID": 479,
+            "objectName": "NFC карты",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 6456,
+            "parentID": 479,
+            "objectName": "NFC кольца",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 6017,
+            "parentID": 479,
+            "objectName": "NFC наклейки",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 3173,
+            "parentID": 1162,
+            "objectName": "pH метры",
+            "parentName": "Строительные инструменты",
+            "isVisible": true
+        },
+        {
+            "objectID": 4398,
+            "parentID": 6257,
+            "objectName": "PoE инжекторы",
+            "parentName": "Сетевое оборудование",
+            "isVisible": true
+        },
+        {
+            "objectID": 5319,
+            "parentID": 6257,
+            "objectName": "Powerline адаптеры",
+            "parentName": "Сетевое оборудование",
+            "isVisible": true
+        },
+        {
+            "objectID": 5836,
+            "parentID": 479,
+            "objectName": "RGBW усилители",
+            "parentName": "Электроника",
+            "isVisible": true
+        },
+        {
+            "objectID": 1258,
+            "parentID": 6258,
+            "objectName": "Sim карты",
+            "parentName": "Смартфоны и аксессуары",
+            "isVisible": true
+        }
+    ],
+    "error": false,
+    "errorText": "",
+    "additionalErrors": null
+}
