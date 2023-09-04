@@ -1,6 +1,44 @@
 from django.contrib import admin
 
-from .models import About, Agreements, DeliveryInformation, Policy, ContactUs, Requisite, MainShop, OurShop
+from .models import About, Agreements, DeliveryInformation, Policy, Contacts, Requisite, MainShop, OurShop
+
+
+class RequisiteInline(admin.StackedInline):
+    """
+    Инлайн для отображения реквизитов на странице
+    "Контакты".
+    """
+
+    model = Requisite
+    extra = 1
+
+
+class MainShopInline(admin.StackedInline):
+    """
+    Инлайн для отображения информации об основном
+    магазине на странице "Контакты".
+    """
+
+    model = MainShop
+    extra = 1
+    max_num = 1
+
+
+class OurShopInline(admin.StackedInline):
+    """
+    Инлайн для отображения информации об остальных
+    магазинах на странице "Контакты".
+    """
+
+    model = OurShop
+    extra = 1
+
+
+@admin.register(Contacts)
+class ContactUsAdmin(admin.ModelAdmin):
+    inlines = [MainShopInline, RequisiteInline, OurShopInline]
+    fields = ('headline',)
+    list_display = ('headline',)
 
 
 @admin.register(About)
@@ -20,11 +58,6 @@ class DeliveryInformationAdmin(admin.ModelAdmin):
 
 @admin.register(Policy)
 class PolicyAdmin(admin.ModelAdmin):
-    list_display = ('headline',)
-
-
-@admin.register(ContactUs)
-class ContactUsAdmin(admin.ModelAdmin):
     list_display = ('headline',)
 
 

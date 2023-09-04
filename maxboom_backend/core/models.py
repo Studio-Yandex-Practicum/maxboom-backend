@@ -21,6 +21,9 @@ class BaseCoreModel(models.Model):
     class Meta:
         abstract = True
 
+    def __str__(self):
+        return self.__class__._meta.verbose_name
+
     def clean(self):
         """
         Вызывает внешнюю функцию clean(), чтобы
@@ -37,6 +40,7 @@ class About(BaseCoreModel):
 
     class Meta:
         verbose_name = "О нас"
+        verbose_name_plural = "О нас"
 
 
 class Policy(BaseCoreModel):
@@ -46,6 +50,7 @@ class Policy(BaseCoreModel):
 
     class Meta:
         verbose_name = "Политика безопасности"
+        verbose_name_plural = "Политика безопасности"
 
 
 class Agreements(BaseCoreModel):
@@ -55,6 +60,7 @@ class Agreements(BaseCoreModel):
 
     class Meta:
         verbose_name = "Условия соглашения"
+        verbose_name_plural = "Условия соглашения"
 
 
 class DeliveryInformation(BaseCoreModel):
@@ -64,15 +70,17 @@ class DeliveryInformation(BaseCoreModel):
 
     class Meta:
         verbose_name = "Информация о доставке"
+        verbose_name_plural = "Информация о доставке"
 
 
-class ContactUs(BaseCoreModel):
+class Contacts(BaseCoreModel):
     """
     Модель страницы "Контакты".
     """
 
     class Meta:
         verbose_name = "Контакты"
+        verbose_name_plural = "Контакты"
 
 
 class Requisite(models.Model):
@@ -90,9 +98,17 @@ class Requisite(models.Model):
         verbose_name="Описание реквизита",
         help_text="Укажите описание реквизита"
     )
+    main_page = models.ForeignKey(
+        Contacts,
+        related_name='requisites',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = "Реквизиты"
+        verbose_name_plural = "Реквизиты"
 
 
 class BaseShop(models.Model):
@@ -109,7 +125,7 @@ class BaseShop(models.Model):
     comment = models.CharField(
         max_length=255,
         verbose_name="Комментарий о магазине",
-        help_text=""
+        help_text="Время работы и дополнительная информация"
     )
     phone_number = models.CharField(
         max_length=20,
@@ -120,21 +136,35 @@ class BaseShop(models.Model):
     class Meta:
         abstract = True
 
+    def __str__(self):
+        return self.__class__.__name__
+
 
 class MainShop(BaseShop):
     """
     Модель для описания основного магазина.
     """
 
-    email = models.EmailField()
+    email = models.EmailField(
+        verbose_name="Почта магазина",
+        help_text="Введите электронную почту магазина"
+    )
     location = models.CharField(
         max_length=510,
         verbose_name="Адрес магазина",
         help_text="Укажите адрес магазина"
     )
+    main_page = models.ForeignKey(
+        Contacts,
+        related_name='main_shop',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = "Основной магазин"
+        verbose_name_plural = "Основной магазин"
 
     def clean(self):
         """
@@ -157,6 +187,14 @@ class OurShop(BaseShop):
         verbose_name="Основной магазин",
         help_text="Укажите статус магазина как основного"
     )
+    main_page = models.ForeignKey(
+        Contacts,
+        related_name='our_shops',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = "Наши магазины"
+        verbose_name_plural = "Наши магазины"
