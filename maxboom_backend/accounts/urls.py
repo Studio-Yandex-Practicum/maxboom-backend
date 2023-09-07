@@ -5,7 +5,7 @@ from accounts.views import ActivateUser
 
 urlpatterns = [
     path(
-        'user-activation/<str:uid>/<str:token>/',
+        'user-activation/<uid>/<token>/',
         ActivateUser.as_view(),
         name='activation'
     ),

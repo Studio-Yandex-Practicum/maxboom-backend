@@ -1,11 +1,13 @@
 """Views для пользователей."""
 import requests
+import json
 
-from rest_framework.generics import GenericAPIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-class ActivateUser(GenericAPIView):
+class ActivateUser(APIView):
+    """Кастомная активация пользователя по щелчку в ссылке письма."""
 
     def get(self, request, uid, token, format=None):
         payload = {'uid': uid, 'token': token}
@@ -16,11 +18,11 @@ class ActivateUser(GenericAPIView):
         domain = request.get_host()
 
         url = f"http://{domain}/api/users/activation/"
-        response = requests.post(url, data=payload, headers=headers)
+        response = requests.post(url, data=json.dumps(payload), headers=headers)
 
         if response.status_code == 204:
             return Response(
-                {'detail': 'Пользователь успешно активирован.'},
+                {'detail': 'Активация прошла успешно!'},
                 response.status_code
             )
         else:

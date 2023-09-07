@@ -21,6 +21,8 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
+        UserProfile.objects.create(user=user)
+
         return user
 
     def create_superuser(self, email, password):
@@ -61,6 +63,11 @@ class UserProfile(models.Model):
     about = models.TextField(blank=True)
     company = models.CharField(max_length=255, blank=True)
     is_vendor = models.BooleanField('Оптовик', default=False)
+
+    class Meta:
+        verbose_name = 'Профиль'
+        verbose_name_plural = 'Профили'
+        ordering = ('-id',)
 
     def __str__(self):
         return self.user.email
