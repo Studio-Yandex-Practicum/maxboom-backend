@@ -60,43 +60,43 @@ class TermsViewSet(BaseInfoViewSet):
     serializer_class = TermsSerializer
 
 
-class MailFormViewSet(BaseInfoViewSet):
-    """
-    Вьюсет элементов формы вопроса
-    компании на странице "Контакты".
-    """
-
-    queryset = MailContactForm.objects.all()
-    serializer_class = MailContactFormSerializer
-
-
-class MainShopViewSet(BaseInfoViewSet):
-    """
-    Вьюсет объекта основного магазина
-    на странице "Контакты".
-    """
-
-    queryset = MainShop.objects.all()
-    serializer_class = MainShopSerializer
-
-
-class OurShopsViewSet(BaseInfoViewSet):
-    """
-    Вьюсет объектов дополнительных магазинов
-    на странице "Контакты".
-    """
-
-    queryset = OurShop.objects.all()
-    serializer_class = OurShopSerializer
-
-
-class RequisiteViewSet(BaseInfoViewSet):
-    """
-    Вьюсет объектов реквизитов на странице "Контакты".
-    """
-
-    queryset = Requisite.objects.all()
-    serializer_class = RequisiteSerializer
+# class MailFormViewSet(BaseInfoViewSet):
+#     """
+#     Вьюсет элементов формы вопроса
+#     компании на странице "Контакты".
+#     """
+#
+#     queryset = MailContactForm.objects.all()
+#     serializer_class = MailContactFormSerializer
+#
+#
+# class MainShopViewSet(BaseInfoViewSet):
+#     """
+#     Вьюсет объекта основного магазина
+#     на странице "Контакты".
+#     """
+#
+#     queryset = MainShop.objects.all()
+#     serializer_class = MainShopSerializer
+#
+#
+# class OurShopsViewSet(BaseInfoViewSet):
+#     """
+#     Вьюсет объектов дополнительных магазинов
+#     на странице "Контакты".
+#     """
+#
+#     queryset = OurShop.objects.all()
+#     serializer_class = OurShopSerializer
+#
+#
+# class RequisiteViewSet(BaseInfoViewSet):
+#     """
+#     Вьюсет объектов реквизитов на странице "Контакты".
+#     """
+#
+#     queryset = Requisite.objects.all()
+#     serializer_class = RequisiteSerializer
 
 
 class ContactsViewSet(BaseInfoViewSet):
