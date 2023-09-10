@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from .models import (About, Privacy, DeliveryInformation,
-                     Contacts, Requisite, MainShop, OurShop,
-                     MailContact, MailContactForm,
-                     Header, Footer, Support, Terms)
+from core.models import (About, Privacy, DeliveryInformation,
+                         Contacts, Requisite, MainShop, OurShop,
+                         MailContact, MailContactForm,
+                         Header, Footer, Support, Terms)
 
 
 class BaseCoreSerializer(serializers.ModelSerializer):
@@ -24,6 +24,8 @@ class BaseInfoModelSerializer(BaseCoreSerializer):
 
     headline = serializers.CharField(read_only=True)
     text = serializers.CharField(read_only=True)
+    meta_title = serializers.CharField(read_only=True)
+    meta_description = serializers.CharField(read_only=True)
 
 
 class AboutSerializer(BaseInfoModelSerializer):
