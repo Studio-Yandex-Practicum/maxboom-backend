@@ -2,7 +2,6 @@
 Модели для пользователей.
 """
 from django.contrib.auth.models import (
-    AbstractUser,
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
@@ -59,6 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class UserProfile(models.Model):
     """Модель содержит всю необходимую информацию о пользователе."""
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)

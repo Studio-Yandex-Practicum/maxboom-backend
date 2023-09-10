@@ -146,9 +146,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 15,
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+
 }
 
 DJOSER = {
@@ -164,7 +166,7 @@ DJOSER = {
         'current_user': 'djoser.serializers.UserSerializer',
     },
     'PERMISSIONS': {
-        'user_list': ['rest_framework.permissions.IsAuthenticated'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
         'user': ['rest_framework.permissions.AllowAny'],
         'current_user': ['rest_framework.permissions.IsAuthenticated'],
     },
