@@ -104,7 +104,7 @@ class Post(models.Model):
         ordering = ['id']
 
     def __str__(self) -> str:
-        return self.title[:15]
+        return self.title[:30]
 
 
 class PostTag(models.Model):

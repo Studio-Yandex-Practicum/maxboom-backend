@@ -19,7 +19,7 @@ class PostAdmin(admin.ModelAdmin):
     """
     def image_preview(self, obj):
         return format_html(
-            '<img src="{}" style="max-width:50px; max-height:50px"/>'.format(
+            '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(
                 obj.image.url))
 
     image_preview.short_description = 'Изображение'
@@ -29,10 +29,10 @@ class PostAdmin(admin.ModelAdmin):
         'pub_date',
         'title',
         'text',
-        'image_preview',
         'category',
         'author',
         'slug',
+        'image_preview',
         'meta_title',
         'meta_description',
     )
