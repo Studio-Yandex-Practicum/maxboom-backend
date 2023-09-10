@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from news.models import News
-from api.serializers.news import NewsSerializer
+from api.serializers.news_serializers import NewsSerializer
 
 
 class NewsViewSet(viewsets.ReadOnlyModelViewSet):

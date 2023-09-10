@@ -22,6 +22,18 @@ class News(models.Model):
         unique=True,
         max_length=50,
         verbose_name='Слаг')
+    meta_title = models.CharField(
+        max_length=255,
+        verbose_name='Мета-название страницы',
+        null=True,
+        blank=True
+    )
+    meta_description = models.CharField(
+        max_length=255,
+        verbose_name='Мета-описание страницы',
+        null=True,
+        blank=True
+    )
 
     class Meta:
         ordering = ['-pub_date']

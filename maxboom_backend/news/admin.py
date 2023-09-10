@@ -22,7 +22,9 @@ class NewsAdmin(admin.ModelAdmin):
         'title',
         'text',
         'image_preview',
-        'slug',)
+        'slug',
+        'meta_title',
+        'meta_description',)
     list_filter = (
         'title',
         'pub_date',

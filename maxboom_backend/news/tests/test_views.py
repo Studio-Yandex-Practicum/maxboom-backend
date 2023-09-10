@@ -53,11 +53,10 @@ class NewsViewTests(TestCase):
             'pub_date': pub_date,
             'slug': instance.slug
         }
-
         for key, expected_value in expected_data.items():
             with self.subTest(key=key):
                 self.assertEqual(
-                    response.data[0].get(key),
+                    response.data.get('results')[0].get(key),
                     expected_value)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -80,7 +79,6 @@ class NewsViewTests(TestCase):
             'pub_date': pub_date,
             'slug': instance.slug
         }
-
         for key, expected_value in expected_data.items():
             with self.subTest(key=key):
                 self.assertEqual(
