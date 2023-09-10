@@ -58,6 +58,18 @@ class BaseInfoModel(BaseCoreModel, BaseSingleObjectModel):
         verbose_name="Текст страницы",
         help_text="Введите текст страницы"
     )
+    meta_title = models.CharField(
+        max_length=255,
+        verbose_name="Мета-название страницы",
+        null=True,
+        blank=True
+    )
+    meta_description = models.CharField(
+        max_length=255,
+        verbose_name="Мета-описание страницы",
+        null=True,
+        blank=True
+    )
 
     class Meta:
         abstract = True
