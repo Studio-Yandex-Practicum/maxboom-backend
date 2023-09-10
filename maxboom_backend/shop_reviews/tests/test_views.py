@@ -2,7 +2,11 @@ from http import HTTPStatus
 from django.test import TestCase
 from rest_framework.test import APIClient
 from shop_reviews.models import ShopReviews, ReplayToReview
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class ShopReviewsViewTests(TestCase):
@@ -23,7 +27,7 @@ class ShopReviewsViewTests(TestCase):
             review_id=ShopReviewsViewTests.review
         )
         cls.admin = User.objects.create_superuser(
-            'admin1@example.com', 'admin1', 'admin1')
+            'admin1@example.com', 'admin1')
 
     def setUp(self):
         self.user_client = APIClient()
