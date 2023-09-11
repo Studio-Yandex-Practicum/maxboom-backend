@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 
-from blog.models import Post, Category, Tag, PostTag
-from api.serializers.blog import (PostSerializer,
-                                  CategorySerializer,)
+from blog.models import Post, Category
+from api.serializers.blog_serializers import (
+    PostSerializer, CategorySerializer,)
 
 
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
@@ -23,7 +23,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # lookup_field = 'slug'
+    lookup_field = 'slug'
 
     def get_queryset(self):
-        return Category.objects.all().order_by('-pub_date')
+        return Category.objects.all().order_by('title')

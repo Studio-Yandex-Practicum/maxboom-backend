@@ -77,6 +77,7 @@ class Post(models.Model):
         Category,
         on_delete=models.SET_NULL,
         verbose_name='Категория',
+        related_name='posts',
         blank=True,
         null=True)
     tags = models.ManyToManyField(
