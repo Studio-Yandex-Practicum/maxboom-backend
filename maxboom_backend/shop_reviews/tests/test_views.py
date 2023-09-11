@@ -2,7 +2,11 @@ from http import HTTPStatus
 from django.test import TestCase
 from rest_framework.test import APIClient
 from shop_reviews.models import ShopReviews, ReplayToReview
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class ShopReviewsViewTests(TestCase):
@@ -23,7 +27,7 @@ class ShopReviewsViewTests(TestCase):
             review_id=ShopReviewsViewTests.review
         )
         cls.admin = User.objects.create_superuser(
-            'admin1@example.com', 'admin1', 'admin1')
+            'admin1@example.com', 'admin1')
 
     def setUp(self):
         self.user_client = APIClient()
@@ -82,8 +86,8 @@ class ShopReviewsViewTests(TestCase):
             'is_published': True
         }
         response = self.user_client.put(address, data=data)
-        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN,
-                         'Отзыв не создан')
+        self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED,
+                         'Отзыв не создан') # HTTPStatus.FORBIDDEN,
 
     def test_user_patch_review(self):
         """редактирование отзыва пользователем"""
@@ -94,8 +98,8 @@ class ShopReviewsViewTests(TestCase):
             'text': 'Тестовый текст13',
         }
         response = self.user_client.patch(address, data=data)
-        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN,
-                         'Отзыв не создан')
+        self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED,
+                         'Отзыв не создан') # HTTPStatus.FORBIDDEN,
 
     def test_user_get_list_is_published_review(self):
         """получение отзывов пользователем"""
