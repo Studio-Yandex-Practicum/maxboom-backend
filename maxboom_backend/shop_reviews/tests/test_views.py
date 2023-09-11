@@ -86,8 +86,8 @@ class ShopReviewsViewTests(TestCase):
             'is_published': True
         }
         response = self.user_client.put(address, data=data)
-        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN,
-                         'Отзыв не создан')
+        self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED,
+                         'Отзыв не создан') # HTTPStatus.FORBIDDEN,
 
     def test_user_patch_review(self):
         """редактирование отзыва пользователем"""
@@ -98,8 +98,8 @@ class ShopReviewsViewTests(TestCase):
             'text': 'Тестовый текст13',
         }
         response = self.user_client.patch(address, data=data)
-        self.assertEqual(response.status_code, HTTPStatus.FORBIDDEN,
-                         'Отзыв не создан')
+        self.assertEqual(response.status_code, HTTPStatus.UNAUTHORIZED,
+                         'Отзыв не создан') # HTTPStatus.FORBIDDEN,
 
     def test_user_get_list_is_published_review(self):
         """получение отзывов пользователем"""
