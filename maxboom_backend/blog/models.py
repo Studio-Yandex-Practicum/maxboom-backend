@@ -1,20 +1,13 @@
-from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.db import models
 
 User = get_user_model()
 
 
-class Category(models.Model):
+class MetaDataModel(models.Model):
     """
-    Модель категории постов.
+    Базовая абстрактная модель с мета-данными.
     """
-    title = models.CharField(
-        max_length=250)
-    slug = models.SlugField(
-        unique=True,
-        max_length=50,
-        verbose_name='Слаг')
     meta_title = models.CharField(
         verbose_name='Мета-название страницы',
         max_length=255,
@@ -25,6 +18,21 @@ class Category(models.Model):
         max_length=255,
         blank=True,
         null=True)
+
+    class Meta:
+        abstract = True
+
+
+class Category(MetaDataModel):
+    """
+    Модель категории постов.
+    """
+    title = models.CharField(
+        max_length=250)
+    slug = models.SlugField(
+        unique=True,
+        max_length=50,
+        verbose_name='Слаг')
 
     class Meta:
         verbose_name = 'Категория'
@@ -52,7 +60,7 @@ class Tag(models.Model):
         return self.name[:15]
 
 
-class Post(models.Model):
+class Post(MetaDataModel):
     """
     Модель для постов.
     """
@@ -63,7 +71,9 @@ class Post(models.Model):
         verbose_name='Текст')
     author = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name='Автор')
     pub_date = models.DateField(
         verbose_name='Дата публикации',
@@ -88,16 +98,6 @@ class Post(models.Model):
         unique=True,
         max_length=50,
         verbose_name='Слаг')
-    meta_title = models.CharField(
-        verbose_name='Мета-название страницы',
-        max_length=255,
-        blank=True,
-        null=True)
-    meta_description = models.CharField(
-        verbose_name='Мета-описание страницы',
-        max_length=255,
-        blank=True,
-        null=True)
 
     class Meta:
         verbose_name = 'Пост'
@@ -106,6 +106,17 @@ class Post(models.Model):
 
     def __str__(self) -> str:
         return self.title[:30]
+
+    def save(self, *args, **kwargs):
+        """
+        Если указан автор и не суперюзер, то устанавливаем
+        автором первого суперюзера для постов.
+        """
+        if self.author and not self.author.is_superuser:
+            user = User.objects.filter(is_superuser=True)
+            self.author = user[0]
+            self.author.save()
+        super().save(*args, **kwargs)
 
 
 class PostTag(models.Model):

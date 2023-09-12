@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from blog.models import Post, Category, Tag
+from blog.models import Category, Post, Tag
 
 
 class CategoryLightSerializer(serializers.ModelSerializer):
@@ -28,15 +28,41 @@ class TagSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class PostLightSerializer(serializers.ModelSerializer):
+    """
+    Сериализует данные для постов без мета-данных.
+    """
+    category = CategoryLightSerializer()
+    tags = TagSerializer(many=True)
+    author = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Post
+        fields = (
+            'id',
+            'title',
+            'text',
+            'pub_date',
+            'author',
+            'image',
+            'category',
+            'tags',
+            'slug',
+        )
+        read_only_fields = fields
+
+    def get_author(self, obj):
+        if obj.author:
+            return 'Администратор'
+
+
 class PostSerializer(serializers.ModelSerializer):
     """
     Сериализует данные для постов.
     """
     category = CategoryLightSerializer()
     tags = TagSerializer(many=True)
-    author = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='email')
+    author = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -55,12 +81,16 @@ class PostSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
+    def get_author(self, obj):
+        if obj.author:
+            return 'Администратор'
+
 
 class CategorySerializer(serializers.ModelSerializer):
     """
     Сериализует данные для категорий.
     """
-    posts = PostSerializer(many=True)
+    posts = PostLightSerializer(many=True)
 
     class Meta:
         model = Category

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Category, Tag, Post, PostTag
+from .models import Category, Post, PostTag, Tag
 
 
 class PostTagInLine(admin.TabularInline):
