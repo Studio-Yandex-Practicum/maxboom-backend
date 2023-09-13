@@ -3,18 +3,18 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
-from .models import (About, Contacts, Requisite, MainShop, OurShop,
-                     MailContact, Privacy, Terms,
-                     DeliveryInformation, MailContactForm,
-                     Header, Footer)
-from .serializers import (AboutSerializer,
-                          DeliveryInformationSerializer,
-                          PrivacySerializer, TermsSerializer,
-                          ContactsSerializer, RequisiteSerializer,
-                          MainShopSerializer, OurShopSerializer,
-                          MailContactSerializer,
-                          MailContactFormSerializer,
-                          HeaderSerializer, FooterSerializer)
+from core.models import (About, Contacts, Requisite, MainShop, OurShop,
+                         MailContact, Privacy, Terms,
+                         DeliveryInformation, MailContactForm,
+                         Header, Footer)
+from api.serializers.core import (AboutSerializer,
+                                  DeliveryInformationSerializer,
+                                  PrivacySerializer, TermsSerializer,
+                                  ContactsSerializer, RequisiteSerializer,
+                                  MainShopSerializer, OurShopSerializer,
+                                  MailContactSerializer,
+                                  MailContactFormSerializer,
+                                  HeaderSerializer, FooterSerializer)
 
 
 class BaseInfoViewSet(viewsets.ReadOnlyModelViewSet):
