@@ -1,7 +1,5 @@
 from django.db import models
 
-from maxboom.settings import NEWS_LIMIT
-
 
 class News(models.Model):
     """
@@ -41,4 +39,4 @@ class News(models.Model):
         verbose_name_plural = 'Новости'
 
     def __str__(self) -> str:
-        return self.title[:NEWS_LIMIT]
+        return self.title[:15]
