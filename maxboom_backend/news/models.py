@@ -24,14 +24,12 @@ class News(models.Model):
         max_length=255,
         verbose_name='Мета-название страницы',
         null=True,
-        blank=True
-    )
+        blank=True)
     meta_description = models.CharField(
         max_length=255,
         verbose_name='Мета-описание страницы',
         null=True,
-        blank=True
-    )
+        blank=True)
 
     class Meta:
         ordering = ['-pub_date']

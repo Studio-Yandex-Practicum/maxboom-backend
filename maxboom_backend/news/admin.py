@@ -27,5 +27,4 @@ class NewsAdmin(admin.ModelAdmin):
         'meta_description',)
     list_filter = (
         'title',
-        'pub_date',
-    )
+        'pub_date',)
