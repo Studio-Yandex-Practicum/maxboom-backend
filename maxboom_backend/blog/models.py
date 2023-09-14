@@ -8,6 +8,7 @@ class MetaDataModel(models.Model):
     """
     Базовая абстрактная модель с мета-данными.
     """
+
     meta_title = models.CharField(
         verbose_name='Мета-название страницы',
         max_length=255,
@@ -27,6 +28,7 @@ class Category(MetaDataModel):
     """
     Модель категории постов.
     """
+
     title = models.CharField(
         max_length=250)
     slug = models.SlugField(
@@ -47,6 +49,7 @@ class Tag(models.Model):
     """
     Модель тегов.
     """
+
     name = models.CharField(
         verbose_name='Название',
         max_length=200)
@@ -64,6 +67,7 @@ class Post(MetaDataModel):
     """
     Модель для постов.
     """
+
     title = models.CharField(
         verbose_name='Заголовок',
         max_length=255)
@@ -92,8 +96,8 @@ class Post(MetaDataModel):
         null=True)
     tags = models.ManyToManyField(
         Tag,
-        through='PostTag',
-        verbose_name='Тег')
+        verbose_name='Теги',
+        blank=True)
     slug = models.SlugField(
         unique=True,
         max_length=50,
@@ -112,6 +116,7 @@ class Post(MetaDataModel):
         Если указан автор и не суперюзер, то устанавливаем
         автором первого суперюзера для постов.
         """
+
         if self.author and not self.author.is_superuser:
             user = User.objects.filter(is_superuser=True)
             self.author = user[0]
@@ -119,23 +124,23 @@ class Post(MetaDataModel):
         super().save(*args, **kwargs)
 
 
-class PostTag(models.Model):
-    """
-    Промежуточная модель тегов и постов.
-    """
-    post = models.ForeignKey(
-        Post,
-        verbose_name='Пост',
-        on_delete=models.CASCADE)
-    tag = models.ForeignKey(
-        Tag,
-        verbose_name='Тег',
-        on_delete=models.CASCADE)
+# class PostTag(models.Model):
+#     """
+#     Промежуточная модель тегов и постов.
+#     """
+#     post = models.ForeignKey(
+#         Post,
+#         verbose_name='Пост',
+#         on_delete=models.CASCADE)
+#     tag = models.ForeignKey(
+#         Tag,
+#         verbose_name='Тег',
+#         on_delete=models.CASCADE)
 
-    class Meta:
-        verbose_name = 'Пост и тег'
-        verbose_name_plural = 'Посты и теги'
-        ordering = ['id']
+#     class Meta:
+#         verbose_name = 'Пост и тег'
+#         verbose_name_plural = 'Посты и теги'
+#         ordering = ['id']
 
-    def __str__(self) -> str:
-        return f'{self.post} с тегом {self.tag}'
+#     def __str__(self) -> str:
+#         return f'{self.post} с тегом {self.tag}'

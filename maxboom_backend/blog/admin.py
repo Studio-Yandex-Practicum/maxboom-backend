@@ -1,15 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Category, Post, PostTag, Tag
-
-
-class PostTagInLine(admin.TabularInline):
-    """
-    Инлайн для постов и тегов.
-    """
-    model = PostTag
-    extra = 1
+from .models import Category, Post, Tag
 
 
 @admin.register(Post)
@@ -18,10 +10,12 @@ class PostAdmin(admin.ModelAdmin):
     Админка для постов.
     """
     def image_preview(self, obj):
-        return format_html(
-            '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(
-                obj.image.url))
-
+        try:
+            return format_html(
+                '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(
+                    obj.image.url))
+        except ValueError:
+            pass
     image_preview.short_description = 'Изображение'
 
     list_display = (
@@ -42,7 +36,6 @@ class PostAdmin(admin.ModelAdmin):
         'category',
         'tags',
     )
-    inlines = (PostTagInLine,)
 
 
 @admin.register(Category)
@@ -72,16 +65,4 @@ class TagAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'name',
-    )
-
-
-@admin.register(PostTag)
-class PostTagAdmin(admin.ModelAdmin):
-    """
-    Админка для постов и тегов.
-    """
-    list_display = (
-        'pk',
-        'post',
-        'tag',
     )
