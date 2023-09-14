@@ -9,6 +9,8 @@ class Category(models.Model):
         max_length=500,
         unique=True,
     )
+    slug = models.SlugField(
+        verbose_name='Уникальный слаг', unique=True, max_length=200)
     meta_title = models.CharField(
         max_length=255,
         verbose_name="мета-название категории",
@@ -34,6 +36,8 @@ class Product(models.Model):
     """Модель товаров."""
 
     name = models.CharField(verbose_name="название", max_length=500)
+    slug = models.SlugField(
+        verbose_name='Уникальный слаг', unique=True, max_length=200)
     description = models.TextField(verbose_name="описание")
     price = models.DecimalField(
         verbose_name="цена",

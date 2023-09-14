@@ -16,6 +16,7 @@ class CategoryViewTest(APITestCase):
         )
         cls.category = Category.objects.create(
             name="Категория",
+            slug='category',
             meta_title="мета-название",
             meta_description="мета-писание",
         )
@@ -38,6 +39,7 @@ class CategoryViewTest(APITestCase):
         correct_data = {
             "id": CategoryViewTest.category.id,
             "name": CategoryViewTest.category.name,
+            "slug": CategoryViewTest.category.slug,
             "meta_title": CategoryViewTest.category.meta_title,
             "meta_description": CategoryViewTest.category.meta_description,
         }
@@ -61,6 +63,7 @@ class CategoryViewTest(APITestCase):
             CategoryViewTest.url,
             data={
                 "name": "Категория2",
+                "slug": "category_2",
                 "meta_title": "Название2",
                 "meta_description": "Описание2",
             },
@@ -80,6 +83,7 @@ class CategoryViewTest(APITestCase):
             CategoryViewTest.url,
             data={
                 "name": "Категория3",
+                "slug": "category_3",
                 "meta_title": "Название3",
                 "meta_description": "Описание3",
             },
@@ -115,6 +119,7 @@ class CategoryViewTest(APITestCase):
             CategoryViewTest.url,
             data={
                 "name": "Категория",
+                "slug": "category",
                 "meta_title": "Название",
                 "meta_description": "Описание",
             },
@@ -137,6 +142,7 @@ class CategoryViewTest(APITestCase):
             f"{CategoryViewTest.url}1/",
             data={
                 "name": "Новое",
+                "slug": "category",
                 "meta_title": "Новое мета-название",
                 "meta_description": "Новое мета-описание",
             },
@@ -157,6 +163,7 @@ class CategoryViewTest(APITestCase):
         )
         put_data = {
             "name": "Новое название",
+            "slug": "new_category",
             "meta_title": "Новое мета-название",
             "meta_description": "Новое мета-описание",
         }
