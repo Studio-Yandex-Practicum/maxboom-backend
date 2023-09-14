@@ -1,16 +1,19 @@
 from django.contrib import admin
 
-from .models import (About, Terms, DeliveryInformation,
-                     Privacy, Contacts, Requisite, MainShop,
-                     OurShop, MailContact, MainLogo, AdditionalLogo,
-                     Support, Header, Footer, MailContactForm)
+from .models import (
+    About, Terms, DeliveryInformation, Privacy, Contacts, Requisite,
+    MainShop, OurShop, MailContact, MainLogo, AdditionalLogo,
+    Support, Header, Footer, MailContactForm
+)
 
 
 class BaseAdmin(admin.ModelAdmin):
     list_display = ['element_name']
 
+    # Настройка для вывода названия модели вместо
+    # id объекта в админке для явного доступа.
     def element_name(self, obj):
-        return obj.__class__._meta.verbose_name
+        return obj._meta.verbose_name
 
 
 class MainShopInline(admin.StackedInline):

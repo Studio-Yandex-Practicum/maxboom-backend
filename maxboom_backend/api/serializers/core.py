@@ -1,9 +1,11 @@
 from rest_framework import serializers
 
-from core.models import (About, Privacy, DeliveryInformation,
-                         Contacts, Requisite, MainShop, OurShop,
-                         MailContact, MailContactForm,
-                         Header, Footer, Support, Terms)
+from core.models import (
+    About, Privacy, DeliveryInformation,
+    Contacts, Requisite, MainShop, OurShop,
+    MailContact, MailContactForm,
+    Header, Footer, Support, Terms
+)
 
 
 class BaseCoreSerializer(serializers.ModelSerializer):
@@ -155,7 +157,8 @@ class ContactsSerializer(BaseCoreSerializer):
 
     def get_our_shops(self, value):
         our_shops = value.our_shops.all()
-        return OurShopSerializer(our_shops, many=True).data
+        return OurShopSerializer(
+            our_shops, context=self.context, many=True).data
 
 
 class MailContactSerializer(serializers.Serializer):
