@@ -13,9 +13,13 @@ class BaseCoreModel(models.Model):
     class Meta:
         abstract = True
 
+    # str() будет отображать название объекта в админке в виде
+    # названия модели для облегчения работы с ним.
     def __str__(self):
-        return self.__class__._meta.verbose_name
+        return self._meta.verbose_name
 
+    # repr() нужен для облегчения более внутренней работы над
+    # объектами внутри админки.
     def __repr__(self):
         return self.__class__.__name__
 

@@ -3,18 +3,16 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
-from core.models import (About, Contacts, Requisite, MainShop, OurShop,
-                         MailContact, Privacy, Terms,
-                         DeliveryInformation, MailContactForm,
-                         Header, Footer)
-from api.serializers.core import (AboutSerializer,
-                                  DeliveryInformationSerializer,
-                                  PrivacySerializer, TermsSerializer,
-                                  ContactsSerializer, RequisiteSerializer,
-                                  MainShopSerializer, OurShopSerializer,
-                                  MailContactSerializer,
-                                  MailContactFormSerializer,
-                                  HeaderSerializer, FooterSerializer)
+from core.models import (
+    About, Contacts, MailContact, Privacy, Terms,
+    DeliveryInformation, Header, Footer
+)
+from api.serializers.core import (
+    AboutSerializer, DeliveryInformationSerializer,
+    PrivacySerializer, TermsSerializer, ContactsSerializer,
+    MailContactSerializer, HeaderSerializer, FooterSerializer
+)
+from api.permissions.core import IsAdminOrPostOnly
 
 
 class BaseInfoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -60,45 +58,6 @@ class TermsViewSet(BaseInfoViewSet):
     serializer_class = TermsSerializer
 
 
-# class MailFormViewSet(BaseInfoViewSet):
-#     """
-#     Вьюсет элементов формы вопроса
-#     компании на странице "Контакты".
-#     """
-#
-#     queryset = MailContactForm.objects.all()
-#     serializer_class = MailContactFormSerializer
-#
-#
-# class MainShopViewSet(BaseInfoViewSet):
-#     """
-#     Вьюсет объекта основного магазина
-#     на странице "Контакты".
-#     """
-#
-#     queryset = MainShop.objects.all()
-#     serializer_class = MainShopSerializer
-#
-#
-# class OurShopsViewSet(BaseInfoViewSet):
-#     """
-#     Вьюсет объектов дополнительных магазинов
-#     на странице "Контакты".
-#     """
-#
-#     queryset = OurShop.objects.all()
-#     serializer_class = OurShopSerializer
-#
-#
-# class RequisiteViewSet(BaseInfoViewSet):
-#     """
-#     Вьюсет объектов реквизитов на странице "Контакты".
-#     """
-#
-#     queryset = Requisite.objects.all()
-#     serializer_class = RequisiteSerializer
-
-
 class ContactsViewSet(BaseInfoViewSet):
     """
     Вьюсет страницы "Контакты".
@@ -111,7 +70,7 @@ class ContactsViewSet(BaseInfoViewSet):
     # все запросы на обращение через e-mail и по post-запросу
     # отправить новое.
     @action(methods=['get', 'post'], detail=False,
-            url_path='mail')
+            url_path='mail', permission_classes=[IsAdminOrPostOnly])
     def get_mail(self, request):
         if request.method == 'GET':
             queryset = MailContact.objects.all()
@@ -124,25 +83,6 @@ class ContactsViewSet(BaseInfoViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-
-# Временно неопределённый статус у вьюсетов хэдера и футера.
-# class HeaderViewSet(BaseInfoViewSet):
-#     """
-#     Вьюсет для хэдера со всеми его элементами.
-#     """
-#
-#     queryset = Header.objects.all()
-#     serializer_class = HeaderSerializer
-#
-#
-# class FooterViewSet(BaseInfoViewSet):
-#     """
-#     Вьюсет для футера со всеми его элементами.
-#     """
-#
-#     queryset = Footer.objects.all()
-#     serializer_class = FooterSerializer
 
 
 class BaseElementsView(views.APIView):
