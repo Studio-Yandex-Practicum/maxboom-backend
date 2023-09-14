@@ -122,25 +122,3 @@ class Post(MetaDataModel):
             self.author = user[0]
             self.author.save()
         super().save(*args, **kwargs)
-
-
-# class PostTag(models.Model):
-#     """
-#     Промежуточная модель тегов и постов.
-#     """
-#     post = models.ForeignKey(
-#         Post,
-#         verbose_name='Пост',
-#         on_delete=models.CASCADE)
-#     tag = models.ForeignKey(
-#         Tag,
-#         verbose_name='Тег',
-#         on_delete=models.CASCADE)
-
-#     class Meta:
-#         verbose_name = 'Пост и тег'
-#         verbose_name_plural = 'Посты и теги'
-#         ordering = ['id']
-
-#     def __str__(self) -> str:
-#         return f'{self.post} с тегом {self.tag}'

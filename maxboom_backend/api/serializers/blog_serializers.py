@@ -5,7 +5,8 @@ from blog.models import Category, Post, Tag
 
 class CategoryLightSerializer(serializers.ModelSerializer):
     """
-    Сериализует данные для категорий без мета-данных.
+    Сериализует данные для категорий
+    без мета-данных.
     """
 
     class Meta:
@@ -30,9 +31,10 @@ class TagSerializer(serializers.ModelSerializer):
 
 class PostLightSerializer(serializers.ModelSerializer):
     """
-    Сериализует данные для постов без мета-данных.
+    Сериализует данные для постов без мета-данных
+    и категории при запросе в категориях по {slug}.
     """
-    category = CategoryLightSerializer()
+
     tags = TagSerializer(many=True)
     author = serializers.SerializerMethodField()
 
@@ -45,7 +47,6 @@ class PostLightSerializer(serializers.ModelSerializer):
             'pub_date',
             'author',
             'image',
-            'category',
             'tags',
             'slug',
         )
@@ -58,8 +59,9 @@ class PostLightSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     """
-    Сериализует данные для постов.
+    Сериализует все данные для постов.
     """
+
     category = CategoryLightSerializer()
     tags = TagSerializer(many=True)
     author = serializers.SerializerMethodField()
@@ -86,10 +88,29 @@ class PostSerializer(serializers.ModelSerializer):
             return 'Администратор'
 
 
-class CategorySerializer(serializers.ModelSerializer):
+class CategoryListSerializer(serializers.ModelSerializer):
     """
-    Сериализует данные для категорий.
+    Сериализует данные для категорий
+    при запросе всех категорий без постов.
     """
+
+    class Meta:
+        model = Category
+        fields = (
+            'title',
+            'slug',
+            'meta_title',
+            'meta_description',
+        )
+        read_only_fields = fields
+
+
+class CategoryDetailSerializer(serializers.ModelSerializer):
+    """
+    Сериализует данные для категорий c постами
+    при запросе по {slug}.
+    """
+
     posts = PostLightSerializer(many=True)
 
     class Meta:
