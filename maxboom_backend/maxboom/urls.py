@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/', include('api.urls.accounts_urls')),
     path('api/', include('api.urls.core')),
     path('api/', include('api.urls.shop_reviews_urls')),
+    path('api/', include('api.urls.catalogue')),
 ]
 
 if settings.DEBUG:

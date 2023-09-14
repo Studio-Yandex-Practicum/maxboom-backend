@@ -61,7 +61,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'api',
     'blog',
-    'catalogue',
+    'catalogue.apps.CatalogueConfig',
     'core',
     'news',
     'payment',
@@ -132,10 +132,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -186,6 +182,7 @@ DEBUG_TOOLBAR_CONFIG = {
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
 DJOSER = {
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
