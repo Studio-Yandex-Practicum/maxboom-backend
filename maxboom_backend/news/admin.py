@@ -9,11 +9,14 @@ class NewsAdmin(admin.ModelAdmin):
     """
     Админка для новостей.
     """
-    def image_preview(self, obj):
-        return format_html(
-            '<img src="{}" style="max-width:50px; max-height:50px"/>'.format(
-                obj.image.url))
 
+    def image_preview(self, obj):
+        try:
+            return format_html(
+                '<img src="{}" style="max-width:50px; max-height:50px"/>'.format(
+                    obj.image.url))
+        except ValueError:
+            pass
     image_preview.short_description = 'Изображение'
 
     list_display = (

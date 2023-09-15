@@ -1,12 +1,11 @@
 import shutil
 import tempfile
 
-from django.test import override_settings, TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import TestCase, override_settings
 from rest_framework import status
 
 from news.models import News
-
 
 MEDIA_ROOT = tempfile.mkdtemp()
 
@@ -18,6 +17,7 @@ class NewsViewTests(TestCase):
         """
         Создание новости для всего тестирования.
         """
+
         super().setUpClass()
         cls.news = News.objects.create(
             title='Заголовок для тестов',
@@ -32,6 +32,7 @@ class NewsViewTests(TestCase):
         """
         Удаление временной папки для медиа после всех тестов.
         """
+
         shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
         super().tearDownClass()
 
@@ -40,6 +41,7 @@ class NewsViewTests(TestCase):
         Получение списка всех новостей
         для неавторизованных пользователей.
         """
+
         response = self.client.get(
             '/api/shopnews/')
         instance = News.objects.first()
@@ -63,9 +65,10 @@ class NewsViewTests(TestCase):
 
     def test_retrieve_unauthenticated(self):
         """
-        Получение новости по {pk}
+        Получение новости по {slug}
         для неавторизованных пользователей.
         """
+
         instance = News.objects.first()
         response = self.client.get(
             f'/api/shopnews/{instance.slug}/')

@@ -5,6 +5,7 @@ class News(models.Model):
     """
     Модель новостей.
     """
+
     title = models.CharField(
         max_length=250,
         verbose_name='Заголовок')
@@ -12,7 +13,9 @@ class News(models.Model):
         verbose_name='Текст')
     image = models.ImageField(
         verbose_name='Изображение',
-        null=True, blank=True, upload_to='news/')
+        null=True,
+        blank=True,
+        upload_to='news/')
     pub_date = models.DateField(
         auto_now_add=True,
         verbose_name='Дата публикации')
@@ -37,4 +40,4 @@ class News(models.Model):
         verbose_name_plural = 'Новости'
 
     def __str__(self) -> str:
-        return self.title[:15]
+        return self.title[:30]

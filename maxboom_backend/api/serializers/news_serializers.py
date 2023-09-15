@@ -20,3 +20,4 @@ class NewsSerializer(serializers.ModelSerializer):
             'meta_title',
             'meta_description',
         )
+        read_only_fields = fields
