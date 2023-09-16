@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+
 User = get_user_model()
 
 
@@ -118,7 +119,7 @@ class Post(MetaDataModel):
         """
 
         if self.author and not self.author.is_superuser:
-            user = User.objects.filter(is_superuser=True)
-            self.author = user[0]
+            super_user = User.objects.filter(is_superuser=True).first()
+            self.author = super_user
             self.author.save()
         super().save(*args, **kwargs)
