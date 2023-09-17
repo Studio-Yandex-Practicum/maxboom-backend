@@ -1,30 +1,76 @@
-# maxboom-backend
+## maxboom-backend
+
 Интернет-магазин на DRF
 
-Версия Python: 3.9
-<br>Версия Django: 3.2.3
-
+Стек:
+* Python 3.9
+* Django 3.2.3
+---
 ### Запуск текущей версии сервера на локальной машине
-<br>— установить виртуальное окружение:
-<br>```python -m venv venv```
-— перейти в директорию ```maxboom_backend```
-<br>```cd maxboom_backend```
-<br>— установить зависимости окружения:
-<br>```pip install -r requirements.txt```
-<br>— настроить переменные окружения в соответствии с файлом ```.env.example```;
-<br>— применить миграции:
-<br>```python manage.py migrate```
+* установить виртуальное окружение:
+```bash
+python -m venv venv
+```
+* перейти в директорию ```maxboom_backend```
+```bash
+cd maxboom_backend
+```
+* установить зависимости окружения:
+```bash
+pip install -r requirements.txt
+```
+* настроить переменные окружения в соответствии с файлом ```.env.example```;
+* применить миграции:
+```bash
+python manage.py migrate
+```
 
-
+---
 ### Запуск текущей версии контейнеров
-<br>— настроить переменные окружения и базу данных в ```settings.py```;
-<br>— сбилдить образы в docker-compose:
-<br>```docker compose build```
-<br>— запустить образы:
-<br>```docker compose up```
-<br>— применить миграции в контейнере backend:
-<br>```docker compose exec backend python manage.py migrate```
-<br>— собрать статику:
-<br>```docker compose exec backend python manage.py collectstatic```
-<br>— скопировать статику:
-<br>```docker compose exec backend cp -r /app/collected_static/. /backend_static/static/```
+<details>
+<summary>С PostgreSQL</summary>
+
+* настроить переменные окружения и базу данных в ```settings.py``` (установить database engine на postgresql);
+* сбилдить образы в docker-compose:
+```bash
+docker compose -f docker-compose build
+```
+* запустить образы:
+```bash
+docker compose -f docker-compose up
+```
+* применить миграции в контейнере backend:
+```bash
+docker compose -f docker-compose exec backend python manage.py migrate
+```
+* собрать статику:
+```bash
+docker compose -f docker-compose exec backend python manage.py collectstatic
+```
+* скопировать статику:
+```bash
+docker compose -f docker-compose exec backend cp -r /app/collected_static/. /backend_static/static/
+```
+</details>
+
+<details>
+<summary>С SQLite</summary>
+
+* настроить переменные окружения и базу данных в ```settings.py``` (установить database engine на sqlite3);
+* сбилдить образы в docker-compose:
+```bash
+docker compose -f docker-compose-sqlite build
+```
+* применить миграции в контейнере backend:
+```bash
+docker compose -f docker-compose-sqlite exec backend python manage.py migrate
+```
+* собрать статику:
+```bash
+docker compose -f docker-compose-sqlite exec backend python manage.py collectstatic
+```
+* скопировать статику:
+```bash
+docker compose -f docker-compose-sqlite exec backend cp -r /app/collected_static/. /backend_static/static/
+```
+</details>
