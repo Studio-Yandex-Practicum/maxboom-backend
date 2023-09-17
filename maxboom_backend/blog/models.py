@@ -31,7 +31,8 @@ class Category(MetaDataModel):
     """
 
     title = models.CharField(
-        max_length=250)
+        max_length=250,
+        verbose_name='Название категории')
     slug = models.SlugField(
         unique=True,
         max_length=50,
@@ -98,6 +99,7 @@ class Post(MetaDataModel):
     tags = models.ManyToManyField(
         Tag,
         verbose_name='Теги',
+        related_name='posts',
         blank=True)
     slug = models.SlugField(
         unique=True,

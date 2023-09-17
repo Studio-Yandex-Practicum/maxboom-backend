@@ -9,14 +9,6 @@ class PostAdmin(admin.ModelAdmin):
     """
     Админка для постов.
     """
-    def image_preview(self, obj):
-        try:
-            return format_html(
-                '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(
-                    obj.image.url))
-        except ValueError:
-            pass
-    image_preview.short_description = 'Изображение'
 
     list_display = (
         'pk',
@@ -24,6 +16,7 @@ class PostAdmin(admin.ModelAdmin):
         'title',
         'text',
         'category',
+        'show_tags',
         'author',
         'slug',
         'image_preview',
@@ -36,6 +29,23 @@ class PostAdmin(admin.ModelAdmin):
         'category',
         'tags',
     )
+    filter_horizontal = ('tags',)
+    empty_value_display = '-пусто-'
+
+    def image_preview(self, obj):
+        try:
+            return format_html(
+                '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(
+                    obj.image.url))
+        except ValueError:
+            pass
+    image_preview.short_description = 'Изображение'
+
+    @admin.display(description='теги')
+    def show_tags(self, obj):
+        tags = [tag.name for tag in obj.tags.all()]
+        if len(obj.tags.all()) > 0:
+            return ', '.join(tags)
 
 
 @admin.register(Category)
@@ -43,6 +53,7 @@ class CategoryAdmin(admin.ModelAdmin):
     """
     Админка для категорий.
     """
+
     list_display = (
         'pk',
         'title',
@@ -53,6 +64,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = (
         'title',
     )
+    empty_value_display = '-пусто-'
 
 
 @admin.register(Tag)
@@ -60,6 +72,7 @@ class TagAdmin(admin.ModelAdmin):
     """
     Админка для тегов.
     """
+
     list_display = (
         'name',
     )
