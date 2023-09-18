@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import Category, Post, Tag
+from .models import Category, Post, Tag, Comments
 
 
 @admin.register(Post)
@@ -20,6 +20,8 @@ class PostAdmin(admin.ModelAdmin):
         'author',
         'slug',
         'image_preview',
+        'viewers',
+        'comments',
         'meta_title',
         'meta_description',
     )
@@ -78,4 +80,24 @@ class TagAdmin(admin.ModelAdmin):
     )
     list_filter = (
         'name',
+    )
+
+
+@admin.register(Comments)
+class CommentsAdmin(admin.ModelAdmin):
+    """
+    Админка для комментариев.
+    """
+
+    list_display = (
+        'id',
+        'author',
+        'text',
+        'pub_date',
+        'is_published',
+    )
+    list_filter = (
+        'author',
+        'pub_date',
+        'is_published',
     )
