@@ -65,32 +65,6 @@ class Tag(models.Model):
         return self.name[:15]
 
 
-class Comments(models.Model):
-    """
-    Модель для комментариев.
-    """
-
-    author = models.CharField(
-        max_length=200,
-        verbose_name='Имя')
-    text = models.TextField(
-        verbose_name='Комментарий')
-    pub_date = models.DateField(
-        verbose_name='Дата создания',
-        auto_now_add=True)
-    is_published = models.BooleanField(
-        verbose_name='Опубликован',
-        default=False)
-
-    class Meta:
-        verbose_name = 'Комментарий'
-        verbose_name_plural = 'Комментарии'
-        ordering = ['-pub_date']
-
-    def __str__(self):
-        return self.text[:30]
-
-
 class Post(MetaDataModel):
     """
     Модель для постов.
@@ -130,13 +104,6 @@ class Post(MetaDataModel):
     viewers = models.PositiveIntegerField(
         verbose_name='Количество просмотров',
         default=0)
-    comments = models.ForeignKey(
-        Comments,
-        on_delete=models.SET_NULL,
-        verbose_name='Комментарии',
-        related_name='posts',
-        blank=True,
-        null=True)
     slug = models.SlugField(
         unique=True,
         max_length=50,
@@ -161,3 +128,34 @@ class Post(MetaDataModel):
             self.author = super_user
             self.author.save()
         super().save(*args, **kwargs)
+
+
+class Comments(models.Model):
+    """
+    Модель для комментариев.
+    """
+
+    author = models.CharField(
+        max_length=200,
+        verbose_name='Имя')
+    post = models.ForeignKey(
+        Post,
+        verbose_name='Пост',
+        on_delete=models.CASCADE,
+        related_name='comments')
+    text = models.TextField(
+        verbose_name='Комментарий')
+    pub_date = models.DateField(
+        verbose_name='Дата создания',
+        auto_now_add=True)
+    is_published = models.BooleanField(
+        verbose_name='Опубликован',
+        default=False)
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ['-pub_date']
+
+    def __str__(self):
+        return self.text[:30]

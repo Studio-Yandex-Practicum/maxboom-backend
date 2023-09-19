@@ -1,9 +1,12 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 
 from api.serializers.blog_serializers import (CategoryDetailSerializer,
                                               CategoryListSerializer,
-                                              PostSerializer)
-from blog.models import Category, Post
+                                              PostSerializer,
+                                              CommentSerializer,
+                                              CommentPostSerializer)
+from blog.models import Category, Post, Comments
 
 
 class PostViewSet(viewsets.ReadOnlyModelViewSet):
@@ -34,3 +37,28 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return Category.objects.all().order_by('title')
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    """
+    Вьюсет только для [GET, POST, HEAD] methods к комментариям.
+    Доступ разрешен всем пользователем.
+    """
+
+    http_method_names = ['get', 'post', 'head']
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CommentPostSerializer
+        return CommentSerializer
+
+    def get_queryset(self):
+        return Comments.objects.select_related(
+            'post').filter(
+                post__slug=self.kwargs[
+                    'post_slug'], is_published=True)
+
+    def perform_create(self, serializer):
+        post_slug = self.kwargs['post_slug']
+        post = get_object_or_404(Post, slug=post_slug)
+        serializer.save(post=post)

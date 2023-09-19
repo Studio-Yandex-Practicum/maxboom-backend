@@ -14,14 +14,13 @@ class PostAdmin(admin.ModelAdmin):
         'pk',
         'pub_date',
         'title',
-        'text',
+        'short_text_view',
         'category',
         'show_tags',
         'author',
         'slug',
         'image_preview',
         'viewers',
-        'comments',
         'meta_title',
         'meta_description',
     )
@@ -34,6 +33,7 @@ class PostAdmin(admin.ModelAdmin):
     filter_horizontal = ('tags',)
     empty_value_display = '-пусто-'
 
+    @admin.display(description='Изображение')
     def image_preview(self, obj):
         try:
             return format_html(
@@ -41,13 +41,16 @@ class PostAdmin(admin.ModelAdmin):
                     obj.image.url))
         except ValueError:
             pass
-    image_preview.short_description = 'Изображение'
 
-    @admin.display(description='теги')
+    @admin.display(description='Теги')
     def show_tags(self, obj):
         tags = [tag.name for tag in obj.tags.all()]
         if len(obj.tags.all()) > 0:
             return ', '.join(tags)
+
+    @admin.display(description='Текст')
+    def short_text_view(self, obj):
+        return obj.text[:50] + '...' if len(obj.text) > 50 else obj.text[:50]
 
 
 @admin.register(Category)
@@ -92,7 +95,8 @@ class CommentsAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'author',
-        'text',
+        'post',
+        'short_comment_view',
         'pub_date',
         'is_published',
     )
@@ -101,3 +105,7 @@ class CommentsAdmin(admin.ModelAdmin):
         'pub_date',
         'is_published',
     )
+
+    @admin.display(description='Комментарии')
+    def short_comment_view(self, obj):
+        return obj.text[:50] + '...' if len(obj.text) > 50 else obj.text[:50]

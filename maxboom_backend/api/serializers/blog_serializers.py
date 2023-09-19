@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from blog.models import Category, Post, Tag
+from blog.models import Category, Post, Tag, Comments
 
 
 class CategoryLightSerializer(serializers.ModelSerializer):
@@ -123,3 +123,36 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
             'posts',
         )
         read_only_fields = fields
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """
+    Сериализует данные для комментариев для чтения.
+    """
+
+    class Meta:
+        model = Comments
+        fields = (
+            'id',
+            'author',
+            'text',
+            'pub_date',
+        )
+        read_only_fields = fields
+
+
+class CommentPostSerializer(serializers.ModelSerializer):
+    """
+    Сериализует данные для комментариев в случае их добавления.
+    """
+    # post_id = serializers.PrimaryKeyRelatedField(
+    #     read_only=True)
+
+    class Meta:
+        model = Comments
+        fields = (
+            'author',
+            'post',
+            'text',
+        )
+        read_only_fields = ('post',)
