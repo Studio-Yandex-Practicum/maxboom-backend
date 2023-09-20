@@ -10,4 +10,4 @@ django-cleanup==8.0.0
 drf-yasg==1.21.7
 django-debug-toolbar==3.2.2
 djoser==2.2.0
-
+pytils==0.4.1
