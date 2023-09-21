@@ -58,8 +58,8 @@ class CategoryTreeModelTest(TestCase):
             name='Категория3',
         )
         cls.category_tree = CategoryTree.objects.create(
-            parent_id=CategoryTreeModelTest.category_root,
-            affiliated_id=CategoryTreeModelTest.category_affiliated
+            root=CategoryTreeModelTest.category_root,
+            branch=CategoryTreeModelTest.category_affiliated
         )
 
     def test_models_have_correct_object_name(self):
@@ -75,8 +75,8 @@ class CategoryTreeModelTest(TestCase):
         """verbose_name в полях совпадает с ожидаемым."""
         category_tree = CategoryTreeModelTest.category_tree
         field_verboses = {
-            'parent_id': 'Родительская категория',
-            'affiliated_id': 'Дочерняя категория',
+            'root': 'Родительская категория',
+            'branch': 'Дочерняя категория',
         }
         for field, expected_value in field_verboses.items():
             with self.subTest(field=field):
@@ -223,6 +223,7 @@ class ProductImageModelTest(TestCase):
         field_verboses = {
             'image': 'Изображение',
             'product': 'Продукт',
+            'thumbnail': 'Эскиз'
         }
         for field, expected_value in field_verboses.items():
             with self.subTest(field=field):

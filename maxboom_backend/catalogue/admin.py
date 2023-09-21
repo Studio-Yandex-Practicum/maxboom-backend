@@ -7,10 +7,11 @@ from .models import (
 
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'image', 'img_preview',)
+    list_display = ('id', 'product', 'image', 'thumbnail',
+                    'img_preview', 'thumb_preview')
     list_editable = ('product',)
     list_filter = ('product',)
-    readonly_fields = ('img_preview',)
+    readonly_fields = ('img_preview', 'thumb_preview')
 
 
 @admin.register(Brand)
@@ -19,7 +20,7 @@ class BrandAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'slug', 'name', 'is_prohibited'
     )
-    list_editable = ('name',)
+    list_editable = ('name', 'is_prohibited')
     list_filter = ('name', 'is_prohibited')
     search_fields = ('name',)
     empty_value_display = '-пусто-'
@@ -33,13 +34,13 @@ class ProductImageInline(admin.TabularInline):
 
 class CategoryTreeRootInline(admin.TabularInline):
     model = CategoryTree
-    fk_name = 'parent_id'
+    fk_name = 'root'
     extra = 0
 
 
 class CategoryTreeAffiliatedInline(admin.TabularInline):
     model = CategoryTree
-    fk_name = 'affiliated_id'
+    fk_name = 'branch'
     extra = 0
 
 
@@ -47,10 +48,10 @@ class CategoryTreeAffiliatedInline(admin.TabularInline):
 class CategoryTreeAdmin(admin.ModelAdmin):
     '''Кастомный класс админки дерева категорий.'''
     list_display = (
-        'id', 'parent_id', 'affiliated_id',
+        'id', 'root', 'branch',
     )
     list_editable = (
-        'parent_id', 'affiliated_id',
+        'root', 'branch',
     )
 
 
@@ -61,7 +62,7 @@ class CategoryAdmin(admin.ModelAdmin):
         'id', 'slug', 'name', 'meta_title', 'meta_description',
         'is_visible_on_main', 'is_prohibited'
     )
-    list_editable = ('name',)
+    list_editable = ('name', 'is_prohibited', 'is_visible_on_main')
     list_filter = ('name', 'is_visible_on_main', 'is_prohibited')
     search_fields = ('name', 'meta_description')
     empty_value_display = '-пусто-'

@@ -1,10 +1,13 @@
 from django.db import models
 from pytils.translit import slugify
 from django.utils.html import mark_safe
+from sorl.thumbnail import get_thumbnail
+from django.db.models.signals import pre_delete
+from django.dispatch.dispatcher import receiver
 
 
 class Brand(models.Model):
-    """Модель производителей."""
+    '''Модель производителей.'''
 
     name = models.CharField(
         verbose_name='Наименование',
@@ -15,6 +18,7 @@ class Brand(models.Model):
         verbose_name='Уникальный слаг', unique=True, max_length=200,
         null=True,
         blank=True,
+        editable=False
     )
     is_prohibited = models.BooleanField(
         verbose_name='Запрещенный для публикации производитель',
@@ -36,7 +40,7 @@ class Brand(models.Model):
 
 
 class Category(models.Model):
-    """Модель категорий."""
+    '''Модель категорий.'''
 
     name = models.CharField(
         verbose_name='Название',
@@ -47,6 +51,7 @@ class Category(models.Model):
         verbose_name='Уникальный слаг', unique=True, max_length=200,
         null=True,
         blank=True,
+        editable=False
     )
     meta_title = models.CharField(
         max_length=255,
@@ -86,13 +91,14 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    """Модель товаров."""
+    '''Модель товаров.'''
 
     name = models.CharField(verbose_name='Название', max_length=500)
     slug = models.SlugField(
         verbose_name='Уникальный слаг', unique=True, max_length=200,
         null=True,
         blank=True,
+        editable=False
     )
     description = models.TextField(verbose_name='Описание')
     price = models.DecimalField(
@@ -148,11 +154,17 @@ class Product(models.Model):
 class ProductImage(models.Model):
     product = models.ForeignKey(
         Product, related_name='images', on_delete=models.CASCADE,
-        verbose_name='Продукт'
+        verbose_name='Продукт',
     )
     image = models.ImageField(
-        upload_to='products_images',
-        verbose_name='Изображение'
+        upload_to='products-images',
+        verbose_name='Изображение',
+    )
+    thumbnail = models.ImageField(
+        verbose_name='Эскиз',
+        null=True,
+        blank=True,
+        # editable=False
     )
 
     class Meta:
@@ -163,17 +175,35 @@ class ProductImage(models.Model):
         return self.image.name
 
     def img_preview(self):
-        return mark_safe(f'<img src = "{self.image.url}" width = "300"/>')
+        return mark_safe(f"<img src = '{self.image.url}' width = '300'/>")
+
+    def thumb_preview(self):
+        return mark_safe(f"<img src = '{self.thumbnail.url}' width = '300'/>")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.thumbnail = get_thumbnail(
+            self.image, '300x300', crop='center', quality=99
+        ).name
+        super().save(*args, **kwargs)
+
+
+@receiver(pre_delete, sender=ProductImage)
+def image_model_delete(sender, instance, **kwargs):
+    if instance.image.name:
+        instance.image.delete(False)
+    if instance.thumbnail.name:
+        instance.thumbnail.delete(False)
 
 
 class CategoryTree(models.Model):
-    """Модель вложенности категорий."""
-    parent_id = models.ForeignKey(
-        Category, related_name='affiliated', on_delete=models.CASCADE,
+    '''Модель вложенности категорий.'''
+    root = models.ForeignKey(
+        Category, related_name='branches', on_delete=models.CASCADE,
         verbose_name='Родительская категория'
     )
-    affiliated_id = models.ForeignKey(
-        Category, related_name='root', on_delete=models.CASCADE,
+    branch = models.ForeignKey(
+        Category, related_name='roots', on_delete=models.CASCADE,
         verbose_name='Дочерняя категория'
     )
 
@@ -182,4 +212,4 @@ class CategoryTree(models.Model):
         verbose_name_plural = 'Деревья категорий'
 
     def __str__(self) -> str:
-        return f'{self.parent_id} {self.affiliated_id}'
+        return f'{self.root} {self.branch}'
