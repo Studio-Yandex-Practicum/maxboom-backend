@@ -61,8 +61,9 @@ class ShopReviews(models.Model):
     @property
     def average_score(obj):
         return round(
-            (obj.price_score+obj.quality_score+obj.delivery_speed_score)/3, 1
-        )
+            (obj.price_score
+             + obj.quality_score
+             + obj.delivery_speed_score) / 3, 1)
 
     average_score.fget.short_description = 'Средняя оценка'
 

@@ -59,8 +59,8 @@ GET <http://localhost:8000/api/catalogue/categories/>
     "branches": [
       {
         "id": 4,
-        "name": "Автоэлектронника",
-        "slug": "avtoelektronnika",
+        "name": "Автоэлектроника",
+        "slug": "avtoelektronika",
         "branches": [
           {
             "id": 2,
@@ -139,8 +139,8 @@ GET <http://localhost:8000/api/catalogue/categories/fm-transmitteryi/>
   "branches": [],
   "root": {
     "id": 4,
-    "name": "Автоэлектронника",
-    "slug": "avtoelektronnika",
+    "name": "Автоэлектроника",
+    "slug": "avtoelektronika",
     "root": {
       "id": 1,
       "name": "Автотовары",
@@ -215,8 +215,8 @@ GET <http://127.0.0.1:8000/api/catalogue/products/>
         "slug": "fm-transmitteryi",
         "root": {
           "id": 4,
-          "name": "Автоэлектронника",
-          "slug": "avtoelektronnika",
+          "name": "Автоэлектроника",
+          "slug": "avtoelektronika",
           "root": {
             "id": 1,
             "name": "Автотовары",

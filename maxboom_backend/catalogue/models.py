@@ -1,9 +1,11 @@
+
 from django.db import models
 from pytils.translit import slugify
 from django.utils.html import mark_safe
-from sorl.thumbnail import get_thumbnail
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFit
 
 
 class Brand(models.Model):
@@ -167,11 +169,11 @@ class ProductImage(models.Model):
         upload_to='products-images',
         verbose_name='Изображение',
     )
-    thumbnail = models.ImageField(
-        verbose_name='Эскиз',
-        null=True,
-        blank=True,
-        # editable=False
+    thumbnail = ImageSpecField(
+        source='image',
+        processors=[ResizeToFit(200, 200)],
+        format='JPEG',
+        options={'quality': 60}
     )
 
     class Meta:
@@ -185,14 +187,7 @@ class ProductImage(models.Model):
         return mark_safe(f"<img src = '{self.image.url}' width = '300'/>")
 
     def thumb_preview(self):
-        return mark_safe(f"<img src = '{self.thumbnail.url}' width = '300'/>")
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        self.thumbnail = get_thumbnail(
-            self.image, '300x300', crop='center', quality=99
-        ).name
-        super().save(*args, **kwargs)
+        return mark_safe(f"<img src = '{self.thumbnail.url}' width = '200'/>")
 
 
 @receiver(pre_delete, sender=ProductImage)

@@ -42,9 +42,9 @@ class ShopReviewsURLTests(TestCase):
             '/api/': HTTPStatus.OK,
             '/api/store-reviews/': HTTPStatus.OK,
             f'/api/store-reviews/{review.pk}/': HTTPStatus.OK,
-            f'/api/store-reviews/{review.pk}/replay/': HTTPStatus.UNAUTHORIZED,  #cHTTPStatus.FORBIDDEN,
+            f'/api/store-reviews/{review.pk}/replay/': HTTPStatus.UNAUTHORIZED,
             '/api/store-reviews/'
-            f'{review.pk}/replay/{replay.pk}/': HTTPStatus.UNAUTHORIZED, # HTTPStatus.FORBIDDEN,
+            f'{review.pk}/replay/{replay.pk}/': HTTPStatus.UNAUTHORIZED,
             '/unexisting_page': HTTPStatus.NOT_FOUND
         }
         for address, code in status_pages.items():

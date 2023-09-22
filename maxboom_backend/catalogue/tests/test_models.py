@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 from catalogue.models import (
     Category, Product, Brand,
-    ProductImage, CategoryTree
+    ProductImage
 )
 import shutil
 import tempfile
@@ -47,50 +47,6 @@ class BrandModelTest(TestCase):
         super().setUpClass()
 
 
-class CategoryTreeModelTest(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.category_root = Category.objects.create(
-            name='Категория2',
-        )
-        cls.category_affiliated = Category.objects.create(
-            name='Категория3',
-        )
-        cls.category_tree = CategoryTree.objects.create(
-            root=CategoryTreeModelTest.category_root,
-            branch=CategoryTreeModelTest.category_affiliated
-        )
-
-    def test_models_have_correct_object_name(self):
-        category_root = CategoryTreeModelTest.category_root
-        category_affiliated = CategoryTreeModelTest.category_affiliated
-        category_tree = CategoryTreeModelTest.category_tree
-        expected = f'{category_root.name} {category_affiliated.name}'
-        self.assertEqual(
-            expected, str(category_tree)
-        )
-
-    def test_verbose_name(self):
-        """verbose_name в полях совпадает с ожидаемым."""
-        category_tree = CategoryTreeModelTest.category_tree
-        field_verboses = {
-            'root': 'Родительская категория',
-            'branch': 'Дочерняя категория',
-        }
-        for field, expected_value in field_verboses.items():
-            with self.subTest(field=field):
-                self.assertEqual(
-                    category_tree._meta.get_field(field).verbose_name,
-                    expected_value,
-                    f'Ошибка в поле {field} '
-                )
-
-    @classmethod
-    def tearDownClass(cls):
-        super().setUpClass()
-
-
 class CategoryModelTest(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -119,6 +75,7 @@ class CategoryModelTest(TestCase):
             'meta_description': 'Мета-описание категории',
             'is_visible_on_main': 'Категория видимая на главной странице',
             'is_prohibited': 'Запрещенная для публикации категория',
+            'root': 'Родительская категория'
         }
         for field, expected_value in field_verboses.items():
             with self.subTest(field=field):
@@ -138,11 +95,11 @@ class ProductModelTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.product = Product.objects.create(
-            name='Автомобильный переходник ',
-            description='Хороший продукт',
+            name='Пусковое зарядное устройство  ',
+            description='Хороший продукт для',
             price=180,
-            code=168978277,
-            wb_urls='https://www.wildberries.ru/catalog/168978277/detail.aspx'
+            code=169110394,
+            wb_urls='https://www.wildberries.ru/catalog/169110394/detail.aspx'
         )
 
     def test_models_have_correct_object_name(self):
@@ -212,7 +169,7 @@ class ProductImageModelTest(TestCase):
 
     def test_models_have_correct_object_name(self):
         image = ProductImageModelTest.image
-        expected_str = 'products_images/small.gif'
+        expected_str = 'products-images/small.gif'
         self.assertEqual(
             expected_str, str(image)
         )
@@ -223,7 +180,6 @@ class ProductImageModelTest(TestCase):
         field_verboses = {
             'image': 'Изображение',
             'product': 'Продукт',
-            'thumbnail': 'Эскиз'
         }
         for field, expected_value in field_verboses.items():
             with self.subTest(field=field):

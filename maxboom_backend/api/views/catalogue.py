@@ -11,7 +11,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     lookup_field = 'slug'
     queryset = Category.objects.all().prefetch_related(
-        'products', 'root__root', 'branches__branches')
+        'products', 'root__root__root', 'branches__branches__branches',
+    )
     serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = None

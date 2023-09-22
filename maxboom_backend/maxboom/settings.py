@@ -66,8 +66,7 @@ INSTALLED_APPS = [
     'news',
     'payment',
     'shop_reviews',
-    'sorl.thumbnail'
-
+    'imagekit',
 ]
 
 MIDDLEWARE = [
