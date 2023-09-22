@@ -64,7 +64,7 @@ class PostLightSerializer(serializers.ModelSerializer):
             'post').filter(
                 post=obj,
                 is_published=True)
-        return len(comments)
+        return comments.count()
 
 
 class PostSerializer(serializers.ModelSerializer):

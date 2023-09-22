@@ -54,8 +54,9 @@ class PostAdmin(admin.ModelAdmin):
 
     @admin.display(description='Комментарии')
     def show_comments(self, obj):
-        return len(Comments.objects.select_related(
-            'post').filter(post=obj))
+        comments = Comments.objects.select_related(
+            'post').filter(post=obj, is_published=True)
+        return comments.count()
 
 
 @admin.register(Category)
