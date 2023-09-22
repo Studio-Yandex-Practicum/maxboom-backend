@@ -5,10 +5,14 @@ from catalogue.models import (
 
 
 class ImageThumbnailSerializer(serializers.ModelSerializer):
+    thumbnail = serializers.ImageField()
 
     class Meta:
         model = ProductImage
-        fields = ('image', 'thumbnail',)
+        fields = (
+            'image',
+            'thumbnail',
+        )
 
 
 class ProductSimpleSerializer(serializers.ModelSerializer):
