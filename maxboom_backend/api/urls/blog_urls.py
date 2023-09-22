@@ -7,9 +7,6 @@ from api.views.blog_views import (CategoryViewSet,
 router = routers.DefaultRouter()
 router.register(r'posts', PostViewSet)
 router.register(r'categories', CategoryViewSet)
-# router.register(
-#     r'posts/(?P<post_slug>\[\w-]+)/comments',
-#     CommentViewSet, basename='shopblog-comments')
 
 
 urlpatterns = [

@@ -7,7 +7,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from blog.models import Post, Category, Tag
+from blog.models import Post, Category, Tag, Comments
 
 
 MEDIA_ROOT = tempfile.mkdtemp()
@@ -84,6 +84,7 @@ class BlogViewTests(TestCase):
         url_image_post_1 = 'http://testserver/media/' + str(
             BlogViewTests.post_1.image)
         pub_date_post_1 = BlogViewTests.post_1.pub_date.strftime('%Y-%m-%d')
+        views_post_1 = BlogViewTests.post_1.views
         expected_data_post_1 = {
             'id': id_post_1,
             'title': 'Первый тестовый пост',
@@ -103,6 +104,7 @@ class BlogViewTests(TestCase):
                     'name': 'Тестовый тег 2'
                 }
             ],
+            'views': views_post_1,
             'slug': 'first-post',
             'meta_title': 'Мета-заголовок первого поста',
             'meta_description': 'Мета-описание первого поста'
@@ -127,6 +129,7 @@ class BlogViewTests(TestCase):
         url_image_post_1 = 'http://testserver/media/' + str(
             BlogViewTests.post_1.image)
         pub_date_post_1 = BlogViewTests.post_1.pub_date.strftime('%Y-%m-%d')
+        views_post_1 = BlogViewTests.post_1.views
         slug_post_1 = BlogViewTests.post_1.slug
         expected_data_post_1 = {
             'id': id_post_1,
@@ -147,6 +150,7 @@ class BlogViewTests(TestCase):
                     'name': 'Тестовый тег 2'
                 }
             ],
+            'views': views_post_1,
             'slug': 'first-post',
             'meta_title': 'Мета-заголовок первого поста',
             'meta_description': 'Мета-описание первого поста'

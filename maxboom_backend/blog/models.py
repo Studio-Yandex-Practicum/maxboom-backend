@@ -101,7 +101,7 @@ class Post(MetaDataModel):
         verbose_name='Теги',
         related_name='posts',
         blank=True)
-    viewers = models.PositiveIntegerField(
+    views = models.PositiveIntegerField(
         verbose_name='Количество просмотров',
         default=0)
     slug = models.SlugField(

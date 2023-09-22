@@ -18,9 +18,10 @@ class PostAdmin(admin.ModelAdmin):
         'category',
         'show_tags',
         'author',
-        'slug',
         'image_preview',
-        'viewers',
+        'show_comments',
+        'views',
+        'slug',
         'meta_title',
         'meta_description',
     )
@@ -45,12 +46,16 @@ class PostAdmin(admin.ModelAdmin):
     @admin.display(description='Теги')
     def show_tags(self, obj):
         tags = [tag.name for tag in obj.tags.all()]
-        if len(obj.tags.all()) > 0:
-            return ', '.join(tags)
+        return ', '.join(tags) if len(obj.tags.all()) > 1 else '-пусто-'
 
     @admin.display(description='Текст')
     def short_text_view(self, obj):
         return obj.text[:50] + '...' if len(obj.text) > 50 else obj.text[:50]
+
+    @admin.display(description='Комментарии')
+    def show_comments(self, obj):
+        return len(Comments.objects.select_related(
+            'post').filter(post=obj))
 
 
 @admin.register(Category)

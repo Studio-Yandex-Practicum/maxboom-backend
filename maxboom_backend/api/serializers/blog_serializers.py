@@ -35,8 +35,9 @@ class PostLightSerializer(serializers.ModelSerializer):
     и категории при запросе в категориях по {slug}.
     """
 
-    tags = TagSerializer(many=True)
+    tags = TagSerializer(read_only=True, many=True)
     author = serializers.SerializerMethodField()
+    comments_quantity = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -48,6 +49,8 @@ class PostLightSerializer(serializers.ModelSerializer):
             'author',
             'image',
             'tags',
+            'views',
+            'comments_quantity',
             'slug',
         )
         read_only_fields = fields
@@ -55,6 +58,13 @@ class PostLightSerializer(serializers.ModelSerializer):
     def get_author(self, obj):
         if obj.author:
             return 'Администратор'
+
+    def get_comments_quantity(self, obj):
+        comments = Comments.objects.select_related(
+            'post').filter(
+                post=obj,
+                is_published=True)
+        return len(comments)
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -77,6 +87,7 @@ class PostSerializer(serializers.ModelSerializer):
             'image',
             'category',
             'tags',
+            'views',
             'slug',
             'meta_title',
             'meta_description',
@@ -145,14 +156,10 @@ class CommentPostSerializer(serializers.ModelSerializer):
     """
     Сериализует данные для комментариев в случае их добавления.
     """
-    # post_id = serializers.PrimaryKeyRelatedField(
-    #     read_only=True)
 
     class Meta:
         model = Comments
         fields = (
             'author',
-            'post',
             'text',
         )
-        read_only_fields = ('post',)
