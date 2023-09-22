@@ -1,9 +1,7 @@
 from rest_framework import viewsets
-from catalogue.models import Category, Product, Brand, ProductImage
+from catalogue.models import Category, Product, Brand
 from api.serializers.catalogue import (
     CategorySerializer, ProductSerializer, BrandSerializer,
-    ProductImageSerializer, CategoryProductSerializer,
-    ProductNewSerializer
 )
 from api.permissions.catalogue import IsAdminOrReadOnly
 
@@ -13,9 +11,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     lookup_field = 'slug'
     queryset = Category.objects.all().prefetch_related(
-        'products', 'roots__root', 'branches__branch')
-    serializer_class = CategoryProductSerializer
+        'products', 'root__root', 'branches__branches')
+    serializer_class = CategorySerializer
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None
 
 
 class BrandViewSet(viewsets.ModelViewSet):
@@ -25,21 +24,14 @@ class BrandViewSet(viewsets.ModelViewSet):
     queryset = Brand.objects.all().prefetch_related('products', )
     serializer_class = BrandSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     '''Вьюсет для товаров.'''
 
-    lookup_fields = ['pk', 'slug']
+    lookup_field = 'slug'
     queryset = Product.objects.all().prefetch_related(
-        'category__roots__root', 'images', 'category__branches__branch')
-    serializer_class = ProductNewSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-
-
-class ProductImageViewSet(viewsets.ModelViewSet):
-    '''Вьюсет для товаров.'''
-
-    queryset = ProductImage.objects.all()
-    serializer_class = ProductImageSerializer
+        'category__root__root__root', 'images',)
+    serializer_class = ProductSerializer
     permission_classes = (IsAdminOrReadOnly,)

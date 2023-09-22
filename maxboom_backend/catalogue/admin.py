@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (
-    Category, Product, ProductImage, Brand, CategoryTree
+    Category, Product, ProductImage, Brand,
 )
 
 
@@ -28,47 +28,34 @@ class BrandAdmin(admin.ModelAdmin):
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
-    readonly_fields = ('img_preview',)
+    readonly_fields = ('img_preview', 'thumb_preview')
     extra = 0
+    verbose_name = "Изображение"
+    verbose_name_plural = "Изображения"
 
 
-class CategoryTreeRootInline(admin.TabularInline):
-    model = CategoryTree
+class CategoryBranchesInline(admin.TabularInline):
+    model = Category
     fk_name = 'root'
+    fields = ('name',)
     extra = 0
-
-
-class CategoryTreeAffiliatedInline(admin.TabularInline):
-    model = CategoryTree
-    fk_name = 'branch'
-    extra = 0
-
-
-@admin.register(CategoryTree)
-class CategoryTreeAdmin(admin.ModelAdmin):
-    '''Кастомный класс админки дерева категорий.'''
-    list_display = (
-        'id', 'root', 'branch',
-    )
-    list_editable = (
-        'root', 'branch',
-    )
+    verbose_name = "Дочерняя категория"
+    verbose_name_plural = "Дочерние категории"
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     '''Кастомный класс админки категорий.'''
     list_display = (
-        'id', 'slug', 'name', 'meta_title', 'meta_description',
+        'id', 'slug', 'name', 'root', 'meta_title', 'meta_description',
         'is_visible_on_main', 'is_prohibited'
     )
-    list_editable = ('name', 'is_prohibited', 'is_visible_on_main')
-    list_filter = ('name', 'is_visible_on_main', 'is_prohibited')
+    list_editable = ('name', 'root', 'is_prohibited', 'is_visible_on_main')
+    list_filter = ('name', 'root', 'is_visible_on_main', 'is_prohibited')
     search_fields = ('name', 'meta_description')
     empty_value_display = '-пусто-'
     inlines = (
-        CategoryTreeRootInline,
-        CategoryTreeAffiliatedInline
+        CategoryBranchesInline,
     )
 
 

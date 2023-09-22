@@ -76,6 +76,13 @@ class Category(models.Model):
         help_text='Категория, которая не публикуются на сайте',
         default=False
     )
+    root = models.ForeignKey(
+        'self', related_name='branches',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name='Родительская категория'
+    )
 
     class Meta:
         verbose_name = 'Категория'
@@ -194,22 +201,3 @@ def image_model_delete(sender, instance, **kwargs):
         instance.image.delete(False)
     if instance.thumbnail.name:
         instance.thumbnail.delete(False)
-
-
-class CategoryTree(models.Model):
-    '''Модель вложенности категорий.'''
-    root = models.ForeignKey(
-        Category, related_name='branches', on_delete=models.CASCADE,
-        verbose_name='Родительская категория'
-    )
-    branch = models.ForeignKey(
-        Category, related_name='roots', on_delete=models.CASCADE,
-        verbose_name='Дочерняя категория'
-    )
-
-    class Meta:
-        verbose_name = 'Дерево категорий'
-        verbose_name_plural = 'Деревья категорий'
-
-    def __str__(self) -> str:
-        return f'{self.root} {self.branch}'
