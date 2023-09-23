@@ -19,10 +19,16 @@ class ProductSimpleSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField(read_only=True)
     brand = serializers.StringRelatedField(read_only=True)
     images = ImageThumbnailSerializer(read_only=True, many=True)
+    price = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = ('__all__')
+
+    def get_price(self, obj):
+        if self.context['request'].user.is_authenticated:
+            return round(float(obj.price) * 0.5, 2)
+        return round(float(obj.price) * 0.8, 2)
 
 
 class BrandSerializer(serializers.ModelSerializer):
