@@ -10,6 +10,7 @@ class NewsAdmin(admin.ModelAdmin):
     Админка для новостей.
     """
 
+    @admin.display(description='Изображение')
     def image_preview(self, obj):
         try:
             return format_html(
@@ -17,7 +18,6 @@ class NewsAdmin(admin.ModelAdmin):
                     obj.image.url))
         except ValueError:
             pass
-    image_preview.short_description = 'Изображение'
 
     list_display = (
         'pk',
