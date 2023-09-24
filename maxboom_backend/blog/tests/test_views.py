@@ -292,7 +292,7 @@ class BlogViewTests(TestCase):
         comment_added = Comments.objects.filter(id=3)[0]
         comment_added.is_published = True
         comment_added.save()
-        response_get_after_publish = self.client.get(url)
+        response_get_after_publish = self.user_client.get(url)
         for key, value in data.items():
             with self.subTest(key=key, value=value):
                 self.assertEqual(
