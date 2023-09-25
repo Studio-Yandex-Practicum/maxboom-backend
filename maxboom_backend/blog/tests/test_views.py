@@ -7,7 +7,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from blog.models import Post, Category, Tag
+from blog.models import Post, Category, Tag, Comments
 
 
 MEDIA_ROOT = tempfile.mkdtemp()
@@ -69,6 +69,16 @@ class BlogViewTests(TestCase):
             meta_title='Мета-заголовок второго поста',
             meta_description='Мета-описание второго поста')
         cls.post_2.tags.add(cls.tag_1)
+        cls.comment_1 = Comments.objects.create(
+            author='Тестовый пользователь 1',
+            post=cls.post_1,
+            text='Первый тестовый комментарий',
+            is_published=True)
+        cls.comment_2 = Comments.objects.create(
+            author='Тестовый пользователь 2',
+            post=cls.post_1,
+            text='Второй тестовый комментарий',
+            is_published=False)
 
     def setUp(self):
         super().setUp()
@@ -84,6 +94,7 @@ class BlogViewTests(TestCase):
         url_image_post_1 = 'http://testserver/media/' + str(
             BlogViewTests.post_1.image)
         pub_date_post_1 = BlogViewTests.post_1.pub_date.strftime('%Y-%m-%d')
+        views_post_1 = BlogViewTests.post_1.views
         expected_data_post_1 = {
             'id': id_post_1,
             'title': 'Первый тестовый пост',
@@ -103,6 +114,7 @@ class BlogViewTests(TestCase):
                     'name': 'Тестовый тег 2'
                 }
             ],
+            'views': views_post_1,
             'slug': 'first-post',
             'meta_title': 'Мета-заголовок первого поста',
             'meta_description': 'Мета-описание первого поста'
@@ -127,6 +139,7 @@ class BlogViewTests(TestCase):
         url_image_post_1 = 'http://testserver/media/' + str(
             BlogViewTests.post_1.image)
         pub_date_post_1 = BlogViewTests.post_1.pub_date.strftime('%Y-%m-%d')
+        views_post_1 = BlogViewTests.post_1.views
         slug_post_1 = BlogViewTests.post_1.slug
         expected_data_post_1 = {
             'id': id_post_1,
@@ -147,12 +160,13 @@ class BlogViewTests(TestCase):
                     'name': 'Тестовый тег 2'
                 }
             ],
+            'views': views_post_1 + 1,
             'slug': 'first-post',
             'meta_title': 'Мета-заголовок первого поста',
             'meta_description': 'Мета-описание первого поста'
         }
         url = '/api/shopblog/posts'
-        response = self.client.get(f'{url}/{slug_post_1}/')
+        response = self.user_client.get(f'{url}/{slug_post_1}/')
         for key, value in expected_data_post_1.items():
             with self.subTest(key=key, value=value):
                 self.assertEqual(response.data[key], value)
@@ -190,6 +204,9 @@ class BlogViewTests(TestCase):
         url_image_post_1 = 'http://testserver/media/' + str(
             BlogViewTests.post_1.image)
         pub_date_post_1 = BlogViewTests.post_1.pub_date.strftime('%Y-%m-%d')
+        views_post_1 = BlogViewTests.post_1.views
+        comments_quantity = Comments.objects.filter(
+            post__id=id_post_1, is_published=True)
         slug_category_1 = BlogViewTests.category_1.slug
         expected_data_category_1 = {
             'title': 'Первая тестовая категория',
@@ -212,16 +229,74 @@ class BlogViewTests(TestCase):
                             'name': 'Тестовый тег 2'
                         }
                     ],
+                    'views': views_post_1,
+                    'comments_quantity': comments_quantity.count(),
                     'slug': 'first-post'
                 }
             ]
         }
         url = '/api/shopblog/categories'
-        response = self.client.get(f'{url}/{slug_category_1}/')
+        response = self.user_client.get(f'{url}/{slug_category_1}/')
         for key, value in expected_data_category_1.items():
             with self.subTest(key=key, value=value):
                 self.assertEqual(response.data[key], value)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_comments_list_unathenticated(self):
+        """
+        Получение списка всех опубликованных комментариев
+        для неавторизованных пользователей.
+        """
+
+        id_comment_1 = BlogViewTests.comment_1.id
+        pub_date_comment_1 = BlogViewTests.comment_1.pub_date.strftime(
+            '%Y-%m-%d')
+        slug_post_1 = BlogViewTests.post_1.slug
+        expected_data_comment_1 = {
+            'id': id_comment_1,
+            'author': 'Тестовый пользователь 1',
+            'text': 'Первый тестовый комментарий',
+            'pub_date': pub_date_comment_1
+        }
+        url = f'/api/shopblog/posts/{slug_post_1}/comments/'
+        response = self.user_client.get(url)
+        response_data_comment_1 = response.data['results'][0]
+        for key, value in expected_data_comment_1.items():
+            with self.subTest(key=key, value=value):
+                self.assertEqual(response_data_comment_1[key], value)
+        self.assertEqual(
+            len(response.data['results']), Comments.objects.filter(
+                is_published=True).count())
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_comments_post_unathenticated(self):
+        """
+        Создание комментариев
+        для неавторизованных пользователей.
+        """
+
+        slug_post_1 = BlogViewTests.post_1.slug
+        url = f'/api/shopblog/posts/{slug_post_1}/comments/'
+        comments = Comments.objects.filter(post=BlogViewTests.post_1,
+                                           is_published=True)
+        data = {
+            'author': 'Тестовый пользователь',
+            'text': 'Тестовый текст'
+        }
+        response_get_before_publish = self.client.get(url)
+        response_add = self.user_client.post(url, data=data)
+        self.assertEqual(response_add.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(
+            len(response_get_before_publish.data['results']),
+            comments.count())
+        comment_added = Comments.objects.filter(id=3)[0]
+        comment_added.is_published = True
+        comment_added.save()
+        response_get_after_publish = self.user_client.get(url)
+        for key, value in data.items():
+            with self.subTest(key=key, value=value):
+                self.assertEqual(
+                    response_get_after_publish.data['results'][1][key], value)
 
     @classmethod
     def tearDownClass(cls):
