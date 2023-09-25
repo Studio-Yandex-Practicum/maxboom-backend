@@ -5,7 +5,7 @@ from django.test import override_settings, TestCase
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from blog.models import Post, Category, Tag
+from blog.models import Post, Category, Tag, Comments
 
 
 MEDIA_ROOT = tempfile.mkdtemp()
@@ -57,7 +57,7 @@ class CategoryModelTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().setUpClass()
+        super().tearDownClass()
 
 
 class TagModelTest(TestCase):
@@ -99,7 +99,7 @@ class TagModelTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().setUpClass()
+        super().tearDownClass()
 
 
 @override_settings(MEDIA_ROOT=MEDIA_ROOT)
@@ -156,6 +156,7 @@ class PostModelTest(TestCase):
             'image': 'Изображение',
             'category': 'Категория',
             'tags': 'Теги',
+            'views': 'Количество просмотров',
             'slug': 'Слаг',
             'meta_title': 'Мета-название страницы',
             'meta_description': 'Мета-описание страницы'
@@ -169,4 +170,55 @@ class PostModelTest(TestCase):
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
+
+class CommentsModelTest(TestCase):
+    """
+    Тестирование модели комментариев.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.post = Post.objects.create(
+            title='Пост для теста комменатриев',
+            text='Текст для теста комменатриев',
+            slug='test-post-comment')
+        cls.comment = Comments.objects.create(
+            author='Пользователь для теста комментариев',
+            post=cls.post,
+            text='Комментарий пользователя')
+
+    def test_model_have_correct_object_name(self):
+        """
+        Тестирование корректности
+        отображения __str__ у модели.
+        """
+
+        comment = CommentsModelTest.comment
+        expected_comment_text = comment.text[:30]
+        self.assertEqual(expected_comment_text, str(comment))
+
+    def test_model_verbose_name(self):
+        """
+        verbose_name в полях совпадает с ожидаемым.
+        """
+
+        comment = CommentsModelTest.comment
+        field_verboses = {
+            'author': 'Имя',
+            'post': 'Пост',
+            'text': 'Комментарий',
+            'pub_date': 'Дата создания',
+            'is_published': 'Опубликован'
+        }
+        for field, expected_value in field_verboses.items():
+            with self.subTest(field=field):
+                self.assertEqual(
+                    comment._meta.get_field(
+                        field).verbose_name, expected_value)
+
+    @classmethod
+    def tearDownClass(cls):
         super().tearDownClass()

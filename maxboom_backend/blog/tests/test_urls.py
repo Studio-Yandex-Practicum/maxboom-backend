@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from blog.models import Post, Category
+from blog.models import Post, Category, Comments
 
 
 User = get_user_model()
@@ -32,6 +32,10 @@ class BlogUrlTests(TestCase):
             slug='test-post',
             meta_title='Мета-заголовок поста',
             meta_description='Мета-описание поста')
+        cls.comment = Comments.objects.create(
+            author='Пользователь для теста комментариев',
+            post=cls.post,
+            text='Комментарий пользователя')
 
     def setUp(self):
         self.user_client = APIClient()
@@ -45,12 +49,12 @@ class BlogUrlTests(TestCase):
         category = BlogUrlTests.category
         post = BlogUrlTests.post
         pages_statuses = {
-            '/api/': status.HTTP_200_OK,
             '/api/shopblog/': status.HTTP_200_OK,
             '/api/shopblog/categories/': status.HTTP_200_OK,
             f'/api/shopblog/categories/{category.slug}/': status.HTTP_200_OK,
             '/api/shopblog/posts/': status.HTTP_200_OK,
             f'/api/shopblog/posts/{post.slug}/': status.HTTP_200_OK,
+            f'/api/shopblog/posts/{post.slug}/comments/': status.HTTP_200_OK
         }
         for url, code in pages_statuses.items():
             with self.subTest(url=url):

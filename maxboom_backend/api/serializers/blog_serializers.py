@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from blog.models import Category, Post, Tag
+from blog.models import Category, Post, Tag, Comments
 
 
 class CategoryLightSerializer(serializers.ModelSerializer):
@@ -35,8 +35,9 @@ class PostLightSerializer(serializers.ModelSerializer):
     и категории при запросе в категориях по {slug}.
     """
 
-    tags = TagSerializer(many=True)
+    tags = TagSerializer(read_only=True, many=True)
     author = serializers.SerializerMethodField()
+    comments_quantity = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -48,6 +49,8 @@ class PostLightSerializer(serializers.ModelSerializer):
             'author',
             'image',
             'tags',
+            'views',
+            'comments_quantity',
             'slug',
         )
         read_only_fields = fields
@@ -55,6 +58,13 @@ class PostLightSerializer(serializers.ModelSerializer):
     def get_author(self, obj):
         if obj.author:
             return 'Администратор'
+
+    def get_comments_quantity(self, obj):
+        comments = Comments.objects.select_related(
+            'post').filter(
+                post=obj,
+                is_published=True)
+        return comments.count()
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -77,6 +87,7 @@ class PostSerializer(serializers.ModelSerializer):
             'image',
             'category',
             'tags',
+            'views',
             'slug',
             'meta_title',
             'meta_description',
@@ -123,3 +134,32 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
             'posts',
         )
         read_only_fields = fields
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    """
+    Сериализует данные для комментариев для чтения.
+    """
+
+    class Meta:
+        model = Comments
+        fields = (
+            'id',
+            'author',
+            'text',
+            'pub_date',
+        )
+        read_only_fields = fields
+
+
+class CommentPostSerializer(serializers.ModelSerializer):
+    """
+    Сериализует данные для комментариев в случае их добавления.
+    """
+
+    class Meta:
+        model = Comments
+        fields = (
+            'author',
+            'text',
+        )
