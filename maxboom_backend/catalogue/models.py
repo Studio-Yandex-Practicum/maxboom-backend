@@ -5,7 +5,7 @@ from django.utils.html import mark_safe
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFit
+from imagekit.processors import ResizeToFit, Resize, Image
 
 
 class Brand(models.Model):
@@ -188,6 +188,19 @@ class ProductImage(models.Model):
 
     def thumb_preview(self):
         return mark_safe(f"<img src = '{self.thumbnail.url}' width = '200'/>")
+
+
+class Resize(Resize):
+    """
+    Resizes an image to the specified width and height.
+
+    """
+
+    def process(self, img):
+        if self.upscale or (self.width < img.size[0] and self.height < img.size[1]):
+            img = img.convert('RGBA')
+            img = img.resize((self.width, self.height), Image.LANCZOS)
+        return img
 
 
 @receiver(pre_delete, sender=ProductImage)
