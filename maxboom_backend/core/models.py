@@ -192,6 +192,7 @@ class OurShop(BaseShop):
 
     photo = models.ImageField(
         verbose_name="Фотография",
+        upload_to='core/news/'
     )
     is_main_shop = models.BooleanField(
         verbose_name="Основной магазин",
@@ -342,7 +343,8 @@ class BaseLogo(BaseCoreModel):
     """
 
     image = models.ImageField(
-        verbose_name="Изображение логотипа"
+        verbose_name="Изображение логотипа",
+        upload_to='core/logos/'
     )
     url = models.URLField(
         verbose_name="Ссылка на сайт логотипа"
