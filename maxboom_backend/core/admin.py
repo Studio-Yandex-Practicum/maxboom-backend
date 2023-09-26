@@ -117,47 +117,12 @@ class TermsAdmin(BaseAdmin):
     ...
 
 
-@admin.register(Requisite)
-class RequisiteAdmin(admin.ModelAdmin):
-    list_display = ['requisite_name']
-
-
-@admin.register(MainShop)
-class MainShopAdmin(BaseAdmin):
-    ...
-
-
-@admin.register(OurShop)
-class OurShopAdmin(BaseAdmin):
-    list_display = ['name']
-
-
-@admin.register(MailContactForm)
-class MailContactFormAdmin(BaseAdmin):
-    ...
-
-
 @admin.register(MailContact)
 class MailContactAdmin(admin.ModelAdmin):
     list_display = ['get_id', 'person_name', 'person_email', 'message']
 
     def get_id(self, obj):
         return f"ID обращения: {obj.pk}"
-
-
-@admin.register(MainLogo)
-class MainLogoAdmin(BaseAdmin):
-    ...
-
-
-@admin.register(AdditionalLogo)
-class AdditionalLogoAdmin(BaseAdmin):
-    list_display = ['url']
-
-
-@admin.register(Support)
-class SupportAdmin(BaseAdmin):
-    ...
 
 
 @admin.register(Header)
