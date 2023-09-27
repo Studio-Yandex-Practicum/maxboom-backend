@@ -1,8 +1,58 @@
 # flake8: noqa
 from django.contrib.auth import get_user_model
 from django.core import mail
+from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+
+class UserTests(TestCase):
+    def setUp(self):
+        self.user_data = {
+            'email': 'test@example.com',
+            'password': 'testpassword',
+        }
+
+    def test_create_user(self):
+        User = get_user_model()
+        user = User.objects.create_user(**self.user_data)
+        self.assertEqual(user.email, self.user_data['email'])
+        self.assertTrue(user.check_password(self.user_data['password']))
+        self.assertFalse(user.is_superuser)
+        self.assertFalse(user.is_staff)
+
+    def test_create_superuser(self):
+        User = get_user_model()
+        admin_user = User.objects.create_superuser(**self.user_data)
+        self.assertEqual(admin_user.email, self.user_data['email'])
+        self.assertTrue(admin_user.check_password(self.user_data['password']))
+        self.assertTrue(admin_user.is_superuser)
+        self.assertTrue(admin_user.is_staff)
+
+    def test_user_authentication(self):
+        User = get_user_model()
+        user = User.objects.create_user(**self.user_data)
+        response = self.client.post(reverse('admin:login'), {
+            'username': self.user_data['email'],
+            'password': self.user_data['password'],
+        })
+        self.assertEqual(response.status_code, 200)
+
+    def test_invalid_user_authentication(self):
+        response = self.client.post(reverse('admin:login'), {
+            'username': self.user_data['email'],
+            'password': 'invalidpassword',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, 'введите корректные Почта и пароль учётной записи'
+        )
+
+    def test_user_profile_creation(self):
+        User = get_user_model()
+        user = User.objects.create_user(**self.user_data)
+        self.assertIsNotNone(user.userprofile)
 
 
 class EmailVerificationTest(APITestCase):

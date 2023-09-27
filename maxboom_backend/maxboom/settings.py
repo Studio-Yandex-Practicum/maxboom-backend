@@ -10,11 +10,11 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', "django")
 
-DEBUG = bool(os.getenv('DEBUG'))
+DEBUG = bool(os.getenv('DEBUG', 1))
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', "127.0.0.1 localhost").split(' ')
 
 
 # Application definition
@@ -63,7 +63,8 @@ INSTALLED_APPS = [
     'core',
     'news',
     'payment',
-    'shop_reviews'
+    'shop_reviews',
+    'stories.apps.StoriesConfig',
 ]
 
 MIDDLEWARE = [
@@ -181,7 +182,7 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'djoser.serializers.UserCreateSerializer',
         'user': 'djoser.serializers.UserSerializer',
-        'current_user': 'djoser.serializers.UserSerializer',
+        'current_user': 'api.serializers.accounts_serializers.CurrentUserSerializer',
     },
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny'],
