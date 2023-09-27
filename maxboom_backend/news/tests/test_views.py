@@ -1,17 +1,24 @@
 import shutil
 import tempfile
 
+from django.test import override_settings, TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
 from rest_framework import status
+from rest_framework.test import APIClient
 
 from news.models import News
+
 
 MEDIA_ROOT = tempfile.mkdtemp()
 
 
 @override_settings(MEDIA_ROOT=MEDIA_ROOT)
 class NewsViewTests(TestCase):
+    """
+    Тестирование возвращаемого ответа по эндпоинтам
+    приложения news.
+    """
+
     @classmethod
     def setUpClass(cls):
         """
@@ -24,43 +31,40 @@ class NewsViewTests(TestCase):
             text='Текст для тестов',
             image=SimpleUploadedFile(
                 'test.jpg', b'something'),
-            slug='test-slug'
-        )
+            slug='test-slug',
+            meta_title='Мета-заголовок новости',
+            meta_description='Мета-описание новости')
 
-    @classmethod
-    def tearDownClass(cls):
-        """
-        Удаление временной папки для медиа после всех тестов.
-        """
+    def setUp(self):
+        super().setUp()
+        self.user_client = APIClient()
 
-        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
-        super().tearDownClass()
-
-    def test_list_unauthenticated(self):
+    def test_category_list_unauthenticated(self):
         """
         Получение списка всех новостей
         для неавторизованных пользователей.
         """
 
-        response = self.client.get(
-            '/api/shopnews/')
-        instance = News.objects.first()
-        url_image = 'http://testserver/media/' + str(instance.image)
-        pub_date = instance.pub_date.strftime('%Y-%m-%d')
+        news = NewsViewTests.news
+        url_image = 'http://testserver/media/' + str(news.image)
+        pub_date = news.pub_date.strftime('%Y-%m-%d')
         expected_data = {
-            'id': instance.pk,
-            'title': instance.title,
-            'text': instance.text,
+            'id': news.id,
+            'title': 'Заголовок для тестов',
+            'text': 'Текст для тестов',
             'image': url_image,
             'pub_date': pub_date,
-            'slug': instance.slug
+            'slug': 'test-slug'
         }
+        response = self.user_client.get(
+            '/api/shopnews/')
         for key, expected_value in expected_data.items():
             with self.subTest(key=key):
                 self.assertEqual(
                     response.data.get('results')[0].get(key),
                     expected_value)
-
+        self.assertEqual(
+            len(response.data['results']), News.objects.all().count())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_retrieve_unauthenticated(self):
@@ -69,23 +73,27 @@ class NewsViewTests(TestCase):
         для неавторизованных пользователей.
         """
 
-        instance = News.objects.first()
-        response = self.client.get(
-            f'/api/shopnews/{instance.slug}/')
-        url_image = 'http://testserver/media/' + str(instance.image)
-        pub_date = instance.pub_date.strftime('%Y-%m-%d')
+        news = NewsViewTests.news
+        url_image = 'http://testserver/media/' + str(news.image)
+        pub_date = news.pub_date.strftime('%Y-%m-%d')
         expected_data = {
-            'id': instance.pk,
-            'title': instance.title,
-            'text': instance.text,
+            'id': news.id,
+            'title': 'Заголовок для тестов',
+            'text': 'Текст для тестов',
             'image': url_image,
             'pub_date': pub_date,
-            'slug': instance.slug
+            'slug': 'test-slug'
         }
+        response = self.user_client.get(
+            f'/api/shopnews/{news.slug}/')
         for key, expected_value in expected_data.items():
             with self.subTest(key=key):
                 self.assertEqual(
                     response.data.get(key),
                     expected_value)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
