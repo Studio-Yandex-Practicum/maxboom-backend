@@ -10,11 +10,11 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', "django")
 
-DEBUG = bool(os.getenv('DEBUG'))
+DEBUG = bool(os.getenv('DEBUG', 1))
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(' ')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', "127.0.0.1 localhost").split(' ')
 
 
 # Application definition
@@ -59,12 +59,13 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'api',
     'blog',
-    'catalogue.apps.CatalogueConfig',
+    'catalogue',
+    'sorl.thumbnail',
     'core',
     'news',
     'payment',
     'shop_reviews',
-    'imagekit',
+    'stories.apps.StoriesConfig',
 ]
 
 MIDDLEWARE = [
@@ -139,13 +140,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATIC_URL = "/static/"
-
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-MEDIA_URL = "/media/"
-
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'collected_static'
 
@@ -178,20 +173,6 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
-    }
-}
-
-DEBUG_TOOLBAR_CONFIG = {
-    "INTERCEPT_REDIRECTS": False,
-}
-
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
-
 DJOSER = {
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
@@ -202,7 +183,7 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'djoser.serializers.UserCreateSerializer',
         'user': 'djoser.serializers.UserSerializer',
-        'current_user': 'djoser.serializers.UserSerializer',
+        'current_user': 'api.serializers.accounts_serializers.CurrentUserSerializer',
     },
     'PERMISSIONS': {
         'user_list': ['rest_framework.permissions.AllowAny'],

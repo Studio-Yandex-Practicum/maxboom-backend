@@ -9,5 +9,5 @@ sqlparse==0.4.4
 typing_extensions==4.7.1
 djoser==2.2.0
 pytils==0.4.1
-django-imagekit==4.1.0
 slugify==0.0.1
+sorl-thumbnail==12.9.0
