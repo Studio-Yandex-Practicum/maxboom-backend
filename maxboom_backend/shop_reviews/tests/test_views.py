@@ -1,10 +1,9 @@
 from http import HTTPStatus
+
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.test import APIClient
-from shop_reviews.models import ShopReviews, ReplayToReview
-# from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-
+from shop_reviews.models import ReplayToReview, ShopReviews
 
 User = get_user_model()
 
@@ -13,6 +12,15 @@ class ShopReviewsViewTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.review_new = ShopReviews.objects.create(
+            text='Новый тестовый текст',
+            author_name='Василий Иванович',
+            author_email='Ivan_test@mail.ru',
+            delivery_speed_score=4,
+            quality_score=3,
+            price_score=3,
+            is_published=True
+        )
         cls.review = ShopReviews.objects.create(
             text='Тестовый текст',
             author_name='Василий Петрович',
@@ -24,7 +32,7 @@ class ShopReviewsViewTests(TestCase):
         )
         cls.replay = ReplayToReview.objects.create(
             text='Тестовый ответ',
-            review_id=ShopReviewsViewTests.review
+            review_id=cls.review
         )
         cls.admin = User.objects.create_superuser(
             'admin1@example.com', 'admin1')
@@ -128,21 +136,21 @@ class ShopReviewsViewTests(TestCase):
         for key, expected_value in expected_review.items():
             with self.subTest(key=key):
                 self.assertEqual(
-                    response.data.get('results')[0].get(key),
+                    response.data.get('results')[1].get(key),
                     expected_value,
                     f'{key}'
                 )
         for key, expected_value in expected_review_replay.items():
             with self.subTest(key=key):
                 self.assertEqual(
-                    response.data.get('results')[0].get('replay').get(key),
+                    response.data.get('results')[1].get('replay').get(key),
                     expected_value,
                     f'{key}'
                 )
 
     def test_user_get_item_is_published_review(self):
         """получение отзыва пользователем"""
-        reviews_expected = ShopReviews.objects.all()[0]
+        reviews_expected = ShopReviewsViewTests.review
         address = f'/api/store-reviews/{reviews_expected.pk}/'
         response = self.user_client.get(address)
         expected_review = {
@@ -270,7 +278,8 @@ class ShopReviewsViewTests(TestCase):
 
     def test_admin_get_replay_list(self):
         """Получение ответа на отзыв администратором"""
-        address = f'/api/store-reviews/{1}/replay/'
+        review = ShopReviewsViewTests.review
+        address = f'/api/store-reviews/{review.pk}/replay/'
         response = self.admin_client.get(address)
         self.assertEqual(response.status_code, HTTPStatus.OK,
                          'Ответ не получен')
@@ -321,4 +330,4 @@ class ShopReviewsViewTests(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().setUpClass()
+        super().tearDownClass()

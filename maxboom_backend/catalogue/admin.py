@@ -1,37 +1,27 @@
 from django.contrib import admin
+from sorl.thumbnail.admin import AdminImageMixin
 
-from .models import (
-    Category, Product, ProductImage, Brand,
-)
+from .models import Brand, Category, Product, ProductImage
 
 
 @admin.register(ProductImage)
-class ProductImageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'image', 'thumbnail',
-                    'img_preview', 'thumb_preview')
+class ProductImageAdmin(AdminImageMixin, admin.ModelAdmin):
+    list_display = ('id', 'product', 'image', 'img_preview')
     list_editable = ('product',)
     list_filter = ('product',)
-    readonly_fields = ('img_preview', 'thumb_preview')
 
 
 @admin.register(Brand)
-class BrandAdmin(admin.ModelAdmin):
+class BrandAdmin(AdminImageMixin, admin.ModelAdmin):
     '''Кастомный класс админки производителей.'''
     list_display = (
-        'id', 'slug', 'name', 'is_prohibited'
+        'id', 'slug', 'name', 'is_prohibited', 'is_visible_on_main',
+        'img_preview'
     )
-    list_editable = ('name', 'is_prohibited')
-    list_filter = ('name', 'is_prohibited')
+    list_editable = ('name', 'is_prohibited', 'is_visible_on_main')
+    list_filter = ('name', 'is_prohibited', 'is_visible_on_main')
     search_fields = ('name',)
     empty_value_display = '-пусто-'
-
-
-class ProductImageInline(admin.TabularInline):
-    model = ProductImage
-    readonly_fields = ('img_preview', 'thumb_preview')
-    extra = 0
-    verbose_name = "Изображение"
-    verbose_name_plural = "Изображения"
 
 
 class CategoryBranchesInline(admin.TabularInline):
@@ -57,6 +47,13 @@ class CategoryAdmin(admin.ModelAdmin):
     inlines = (
         CategoryBranchesInline,
     )
+
+
+class ProductImageInline(AdminImageMixin, admin.TabularInline,):
+    model = ProductImage
+    extra = 0
+    verbose_name = "Изображение"
+    verbose_name_plural = "Изображения"
 
 
 @admin.register(Product)

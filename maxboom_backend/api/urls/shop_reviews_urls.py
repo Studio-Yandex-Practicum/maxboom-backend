@@ -1,8 +1,7 @@
+from api.views.shop_reviews_views import (ReplayToReviewViewSet,
+                                          ShopReviewsViewSet)
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from api.views.shop_reviews_views import (
-    ShopReviewsViewSet, ReplayToReviewViewSet
-)
 
 router = DefaultRouter()
 router.register(r'store-reviews', ShopReviewsViewSet, basename='store-reviews')

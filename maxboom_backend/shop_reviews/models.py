@@ -1,7 +1,5 @@
-from django.core.validators import (
-    MinValueValidator, MaxValueValidator)
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
 
 MIN_AMOUNT = 1
 MAX_AMOUNT = 5

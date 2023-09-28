@@ -1,5 +1,5 @@
 from django.test import TestCase
-from shop_reviews.models import ShopReviews, ReplayToReview
+from shop_reviews.models import ReplayToReview, ShopReviews
 
 
 class ShopReviewsModelTest(TestCase):
@@ -69,7 +69,7 @@ class ShopReviewsModelTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().setUpClass()
+        super().tearDownClass()
 
 
 class ReplayToReviewModelTest(TestCase):
@@ -126,4 +126,4 @@ class ReplayToReviewModelTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().setUpClass()
+        super().tearDownClass()

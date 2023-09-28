@@ -1,11 +1,14 @@
+import logging
 
 from django.db import models
-from pytils.translit import slugify
-from django.utils.html import mark_safe
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, pre_save
 from django.dispatch.dispatcher import receiver
-from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFit, Resize, Image
+from django.utils.html import mark_safe
+from pytils.translit import slugify
+from sorl.thumbnail import ImageField, delete
+from sorl.thumbnail.shortcuts import get_thumbnail
+
+logger = logging.getLogger(__name__)
 
 
 class Brand(models.Model):
@@ -24,8 +27,18 @@ class Brand(models.Model):
     )
     is_prohibited = models.BooleanField(
         verbose_name='Запрещенный для публикации производитель',
-        help_text='Бренды, которые не публикуются на сайте',
+        help_text='Бренд, которые не публикуются на сайте',
         default=False
+    )
+    is_visible_on_main = models.BooleanField(
+        verbose_name='Производитель на главной странице',
+        help_text=('Брэнд, которая '
+                   'отображаются на главной странице'),
+        default=False
+    )
+    image = ImageField(
+        upload_to='brand-images',
+        verbose_name='Логотип',
     )
 
     class Meta:
@@ -37,8 +50,44 @@ class Brand(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)[:200]
+        slug = slugify(self.name)[:200]
+        i = 1
+        while Brand.objects.filter(slug=slug).exists():
+            if len(slug) == 200:
+                slug = slug[:-1]
+            slug = slug + str(i)
+            i += 1
+        self.slug = slug
         super().save(*args, **kwargs)
+
+    def img_preview(self):
+        value = self.image
+        if value and hasattr(value, 'url'):
+            ext = 'JPEG'
+            try:
+                aux_ext = str(value).split('.')
+                if aux_ext[len(aux_ext) - 1].lower() == 'png':
+                    ext = 'PNG'
+                elif aux_ext[len(aux_ext) - 1].lower() == 'gif':
+                    ext = 'GIF'
+            except Exception:
+                pass
+            try:
+                mini = get_thumbnail(value, 'x80', upscale=False, format=ext)
+            except Exception as e:
+                logger.warning("Unable to get the thumbnail", exc_info=e)
+            else:
+                try:
+                    output = (
+                        '<div style="float:left">'
+                        '<a style="width:%spx;display:block;margin:0 0 10px" '
+                        'class="thumbnail" '
+                        'target="_blank" href="%s">'
+                        '<img src="%s"></a></div>'
+                    ) % (mini.width, value.url, mini.url, )
+                except (AttributeError, TypeError):
+                    pass
+        return mark_safe(output)
 
 
 class Category(models.Model):
@@ -95,7 +144,14 @@ class Category(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)[:200]
+        slug = slugify(self.name)[:200]
+        i = 1
+        while Category.objects.filter(slug=slug).exists():
+            if len(slug) == 200:
+                slug = slug[:-1]
+            slug = slug[:-i] + str()
+            i += 1
+        self.slug = slug
         super().save(*args, **kwargs)
 
 
@@ -147,10 +203,6 @@ class Product(models.Model):
         blank=True,
     )
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)[:200]
-        super().save(*args, **kwargs)
-
     class Meta:
         verbose_name = 'Товар'
         verbose_name_plural = 'Товары'
@@ -159,21 +211,26 @@ class Product(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    def save(self, *args, **kwargs):
+        slug = slugify(self.name)[:200]
+        i = 1
+        while Product.objects.filter(slug=slug).exists():
+            if len(slug) == 200:
+                slug = slug[:-1]
+            slug = slug[:-i] + str(i)
+            i += 1
+        self.slug = slug
+        super().save(*args, **kwargs)
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(
         Product, related_name='images', on_delete=models.CASCADE,
         verbose_name='Продукт',
     )
-    image = models.ImageField(
+    image = ImageField(
         upload_to='products-images',
         verbose_name='Изображение',
-    )
-    thumbnail = ImageSpecField(
-        source='image',
-        processors=[ResizeToFit(200, 200)],
-        format='JPEG',
-        options={'quality': 60}
     )
 
     class Meta:
@@ -184,28 +241,47 @@ class ProductImage(models.Model):
         return self.image.name
 
     def img_preview(self):
-        return mark_safe(f"<img src = '{self.image.url}' width = '300'/>")
+        value = self.image
+        if value and hasattr(value, 'url'):
+            ext = 'JPEG'
+            try:
+                aux_ext = str(value).split('.')
+                if aux_ext[len(aux_ext) - 1].lower() == 'png':
+                    ext = 'PNG'
+                elif aux_ext[len(aux_ext) - 1].lower() == 'gif':
+                    ext = 'GIF'
+            except Exception:
+                pass
+            try:
+                mini = get_thumbnail(value, 'x80', upscale=False, format=ext)
+            except Exception as e:
+                logger.warning("Unable to get the thumbnail", exc_info=e)
+            else:
+                try:
+                    output = (
+                        '<div style="float:left">'
+                        '<a style="width:%spx;display:block;margin:0 0 10px" '
+                        'class="thumbnail" '
+                        'target="_blank" href="%s">'
+                        '<img src="%s"></a></div>'
+                    ) % (mini.width, value.url, mini.url, )
+                except (AttributeError, TypeError):
+                    pass
+        return mark_safe(output)
 
-    def thumb_preview(self):
-        return mark_safe(f"<img src = '{self.thumbnail.url}' width = '200'/>")
 
-
-class Resize(Resize):
-    """
-    Resizes an image to the specified width and height.
-
-    """
-
-    def process(self, img):
-        if self.upscale or (self.width < img.size[0] and self.height < img.size[1]):
-            img = img.convert('RGBA')
-            img = img.resize((self.width, self.height), Image.LANCZOS)
-        return img
-
-
+@receiver(pre_delete, sender=Brand)
 @receiver(pre_delete, sender=ProductImage)
 def image_model_delete(sender, instance, **kwargs):
     if instance.image.name:
-        instance.image.delete(False)
-    if instance.thumbnail.name:
-        instance.thumbnail.delete(False)
+        delete(instance.image)
+
+
+@receiver(pre_save, sender=Brand)
+@receiver(pre_save, sender=ProductImage)
+def image_model_update(sender, instance, **kwargs):
+    pk = instance.pk
+    if sender.objects.filter(pk=pk).exists():
+        old_item = sender.objects.get(pk=pk)
+        if old_item.image.name != instance.image.name:
+            delete(old_item.image.name)

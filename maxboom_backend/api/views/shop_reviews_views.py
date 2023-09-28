@@ -1,16 +1,14 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from shop_reviews.models import (
-    ShopReviews, ReplayToReview
-)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
-from django.db import transaction
-from api.serializers.shop_reviews_serializers import (
-    ShopReviewsSerializer, ShopReviewsAdminSerializer,
-    ReplayToReviewAdminSerializer
-)
+
 from api.permissions.shop_reviews_permissions import IsAdminOrAnyUser
+from api.serializers.shop_reviews_serializers import (
+    ReplayToReviewAdminSerializer, ShopReviewsAdminSerializer,
+    ShopReviewsSerializer)
+from shop_reviews.models import ReplayToReview, ShopReviews
 
 
 class ReplayToReviewViewSet(viewsets.ModelViewSet):
