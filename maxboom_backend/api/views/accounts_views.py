@@ -20,16 +20,16 @@ class ActivateUser(APIView):
             {
                 "name": "uid",
                 "in": "path",
-                "description": "User ID",
+                "description": "ID Для активации пользователя.",
                 "required": True,
-                "type": "string",  # Specify the type as "string"
+                "type": "string",
             },
             {
                 "name": "token",
                 "in": "path",
-                "description": "Activation Token",
+                "description": "Token Для активации пользователя.",
                 "required": True,
-                "type": "string",  # Specify the type as "string"
+                "type": "string",
             },
         ],
         responses={status.HTTP_204_NO_CONTENT: None}
