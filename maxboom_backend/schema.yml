@@ -1,0 +1,2430 @@
+openapi: 3.0.3
+info:
+  title: Maxboom API
+  version: 1.0.0
+  description: Maxboom shop
+paths:
+  /api/core/about/:
+    get:
+      operationId: api_core_about_list
+      description: Вьюсет страницы "О нас".
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAboutList'
+          description: ''
+  /api/core/about/{id}/:
+    get:
+      operationId: api_core_about_retrieve
+      description: Вьюсет страницы "О нас".
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this О нас.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/About'
+          description: ''
+  /api/core/base/:
+    get:
+      operationId: api_core_base_retrieve
+      description: Общая вью для хэдера и футера.
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/core/contacts/:
+    get:
+      operationId: api_core_contacts_list
+      description: Вьюсет страницы "Контакты".
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedContactsList'
+          description: ''
+  /api/core/contacts/{id}/:
+    get:
+      operationId: api_core_contacts_retrieve
+      description: Вьюсет страницы "Контакты".
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Контакты.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contacts'
+          description: ''
+  /api/core/contacts/mail/:
+    get:
+      operationId: api_core_contacts_mail_retrieve
+      description: Вьюсет страницы "Контакты".
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contacts'
+          description: ''
+    post:
+      operationId: api_core_contacts_mail_create
+      description: Вьюсет страницы "Контакты".
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contacts'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Contacts'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Contacts'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contacts'
+          description: ''
+  /api/core/information/:
+    get:
+      operationId: api_core_information_list
+      description: Вьюсет страницы "Информация о доставке".
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDeliveryInformationList'
+          description: ''
+  /api/core/information/{id}/:
+    get:
+      operationId: api_core_information_retrieve
+      description: Вьюсет страницы "Информация о доставке".
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Информация о доставке.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryInformation'
+          description: ''
+  /api/core/privacy/:
+    get:
+      operationId: api_core_privacy_list
+      description: Вьюсет страницы "Политика безопасности".
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPrivacyList'
+          description: ''
+  /api/core/privacy/{id}/:
+    get:
+      operationId: api_core_privacy_retrieve
+      description: Вьюсет страницы "Политика безопасности".
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Политика безопасности.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Privacy'
+          description: ''
+  /api/core/terms/:
+    get:
+      operationId: api_core_terms_list
+      description: Вьюсет страницы "Условия соглашения".
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTermsList'
+          description: ''
+  /api/core/terms/{id}/:
+    get:
+      operationId: api_core_terms_retrieve
+      description: Вьюсет страницы "Условия соглашения".
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Условия соглашения.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Terms'
+          description: ''
+  /api/shopblog/categories/:
+    get:
+      operationId: api_shopblog_categories_list
+      description: Вьюсет только для SAFE methods к категориям.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCategoryListList'
+          description: ''
+  /api/shopblog/categories/{slug}/:
+    get:
+      operationId: api_shopblog_categories_retrieve
+      description: Вьюсет только для SAFE methods к категориям.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+          title: Слаг
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryList'
+          description: ''
+  /api/shopblog/posts/:
+    get:
+      operationId: api_shopblog_posts_list
+      description: Вьюсет только для SAFE methods к постам.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPostList'
+          description: ''
+  /api/shopblog/posts/{post_slug}/comments/:
+    get:
+      operationId: api_shopblog_posts_comments_list
+      description: |-
+        Вьюсет только для [GET, POST, HEAD, OPTIONS] methods к комментариям.
+        Доступ разрешен всем пользователем.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - in: path
+        name: post_slug
+        schema:
+          type: string
+          pattern: ^[\w-]+$
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCommentList'
+          description: ''
+    post:
+      operationId: api_shopblog_posts_comments_create
+      description: |-
+        Вьюсет только для [GET, POST, HEAD, OPTIONS] methods к комментариям.
+        Доступ разрешен всем пользователем.
+      parameters:
+      - in: path
+        name: post_slug
+        schema:
+          type: string
+          pattern: ^[\w-]+$
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentPost'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CommentPost'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CommentPost'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentPost'
+          description: ''
+  /api/shopblog/posts/{slug}/:
+    get:
+      operationId: api_shopblog_posts_retrieve
+      description: Вьюсет только для SAFE methods к постам.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+          title: Слаг
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+          description: ''
+  /api/shopnews/:
+    get:
+      operationId: api_shopnews_list
+      description: Вьюсет только для SAFE methods к новостям.
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNewsList'
+          description: ''
+  /api/shopnews/{slug}/:
+    get:
+      operationId: api_shopnews_retrieve
+      description: Вьюсет только для SAFE methods к новостям.
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+          title: Слаг
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/News'
+          description: ''
+  /api/store-reviews/:
+    get:
+      operationId: api_store_reviews_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedShopReviewsList'
+          description: ''
+    post:
+      operationId: api_store_reviews_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopReviews'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ShopReviews'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShopReviews'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopReviews'
+          description: ''
+  /api/store-reviews/{id}/:
+    get:
+      operationId: api_store_reviews_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Отзыв о магазине.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopReviews'
+          description: ''
+    put:
+      operationId: api_store_reviews_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Отзыв о магазине.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShopReviews'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ShopReviews'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShopReviews'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopReviews'
+          description: ''
+    patch:
+      operationId: api_store_reviews_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Отзыв о магазине.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedShopReviews'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedShopReviews'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedShopReviews'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShopReviews'
+          description: ''
+    delete:
+      operationId: api_store_reviews_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Отзыв о магазине.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/store-reviews/{review_id}/replay/:
+    get:
+      operationId: api_store_reviews_replay_list
+      parameters:
+      - in: path
+        name: review_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReplayToReviewAdmin'
+          description: ''
+    post:
+      operationId: api_store_reviews_replay_create
+      parameters:
+      - in: path
+        name: review_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplayToReviewAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReplayToReviewAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReplayToReviewAdmin'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplayToReviewAdmin'
+          description: ''
+  /api/store-reviews/{review_id}/replay/{id}/:
+    get:
+      operationId: api_store_reviews_replay_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Ответ на отзыв.
+        required: true
+      - in: path
+        name: review_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplayToReviewAdmin'
+          description: ''
+    put:
+      operationId: api_store_reviews_replay_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Ответ на отзыв.
+        required: true
+      - in: path
+        name: review_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplayToReviewAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReplayToReviewAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReplayToReviewAdmin'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplayToReviewAdmin'
+          description: ''
+    patch:
+      operationId: api_store_reviews_replay_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Ответ на отзыв.
+        required: true
+      - in: path
+        name: review_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReplayToReviewAdmin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReplayToReviewAdmin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReplayToReviewAdmin'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplayToReviewAdmin'
+          description: ''
+    delete:
+      operationId: api_store_reviews_replay_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Ответ на отзыв.
+        required: true
+      - in: path
+        name: review_id
+        schema:
+          type: string
+          pattern: ^\d+$
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/stories/:
+    get:
+      operationId: api_stories_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStoryList'
+          description: ''
+  /api/token/login/:
+    post:
+      operationId: api_token_login_create
+      description: Use this endpoint to obtain user authentication token.
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenCreate'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenCreate'
+          description: ''
+  /api/token/logout/:
+    post:
+      operationId: api_token_logout_create
+      description: Use this endpoint to logout user (remove user authentication token).
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/update-profile/:
+    put:
+      operationId: api_update_profile_update
+      description: Обновление профиля пользователя. Частично.
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/user-activation/{uid}/{token}/:
+    get:
+      operationId: api_user_activation_retrieve
+      description: Кастомная активация пользователя по щелчку в ссылке письма.
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: uid
+        schema:
+          type: string
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/users/:
+    get:
+      operationId: api_users_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserList'
+          description: ''
+    post:
+      operationId: api_users_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreate'
+          description: ''
+  /api/users/{id}/:
+    get:
+      operationId: api_users_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Пользователь.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: api_users_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Пользователь.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/User'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    patch:
+      operationId: api_users_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Пользователь.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUser'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: api_users_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Пользователь.
+        required: true
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/users/activation/:
+    post:
+      operationId: api_users_activation_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Activation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Activation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Activation'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Activation'
+          description: ''
+  /api/users/me/:
+    get:
+      operationId: api_users_me_retrieve
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUser'
+          description: ''
+    put:
+      operationId: api_users_me_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CurrentUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CurrentUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CurrentUser'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUser'
+          description: ''
+    patch:
+      operationId: api_users_me_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCurrentUser'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCurrentUser'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCurrentUser'
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUser'
+          description: ''
+    delete:
+      operationId: api_users_me_destroy
+      tags:
+      - api
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/users/resend_activation/:
+    post:
+      operationId: api_users_resend_activation_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendEmailReset'
+          description: ''
+  /api/users/reset_email/:
+    post:
+      operationId: api_users_reset_email_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendEmailReset'
+          description: ''
+  /api/users/reset_email_confirm/:
+    post:
+      operationId: api_users_reset_email_confirm_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsernameResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UsernameResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UsernameResetConfirm'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsernameResetConfirm'
+          description: ''
+  /api/users/reset_password/:
+    post:
+      operationId: api_users_reset_password_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendEmailReset'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendEmailReset'
+          description: ''
+  /api/users/reset_password_confirm/:
+    post:
+      operationId: api_users_reset_password_confirm_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordResetConfirm'
+          description: ''
+  /api/users/set_email/:
+    post:
+      operationId: api_users_set_email_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetUsername'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SetUsername'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SetUsername'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetUsername'
+          description: ''
+  /api/users/set_password/:
+    post:
+      operationId: api_users_set_password_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SetPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SetPassword'
+        required: true
+      security:
+      - basicAuth: []
+      - tokenAuth: []
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetPassword'
+          description: ''
+components:
+  schemas:
+    About:
+      type: object
+      description: Сериализатор страницы "О нас".
+      properties:
+        headline:
+          type: string
+          readOnly: true
+        text:
+          type: string
+          readOnly: true
+        meta_title:
+          type: string
+          readOnly: true
+        meta_description:
+          type: string
+          readOnly: true
+      required:
+      - headline
+      - meta_description
+      - meta_title
+      - text
+    Activation:
+      type: object
+      properties:
+        uid:
+          type: string
+        token:
+          type: string
+      required:
+      - token
+      - uid
+    CategoryLight:
+      type: object
+      description: |-
+        Сериализует данные для категорий
+        без мета-данных.
+      properties:
+        title:
+          type: string
+          readOnly: true
+          title: Название категории
+        slug:
+          type: string
+          readOnly: true
+          title: Слаг
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - slug
+      - title
+    CategoryList:
+      type: object
+      description: |-
+        Сериализует данные для категорий
+        при запросе всех категорий без постов.
+      properties:
+        title:
+          type: string
+          readOnly: true
+          title: Название категории
+        slug:
+          type: string
+          readOnly: true
+          title: Слаг
+          pattern: ^[-a-zA-Z0-9_]+$
+        meta_title:
+          type: string
+          readOnly: true
+          title: Мета-название страницы
+        meta_description:
+          type: string
+          readOnly: true
+          title: Мета-описание страницы
+      required:
+      - meta_description
+      - meta_title
+      - slug
+      - title
+    Comment:
+      type: object
+      description: Сериализует данные для комментариев для чтения.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+          title: Имя
+        text:
+          type: string
+          readOnly: true
+          title: Комментарий
+        pub_date:
+          type: string
+          format: date
+          readOnly: true
+          title: Дата создания
+      required:
+      - author
+      - id
+      - pub_date
+      - text
+    CommentPost:
+      type: object
+      description: Сериализует данные для комментариев в случае их добавления.
+      properties:
+        author:
+          type: string
+          title: Имя
+          maxLength: 200
+        text:
+          type: string
+          title: Комментарий
+      required:
+      - author
+      - text
+    Contacts:
+      type: object
+      description: Сериализатор страницы контактов.
+      properties:
+        main_shop:
+          type: string
+          readOnly: true
+        requisites:
+          type: string
+          readOnly: true
+        mail_form:
+          type: string
+          readOnly: true
+        our_shops:
+          type: string
+          readOnly: true
+        headline:
+          type: string
+          title: Заголовок страницы
+          description: Введите заголовок страницы
+          maxLength: 255
+        meta_title:
+          type: string
+          nullable: true
+          title: Мета-название страницы
+          maxLength: 255
+        meta_description:
+          type: string
+          nullable: true
+          title: Мета-описание страницы
+          maxLength: 255
+      required:
+      - headline
+      - mail_form
+      - main_shop
+      - our_shops
+      - requisites
+    CurrentUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Почта
+          maxLength: 255
+        userprofile:
+          allOf:
+          - $ref: '#/components/schemas/UserProfile'
+          readOnly: true
+      required:
+      - email
+      - id
+      - userprofile
+    DeliveryInformation:
+      type: object
+      description: Сериализатор страницы "Информация о доставке".
+      properties:
+        headline:
+          type: string
+          readOnly: true
+        text:
+          type: string
+          readOnly: true
+        meta_title:
+          type: string
+          readOnly: true
+        meta_description:
+          type: string
+          readOnly: true
+      required:
+      - headline
+      - meta_description
+      - meta_title
+      - text
+    News:
+      type: object
+      description: Сериализует данные для новостей.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+          title: Заголовок
+        text:
+          type: string
+          readOnly: true
+          title: Текст
+        image:
+          type: string
+          format: uri
+          readOnly: true
+          title: Изображение
+        pub_date:
+          type: string
+          format: date
+          readOnly: true
+          title: Дата публикации
+        slug:
+          type: string
+          readOnly: true
+          title: Слаг
+          pattern: ^[-a-zA-Z0-9_]+$
+        meta_title:
+          type: string
+          readOnly: true
+          title: Мета-название страницы
+        meta_description:
+          type: string
+          readOnly: true
+          title: Мета-описание страницы
+      required:
+      - id
+      - image
+      - meta_description
+      - meta_title
+      - pub_date
+      - slug
+      - text
+      - title
+    PaginatedAboutList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/About'
+    PaginatedCategoryListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryList'
+    PaginatedCommentList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+    PaginatedContactsList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contacts'
+    PaginatedDeliveryInformationList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryInformation'
+    PaginatedNewsList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/News'
+    PaginatedPostList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+    PaginatedPrivacyList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Privacy'
+    PaginatedShopReviewsList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShopReviews'
+    PaginatedStoryList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Story'
+    PaginatedTermsList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Terms'
+    PaginatedUserList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PasswordResetConfirm:
+      type: object
+      properties:
+        uid:
+          type: string
+        token:
+          type: string
+        new_password:
+          type: string
+      required:
+      - new_password
+      - token
+      - uid
+    PatchedCurrentUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Почта
+          maxLength: 255
+        userprofile:
+          allOf:
+          - $ref: '#/components/schemas/UserProfile'
+          readOnly: true
+    PatchedReplayToReviewAdmin:
+      type: object
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        text:
+          type: string
+          title: Ответ
+          description: Ответ на отзыв
+        pub_date:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата
+          description: Дата создания ответа
+        name:
+          type: string
+          title: Имя
+          description: Имя автора ответа
+          maxLength: 200
+        review_id:
+          type: integer
+          readOnly: true
+    PatchedShopReviews:
+      type: object
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        text:
+          type: string
+          title: Отзыв
+          description: Отзыв о магазине
+        pub_date:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата создания отзыва
+          description: Дата создания отзыва
+        author_name:
+          type: string
+          title: Имя
+          description: Имя автора отзыва
+          maxLength: 200
+        author_email:
+          type: string
+          format: email
+          nullable: true
+          title: Почта
+          description: Почта автора отзыва
+          maxLength: 200
+        average_score:
+          type: string
+          readOnly: true
+        delivery_speed_score:
+          type: integer
+          maximum: 5
+          minimum: 1
+          title: Скорость доставки
+          description: Оценка скорости доставки товаров
+        quality_score:
+          type: integer
+          maximum: 5
+          minimum: 1
+          title: Качество товара
+          description: Оценка качества товара в магазине
+        price_score:
+          type: integer
+          maximum: 5
+          minimum: 1
+          title: Цена
+          description: Оценка цен в магазине
+        replay:
+          allOf:
+          - $ref: '#/components/schemas/ReplayToReview'
+          readOnly: true
+    PatchedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Почта
+    Picture:
+      type: object
+      properties:
+        image:
+          type: string
+          format: uri
+      required:
+      - image
+    Post:
+      type: object
+      description: Сериализует все данные для постов.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+          title: Заголовок
+        text:
+          type: string
+          readOnly: true
+          title: Текст
+        pub_date:
+          type: string
+          format: date
+          readOnly: true
+          title: Дата публикации
+        author:
+          type: string
+          readOnly: true
+        image:
+          type: string
+          format: uri
+          readOnly: true
+          title: Изображение
+        category:
+          $ref: '#/components/schemas/CategoryLight'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        views:
+          type: integer
+          readOnly: true
+          title: Количество просмотров
+        slug:
+          type: string
+          readOnly: true
+          title: Слаг
+          pattern: ^[-a-zA-Z0-9_]+$
+        meta_title:
+          type: string
+          readOnly: true
+          title: Мета-название страницы
+        meta_description:
+          type: string
+          readOnly: true
+          title: Мета-описание страницы
+      required:
+      - author
+      - category
+      - id
+      - image
+      - meta_description
+      - meta_title
+      - pub_date
+      - slug
+      - tags
+      - text
+      - title
+      - views
+    Privacy:
+      type: object
+      description: Сериализатор страницы "Политика безопасности".
+      properties:
+        headline:
+          type: string
+          readOnly: true
+        text:
+          type: string
+          readOnly: true
+        meta_title:
+          type: string
+          readOnly: true
+        meta_description:
+          type: string
+          readOnly: true
+      required:
+      - headline
+      - meta_description
+      - meta_title
+      - text
+    ReplayToReview:
+      type: object
+      properties:
+        text:
+          type: string
+          title: Ответ
+          description: Ответ на отзыв
+        pub_date:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата
+          description: Дата создания ответа
+        name:
+          type: string
+          title: Имя
+          description: Имя автора ответа
+          maxLength: 200
+      required:
+      - pub_date
+      - text
+    ReplayToReviewAdmin:
+      type: object
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        text:
+          type: string
+          title: Ответ
+          description: Ответ на отзыв
+        pub_date:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата
+          description: Дата создания ответа
+        name:
+          type: string
+          title: Имя
+          description: Имя автора ответа
+          maxLength: 200
+        review_id:
+          type: integer
+          readOnly: true
+      required:
+      - pk
+      - pub_date
+      - review_id
+      - text
+    SendEmailReset:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    SetPassword:
+      type: object
+      properties:
+        new_password:
+          type: string
+        current_password:
+          type: string
+      required:
+      - current_password
+      - new_password
+    SetUsername:
+      type: object
+      properties:
+        current_password:
+          type: string
+        new_email:
+          type: string
+          format: email
+          title: Почта
+          maxLength: 255
+      required:
+      - current_password
+      - new_email
+    ShopReviews:
+      type: object
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        text:
+          type: string
+          title: Отзыв
+          description: Отзыв о магазине
+        pub_date:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата создания отзыва
+          description: Дата создания отзыва
+        author_name:
+          type: string
+          title: Имя
+          description: Имя автора отзыва
+          maxLength: 200
+        author_email:
+          type: string
+          format: email
+          nullable: true
+          title: Почта
+          description: Почта автора отзыва
+          maxLength: 200
+        average_score:
+          type: string
+          readOnly: true
+        delivery_speed_score:
+          type: integer
+          maximum: 5
+          minimum: 1
+          title: Скорость доставки
+          description: Оценка скорости доставки товаров
+        quality_score:
+          type: integer
+          maximum: 5
+          minimum: 1
+          title: Качество товара
+          description: Оценка качества товара в магазине
+        price_score:
+          type: integer
+          maximum: 5
+          minimum: 1
+          title: Цена
+          description: Оценка цен в магазине
+        replay:
+          allOf:
+          - $ref: '#/components/schemas/ReplayToReview'
+          readOnly: true
+      required:
+      - author_name
+      - average_score
+      - delivery_speed_score
+      - pk
+      - price_score
+      - pub_date
+      - quality_score
+      - replay
+      - text
+    Story:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Заголовок
+          maxLength: 255
+        link:
+          type: string
+          format: uri
+          nullable: true
+          maxLength: 200
+        pictures:
+          type: array
+          items:
+            $ref: '#/components/schemas/Picture'
+      required:
+      - id
+      - name
+      - pictures
+    Tag:
+      type: object
+      description: Сериализует данные для тегов.
+      properties:
+        name:
+          type: string
+          readOnly: true
+          title: Название
+      required:
+      - name
+    Terms:
+      type: object
+      description: Сериализатор страницы "Условия соглашения".
+      properties:
+        headline:
+          type: string
+          readOnly: true
+        text:
+          type: string
+          readOnly: true
+        meta_title:
+          type: string
+          readOnly: true
+        meta_description:
+          type: string
+          readOnly: true
+      required:
+      - headline
+      - meta_description
+      - meta_title
+      - text
+    TokenCreate:
+      type: object
+      properties:
+        password:
+          type: string
+        email:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Почта
+      required:
+      - email
+      - id
+    UserCreate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Почта
+          maxLength: 255
+        id:
+          type: integer
+          readOnly: true
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - id
+      - password
+    UserProfile:
+      type: object
+      properties:
+        first_name:
+          type: string
+          maxLength: 255
+        last_name:
+          type: string
+          maxLength: 255
+        about:
+          type: string
+        company:
+          type: string
+          maxLength: 255
+        is_vendor:
+          type: boolean
+          title: Оптовик
+    UsernameResetConfirm:
+      type: object
+      properties:
+        new_email:
+          type: string
+          format: email
+          title: Почта
+          maxLength: 255
+      required:
+      - new_email
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

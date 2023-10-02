@@ -7,12 +7,33 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from drf_spectacular.utils import extend_schema
+
 from api.serializers.accounts_serializers import UserProfileUpdateSerializer
 
 
 class ActivateUser(APIView):
     """Кастомная активация пользователя по щелчку в ссылке письма."""
 
+    @extend_schema(
+        parameters=[
+            {
+                "name": "uid",
+                "in": "path",
+                "description": "ID Для активации пользователя.",
+                "required": True,
+                "type": "string",
+            },
+            {
+                "name": "token",
+                "in": "path",
+                "description": "Token Для активации пользователя.",
+                "required": True,
+                "type": "string",
+            },
+        ],
+        responses={status.HTTP_204_NO_CONTENT: None}
+    )
     def get(self, request, uid, token, format=None):
         payload = {'uid': uid, 'token': token}
         headers = {
