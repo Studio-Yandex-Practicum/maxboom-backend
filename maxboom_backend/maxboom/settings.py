@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'blog',
     'catalogue',
     'sorl.thumbnail',
+    'django_filters',
     'core',
     'news',
     'payment',

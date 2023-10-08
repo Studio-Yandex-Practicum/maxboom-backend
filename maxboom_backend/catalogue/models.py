@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class Brand(models.Model):
-    '''Модель производителей.'''
+    """Модель производителей."""
 
     name = models.CharField(
         verbose_name='Наименование',
@@ -87,11 +87,13 @@ class Brand(models.Model):
                     ) % (mini.width, value.url, mini.url, )
                 except (AttributeError, TypeError):
                     pass
-        return mark_safe(output)
+            return mark_safe(output)
+        return None
+    img_preview.short_description = 'Изображение'
 
 
 class Category(models.Model):
-    '''Модель категорий.'''
+    """Модель категорий."""
 
     name = models.CharField(
         verbose_name='Название',
@@ -103,18 +105,6 @@ class Category(models.Model):
         null=True,
         blank=True,
         editable=False
-    )
-    meta_title = models.CharField(
-        max_length=255,
-        verbose_name='Мета-название категории',
-        null=True,
-        blank=True,
-    )
-    meta_description = models.CharField(
-        max_length=255,
-        verbose_name='Мета-описание категории',
-        null=True,
-        blank=True
     )
     is_visible_on_main = models.BooleanField(
         verbose_name='Категория видимая на главной странице',
@@ -156,7 +146,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    '''Модель товаров.'''
+    """Модель товаров."""
 
     name = models.CharField(verbose_name='Название', max_length=500)
     slug = models.SlugField(
@@ -173,7 +163,7 @@ class Product(models.Model):
     )
     brand = models.ForeignKey(
         Brand, related_name='products', on_delete=models.SET_NULL, null=True,
-        verbose_name='Бренд'
+        verbose_name='Производитель'
     )
     category = models.ForeignKey(
         Category, related_name='products', on_delete=models.SET_NULL,
@@ -187,20 +177,8 @@ class Product(models.Model):
         default=999999,
     )
     is_deleted = models.BooleanField(
-        verbose_name='Удален ли товар',
+        verbose_name='Удаленный товар',
         default=False,
-    )
-    meta_title = models.CharField(
-        max_length=255,
-        verbose_name='Мета-название товара',
-        null=True,
-        blank=True,
-    )
-    meta_description = models.CharField(
-        max_length=255,
-        verbose_name='Мета-описание товара',
-        null=True,
-        blank=True,
     )
 
     class Meta:
@@ -224,6 +202,7 @@ class Product(models.Model):
 
 
 class ProductImage(models.Model):
+    """Модель изображений товаров"""
     product = models.ForeignKey(
         Product, related_name='images', on_delete=models.CASCADE,
         verbose_name='Продукт',
@@ -267,7 +246,9 @@ class ProductImage(models.Model):
                     ) % (mini.width, value.url, mini.url, )
                 except (AttributeError, TypeError):
                     pass
-        return mark_safe(output)
+            return mark_safe(output)
+        return None
+    img_preview.short_description = 'Изображение'
 
 
 @receiver(pre_delete, sender=Brand)

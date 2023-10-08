@@ -3,12 +3,14 @@ from shop_reviews.models import ReplayToReview, ShopReviews
 
 
 class ReplayToReviewInline(admin.TabularInline):
+    """Включение ответов в админку отзывов"""
     model = ReplayToReview
     extra = 0
 
 
 @admin.register(ShopReviews)
 class ShopReviewsAdmin(admin.ModelAdmin):
+    """Админка отзывов"""
     list_select_related = ('replay',)
     list_display = (
         'pk',
@@ -42,6 +44,7 @@ class ShopReviewsAdmin(admin.ModelAdmin):
 
 @admin.register(ReplayToReview)
 class ReplayToReviewAdmin(admin.ModelAdmin):
+    """Админка ответов на отзывы"""
     list_display = (
         'pk',
         'text',

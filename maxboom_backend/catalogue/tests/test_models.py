@@ -148,8 +148,6 @@ class CategoryModelTest(TestCase):
         )
         cls.category = Category.objects.create(
             name='Категория1',
-            meta_title='мета-название',
-            meta_description='мета-описание',
             is_visible_on_main=True,
             is_prohibited=True,
             root=cls.category_root,
@@ -173,8 +171,6 @@ class CategoryModelTest(TestCase):
 
         expected_data = {
             'name': 'Категория1',
-            'meta_title': 'мета-название',
-            'meta_description': 'мета-описание',
             'is_visible_on_main': True,
             'is_prohibited': True,
             'root': CategoryModelTest.category_root,
@@ -200,8 +196,6 @@ class CategoryModelTest(TestCase):
         field_verboses = {
             'name': 'Название',
             'slug': 'Уникальный слаг',
-            'meta_title': 'Мета-название категории',
-            'meta_description': 'Мета-описание категории',
             'is_visible_on_main': 'Категория видимая на главной странице',
             'is_prohibited': 'Запрещенная для публикации категория',
             'root': 'Родительская категория'
@@ -230,8 +224,6 @@ class ProductModelTest(TestCase):
         cls.category = Category.objects.create(
             name='Категория1',
             slug='category1',
-            meta_title='мета-название',
-            meta_description='мета-описание',
         )
         cls.product = Product.objects.create(
             name='Пусковое зарядное устройство 2',
@@ -242,8 +234,6 @@ class ProductModelTest(TestCase):
             code=169110394,
             wb_urls='https://www.wildberries.ru/catalog/169110394/detail.aspx',
             is_deleted=True,
-            meta_title='test_title',
-            meta_description='test description',
         )
 
     def test_create_model(self):
@@ -261,8 +251,6 @@ class ProductModelTest(TestCase):
             'wb_urls': ('https://www.wildberries.ru/'
                         'catalog/169110394/detail.aspx'),
             'is_deleted': True,
-            'meta_title': 'test_title',
-            'meta_description': 'test description',
         }
         for field, expected_value in expected_data.items():
             with self.subTest(field=field):
@@ -300,14 +288,12 @@ class ProductModelTest(TestCase):
             'slug': 'Уникальный слаг',
             'description': 'Описание',
             'price': 'Цена',
-            'brand': 'Бренд',
+            'brand': 'Производитель',
             'category': 'Категория',
             'code': 'Код товара',
             'wb_urls': 'Ссылка на WB',
             'quantity': 'Количество',
-            'is_deleted': 'Удален ли товар',
-            'meta_title': 'Мета-название товара',
-            'meta_description': 'Мета-описание товара',
+            'is_deleted': 'Удаленный товар',
         }
         for field, expected_value in field_verboses.items():
             with self.subTest(field=field):

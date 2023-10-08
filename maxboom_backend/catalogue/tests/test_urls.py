@@ -42,9 +42,7 @@ class CatalogueURLTests(TestCase):
             name='Категория тестовая',
         )
         cls.category = Category.objects.create(
-            name='Категория дочерняя',
-            meta_title='мета-название',
-            meta_description='мета-описание',
+            name='Подкатегория',
             is_visible_on_main=True,
             is_prohibited=False,
             root=cls.category_root,
@@ -58,8 +56,6 @@ class CatalogueURLTests(TestCase):
             code=169110394,
             wb_urls='https://www.wildberries.ru/catalog/169110394/detail.aspx',
             is_deleted=False,
-            meta_title='test_title',
-            meta_description='test description',
         )
         cls.uploaded = SimpleUploadedFile(
             name='prod_img.gif',
@@ -81,14 +77,13 @@ class CatalogueURLTests(TestCase):
         category_root = CatalogueURLTests.category_root
         product = CatalogueURLTests.product
         status_pages = {
+            '/api/catalogue/brand/': HTTPStatus.OK,
+            f'/api/catalogue/brand/{brand.slug}/': HTTPStatus.OK,
+            '/api/catalogue/category/': HTTPStatus.OK,
+            f'/api/catalogue/category/{category_root.slug}/': HTTPStatus.OK,
+            f'/api/catalogue/category/{category.slug}/': HTTPStatus.OK,
             '/api/catalogue/': HTTPStatus.OK,
-            '/api/catalogue/brands/': HTTPStatus.OK,
-            f'/api/catalogue/brands/{brand.slug}/': HTTPStatus.OK,
-            '/api/catalogue/categories/': HTTPStatus.OK,
-            f'/api/catalogue/categories/{category_root.slug}/': HTTPStatus.OK,
-            f'/api/catalogue/categories/{category.slug}/': HTTPStatus.OK,
-            '/api/catalogue/products/': HTTPStatus.OK,
-            f'/api/catalogue/products/{product.slug}/': HTTPStatus.OK,
+            f'/api/catalogue/{product.slug}/': HTTPStatus.OK,
             # f'{brand.image.url}': HTTPStatus.OK,
 
         }

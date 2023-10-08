@@ -21,6 +21,8 @@ class ShopReviewsViewTests(TestCase):
             price_score=3,
             is_published=True
         )
+        cls.admin = User.objects.create_superuser(
+            'admin1@example.com', 'admin1')
         cls.review = ShopReviews.objects.create(
             text='Тестовый текст',
             author_name='Василий Петрович',
@@ -34,8 +36,6 @@ class ShopReviewsViewTests(TestCase):
             text='Тестовый ответ',
             review_id=cls.review
         )
-        cls.admin = User.objects.create_superuser(
-            'admin1@example.com', 'admin1')
 
     def setUp(self):
         self.user_client = APIClient()
@@ -120,33 +120,65 @@ class ShopReviewsViewTests(TestCase):
         self.assertEqual(reviews_count_expected, reviews_count,
                          'Пользователь получил отзывы'
                          ' непредназначенные для публикации')
-        expected_review = {
-            'text': 'Тестовый текст',
-            'author_name': 'Василий Петрович',
-            'author_email': 'vasil_test@mail.ru',
-            'delivery_speed_score': 4,
-            'quality_score': 3,
-            'price_score': 3,
-            'average_score': 3.3
-        }
-        expected_review_replay = {
-            'text': 'Тестовый ответ',
-            'name': 'Администратор'
-        }
-        for key, expected_value in expected_review.items():
-            with self.subTest(key=key):
+        expected_data = [
+            {
+                'pk': 2,
+                'text': 'Тестовый текст',
+                'author_name': 'Василий Петрович',
+                'author_email': 'vasil_test@mail.ru',
+                'average_score': 3.3,
+                'delivery_speed_score': 4,
+                'quality_score': 3,
+                'price_score': 3,
+                'replay': {
+                    'text': 'Тестовый ответ',
+                    'name': 'Администратор'
+                }
+            },
+            {
+                'pk': 1,
+                'text': 'Новый тестовый текст',
+                'author_name': 'Василий Иванович',
+                'author_email': 'Ivan_test@mail.ru',
+                'average_score': 3.3,
+                'delivery_speed_score': 4,
+                'quality_score': 3,
+                'price_score': 3,
+                'replay': None
+            },
+
+        ]
+        self.check_fields(response=response.data.get(
+            'results'), expected_data=expected_data)
+
+    def check_fields(self, response, expected_data):
+        if type(expected_data) is list and expected_data:
+            for i in range(len(expected_data)):
+                self.check_fields(
+                    response=response[i], expected_data=expected_data[i])
+        elif type(expected_data) is str:
+            with self.subTest():
                 self.assertEqual(
-                    response.data.get('results')[1].get(key),
-                    expected_value,
-                    f'{key}'
+                    response,
+                    expected_data,
                 )
-        for key, expected_value in expected_review_replay.items():
-            with self.subTest(key=key):
-                self.assertEqual(
-                    response.data.get('results')[1].get('replay').get(key),
-                    expected_value,
-                    f'{key}'
-                )
+        else:
+            for key, expected_value in expected_data.items():
+                if type(expected_value) is list and expected_value:
+                    for j in range(len(expected_value)):
+                        self.check_fields(response=response.get(
+                            key)[j], expected_data=expected_value[j])
+                else:
+                    if type(expected_value) is dict and expected_value:
+                        self.check_fields(response=response.get(
+                            key), expected_data=expected_value)
+                    else:
+                        with self.subTest(key=key):
+                            self.assertEqual(
+                                response.get(key),
+                                expected_value,
+                                f'{key}'
+                            )
 
     def test_user_get_item_is_published_review(self):
         """получение отзыва пользователем"""

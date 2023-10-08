@@ -6,6 +6,7 @@ from .models import Brand, Category, Product, ProductImage
 
 @admin.register(ProductImage)
 class ProductImageAdmin(AdminImageMixin, admin.ModelAdmin):
+    """Админка изображений"""
     list_display = ('id', 'product', 'image', 'img_preview')
     list_editable = ('product',)
     list_filter = ('product',)
@@ -13,7 +14,7 @@ class ProductImageAdmin(AdminImageMixin, admin.ModelAdmin):
 
 @admin.register(Brand)
 class BrandAdmin(AdminImageMixin, admin.ModelAdmin):
-    '''Кастомный класс админки производителей.'''
+    """Админка производителей"""
     list_display = (
         'id', 'slug', 'name', 'is_prohibited', 'is_visible_on_main',
         'img_preview'
@@ -25,6 +26,7 @@ class BrandAdmin(AdminImageMixin, admin.ModelAdmin):
 
 
 class CategoryBranchesInline(admin.TabularInline):
+    """Включение подкатегорий в админку категорий"""
     model = Category
     fk_name = 'root'
     fields = ('name',)
@@ -35,14 +37,14 @@ class CategoryBranchesInline(admin.TabularInline):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    '''Кастомный класс админки категорий.'''
+    """Админка категорий"""
     list_display = (
-        'id', 'slug', 'name', 'root', 'meta_title', 'meta_description',
+        'id', 'slug', 'name', 'root',
         'is_visible_on_main', 'is_prohibited'
     )
     list_editable = ('name', 'root', 'is_prohibited', 'is_visible_on_main')
     list_filter = ('name', 'root', 'is_visible_on_main', 'is_prohibited')
-    search_fields = ('name', 'meta_description')
+    search_fields = ('name',)
     empty_value_display = '-пусто-'
     inlines = (
         CategoryBranchesInline,
@@ -50,6 +52,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 class ProductImageInline(AdminImageMixin, admin.TabularInline,):
+    """Включение изображений в админку товаров"""
     model = ProductImage
     extra = 0
     verbose_name = "Изображение"
@@ -58,13 +61,12 @@ class ProductImageInline(AdminImageMixin, admin.TabularInline,):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    '''Кастомный класс админки товаров.'''
+    """Админка товаров"""
     list_select_related = ('brand', 'category',)
     list_display = (
         'id',
         'name',
         'slug',
-        # 'description',
         'price',
         'brand',
         'category',
@@ -72,8 +74,6 @@ class ProductAdmin(admin.ModelAdmin):
         'wb_urls',
         'quantity',
         'is_deleted',
-        'meta_title',
-        'meta_description',
     )
     list_editable = (
         'name',
@@ -84,8 +84,6 @@ class ProductAdmin(admin.ModelAdmin):
         'wb_urls',
         'quantity',
         'is_deleted',
-        'meta_title',
-        'meta_description',
     )
     list_filter = ('name', 'is_deleted')
     search_fields = ('name', 'description')

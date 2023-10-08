@@ -6,6 +6,7 @@ MAX_AMOUNT = 5
 
 
 class ShopReviews(models.Model):
+    """Модель отзывов"""
     text = models.TextField(
         verbose_name='Отзыв',
         help_text='Отзыв о магазине',
@@ -62,19 +63,19 @@ class ShopReviews(models.Model):
             (obj.price_score
              + obj.quality_score
              + obj.delivery_speed_score) / 3, 1)
-
     average_score.fget.short_description = 'Средняя оценка'
 
     class Meta:
         verbose_name = 'Отзыв о магазине'
         verbose_name_plural = 'Отзывы о магазине'
-        ordering = ('-pub_date',)
+        ordering = ('-pub_date', '-id')
 
     def __str__(self):
         return self.text[:15]
 
 
 class ReplayToReview(models.Model):
+    """Модель ответов на отзывы"""
     text = models.TextField(
         verbose_name='Ответ',
         help_text='Ответ на отзыв'
