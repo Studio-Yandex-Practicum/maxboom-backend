@@ -243,7 +243,6 @@ class CatalogueViewsTests(TestCase):
         address = '/api/catalogue/category/?search=Подкат'
         response = self.user_client.get(address)
         categories_count = len(response.data)
-        print(response.json())
         self.assertEqual(1, categories_count,
                          'Не найдена категория')
 
