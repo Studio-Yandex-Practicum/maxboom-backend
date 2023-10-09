@@ -1,19 +1,134 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
-from shop_reviews.models import (
-    ShopReviews, ReplayToReview
-)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
-from django.db import transaction
-from api.serializers.shop_reviews_serializers import (
-    ShopReviewsSerializer, ShopReviewsAdminSerializer,
-    ReplayToReviewAdminSerializer
-)
+
 from api.permissions.shop_reviews_permissions import IsAdminOrAnyUser
+from api.serializers.shop_reviews_serializers import (
+    ReplayToReviewAdminSerializer, ShopReviewsAdminSerializer,
+    ShopReviewsSerializer)
+from drf_spectacular.utils import (
+    extend_schema, extend_schema_view,
+    OpenApiParameter,
+    # OpenApiExample
+)
+from shop_reviews.models import ReplayToReview, ShopReviews
 
 
+@extend_schema(
+    tags=["Shop reviews"],
+)
+@extend_schema_view(
+    list=extend_schema(
+        summary='Получение списка ответов на отзыв',
+        parameters=[
+            OpenApiParameter(
+                name='review_id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    retrieve=extend_schema(
+        summary='Получение отдельного ответа на отзыв',
+        parameters=[
+            OpenApiParameter(
+                name='review_id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id ответа на отзыв',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    post=extend_schema(
+        summary='Запись ответа на отзыв',
+        description='Запись ответа на отзыв, доступна только администратору',
+        parameters=[
+            OpenApiParameter(
+                name='review_id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    put=extend_schema(
+        summary='Замена ответа на отзыв',
+        description='Замена ответа на отзыв, доступна только администратору',
+        parameters=[
+            OpenApiParameter(
+                name='review_id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id ответа на отзыв',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    patch=extend_schema(
+        summary='Частичная замена ответа на отзыв',
+        description='''
+        Частичная замена ответа на отзыв, доступна только администратору
+        ''',
+        parameters=[
+            OpenApiParameter(
+                name='review_id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id ответа на отзыв',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    delete=extend_schema(
+        summary='Удаление ответа на отзыв',
+        description='Удаление ответа на отзыв, доступна только администратору',
+        parameters=[
+            OpenApiParameter(
+                name='review_id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id ответа на отзыв',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+)
 class ReplayToReviewViewSet(viewsets.ModelViewSet):
+    """Ответ на отзыв"""
     http_method_names = ('get', 'post', 'put', 'patch',
                          'delete', 'head', 'options')
     serializer_class = ReplayToReviewAdminSerializer
@@ -33,7 +148,86 @@ class ReplayToReviewViewSet(viewsets.ModelViewSet):
         return queryset
 
 
+@extend_schema(
+    tags=["Shop reviews"],
+    summary='Отзывы о магазине'
+)
+@extend_schema_view(
+    list=extend_schema(
+        summary='Получение списка отзывов о магазине',
+    ),
+    retrieve=extend_schema(
+        summary='Получение отдельного отзыва о магазине',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    post=extend_schema(
+        summary='Запись отзыва о магазине',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    put=extend_schema(
+        summary='Замена отзыва о магазине',
+        description='''
+        Замена отзыва о магазине, доступна только администратору
+        ''',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    patch=extend_schema(
+        summary='Частичная замена отзыва о магазине',
+        description='''
+        Частичная замена отзыва о магазине, доступна только администратору
+        ''',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+    delete=extend_schema(
+        summary='Удаление отзыва о магазине',
+        description='''
+        Удаление отзыва о магазине, доступна только администратору
+        ''',
+        parameters=[
+            OpenApiParameter(
+                name='id',
+                location=OpenApiParameter.PATH,
+                description='id отзыва',
+                required=True,
+                type=int
+            ),
+        ]
+    ),
+)
 class ShopReviewsViewSet(viewsets.ModelViewSet):
+    """Отзыв о магазине"""
     http_method_names = ('get', 'post', 'patch', 'put',
                          'delete', 'head', 'options')
     pagination_class = PageNumberPagination
