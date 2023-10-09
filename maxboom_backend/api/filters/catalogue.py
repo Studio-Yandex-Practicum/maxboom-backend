@@ -17,8 +17,8 @@ class CustomProductSearchFilter(filters.SearchFilter):
             type(description) is str
             and description.upper() == 'TRUE'
         ):
-            return ('name', 'description',)
-        return ('name',)
+            return ('name', 'category__name', 'description',)
+        return ('name', 'category__name')
 
 
 class ProductFilterSet(FilterSet):
