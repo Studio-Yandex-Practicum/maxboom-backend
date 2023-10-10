@@ -1,4 +1,5 @@
 import logging
+import os
 
 from django.db import models
 from django.db.models.signals import pre_delete, pre_save
@@ -9,6 +10,43 @@ from sorl.thumbnail import ImageField, delete
 from sorl.thumbnail.shortcuts import get_thumbnail
 
 logger = logging.getLogger(__name__)
+
+
+def get_slug(instance):
+    if type(instance) in [Brand, Category]:
+        name = instance.name.replace('   ', ' ').replace('  ', ' ')
+        slug_n = slugify(name)[:200]
+        i = 1
+        while Brand.objects.filter(slug=slug_n).exists():
+            if len(slug_n) == 200:
+                slug_n = slug_n[:-1]
+            slug_n = slug_n + str(i)
+            i += 1
+        return slug_n
+
+    if type(instance) is Product:
+        name = instance.name.replace('   ', ' ').replace('  ', ' ')
+        vendor_code = instance.vendor_code.replace(
+            '   ', ' ').replace('  ', ' ')
+        slug_vendor_code = slugify(vendor_code)
+        slug_n = (slugify(name)[:199 - len(slug_vendor_code)]
+                  + '-' + slug_vendor_code)
+        i = 1
+        while Brand.objects.filter(slug=slug_n).exists():
+            if len(slug_n) == 200:
+                slug_n = slug_n[:-1]
+            slug_n = slug_n + str(i)
+            i += 1
+        return slug_n
+
+
+def image_upload_path(instance, filename):
+    if type(instance) is Brand:
+        return os.path.join(
+            'brand-images', instance.slug, filename
+        )
+    if type(instance) is ProductImage:
+        return os.path.join('product-images', instance.product.slug, filename)
 
 
 class Brand(models.Model):
@@ -37,8 +75,11 @@ class Brand(models.Model):
         default=False
     )
     image = ImageField(
-        upload_to='brand-images',
+        upload_to=image_upload_path,
+        max_length=1000,
         verbose_name='Логотип',
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -50,14 +91,7 @@ class Brand(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        slug = slugify(self.name)[:200]
-        i = 1
-        while Brand.objects.filter(slug=slug).exists():
-            if len(slug) == 200:
-                slug = slug[:-1]
-            slug = slug + str(i)
-            i += 1
-        self.slug = slug
+        self.slug = get_slug(self)
         super().save(*args, **kwargs)
 
     def img_preview(self):
@@ -86,7 +120,7 @@ class Brand(models.Model):
                         '<img src="%s"></a></div>'
                     ) % (mini.width, value.url, mini.url, )
                 except (AttributeError, TypeError):
-                    pass
+                    return None
             return mark_safe(output)
         return None
     img_preview.short_description = 'Изображение'
@@ -105,6 +139,11 @@ class Category(models.Model):
         null=True,
         blank=True,
         editable=False
+    )
+    wb_category_id = models.PositiveIntegerField(
+        verbose_name='Id категории на wildberries',
+        help_text='objectID на wildberries',
+        unique=True,
     )
     is_visible_on_main = models.BooleanField(
         verbose_name='Категория видимая на главной странице',
@@ -134,14 +173,7 @@ class Category(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        slug = slugify(self.name)[:200]
-        i = 1
-        while Category.objects.filter(slug=slug).exists():
-            if len(slug) == 200:
-                slug = slug[:-1]
-            slug = slug[:-i] + str()
-            i += 1
-        self.slug = slug
+        self.slug = get_slug(self)
         super().save(*args, **kwargs)
 
 
@@ -171,6 +203,16 @@ class Product(models.Model):
         verbose_name='Категория'
     )
     code = models.IntegerField(verbose_name='Код товара', unique=True)
+    vendor_code = models.CharField(
+        verbose_name='Артикул продавца',
+        unique=True,
+        max_length=100
+    )
+    imt_id = models.IntegerField(
+        verbose_name='id карточки на WB',
+        null=True,
+        blank=True,
+    )
     wb_urls = models.URLField(verbose_name='Ссылка на WB')
     quantity = models.FloatField(
         verbose_name='Количество',
@@ -190,14 +232,10 @@ class Product(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        slug = slugify(self.name)[:200]
-        i = 1
-        while Product.objects.filter(slug=slug).exists():
-            if len(slug) == 200:
-                slug = slug[:-1]
-            slug = slug[:-i] + str(i)
-            i += 1
-        self.slug = slug
+        self.slug = get_slug(self)
+        if not self.wb_urls:
+            self.wb_urls = ('https://www.wildberries.ru/catalog/'
+                            f'{self.code}/detail.aspx')
         super().save(*args, **kwargs)
 
 
@@ -208,7 +246,8 @@ class ProductImage(models.Model):
         verbose_name='Продукт',
     )
     image = ImageField(
-        upload_to='products-images',
+        upload_to=image_upload_path,
+        max_length=1000,
         verbose_name='Изображение',
     )
 
@@ -245,7 +284,7 @@ class ProductImage(models.Model):
                         '<img src="%s"></a></div>'
                     ) % (mini.width, value.url, mini.url, )
                 except (AttributeError, TypeError):
-                    pass
+                    return None
             return mark_safe(output)
         return None
     img_preview.short_description = 'Изображение'

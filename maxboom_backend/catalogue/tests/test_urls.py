@@ -40,12 +40,15 @@ class CatalogueURLTests(TestCase):
         )
         cls.category_root = Category.objects.create(
             name='Категория тестовая',
+            wb_category_id=123450
+
         )
         cls.category = Category.objects.create(
             name='Подкатегория',
             is_visible_on_main=True,
             is_prohibited=False,
             root=cls.category_root,
+            wb_category_id=123451
         )
         cls.product = Product.objects.create(
             name='Пусковое зарядное устройство 2',
@@ -54,6 +57,7 @@ class CatalogueURLTests(TestCase):
             brand=cls.brand,
             category=cls.category,
             code=169110394,
+            vendor_code='артикул 5',
             wb_urls='https://www.wildberries.ru/catalog/169110394/detail.aspx',
             is_deleted=False,
         )
@@ -84,8 +88,6 @@ class CatalogueURLTests(TestCase):
             f'/api/catalogue/category/{category.slug}/': HTTPStatus.OK,
             '/api/catalogue/': HTTPStatus.OK,
             f'/api/catalogue/{product.slug}/': HTTPStatus.OK,
-            # f'{brand.image.url}': HTTPStatus.OK,
-
         }
         for address, code in status_pages.items():
             with self.subTest(address=address):

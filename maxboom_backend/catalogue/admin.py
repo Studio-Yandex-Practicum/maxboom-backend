@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from sorl.thumbnail.admin import AdminImageMixin
 
 from .models import Brand, Category, Product, ProductImage
@@ -9,7 +10,8 @@ class ProductImageAdmin(AdminImageMixin, admin.ModelAdmin):
     """Админка изображений"""
     list_display = ('id', 'product', 'image', 'img_preview')
     list_editable = ('product',)
-    list_filter = ('product',)
+    search_fields = ('product__name',)
+    ordering = ('product',)
 
 
 @admin.register(Brand)
@@ -20,7 +22,11 @@ class BrandAdmin(AdminImageMixin, admin.ModelAdmin):
         'img_preview'
     )
     list_editable = ('name', 'is_prohibited', 'is_visible_on_main')
-    list_filter = ('name', 'is_prohibited', 'is_visible_on_main')
+    list_filter = (
+        ('name', admin.filters.AllValuesFieldListFilter),
+        'is_prohibited',
+        'is_visible_on_main'
+    )
     search_fields = ('name',)
     empty_value_display = '-пусто-'
 
@@ -40,11 +46,16 @@ class CategoryAdmin(admin.ModelAdmin):
     """Админка категорий"""
     list_display = (
         'id', 'slug', 'name', 'root',
-        'is_visible_on_main', 'is_prohibited'
+        'is_visible_on_main', 'is_prohibited', 'wb_category_id'
     )
-    list_editable = ('name', 'root', 'is_prohibited', 'is_visible_on_main')
-    list_filter = ('name', 'root', 'is_visible_on_main', 'is_prohibited')
-    search_fields = ('name',)
+    list_editable = (
+        'name', 'root', 'is_prohibited', 'is_visible_on_main', 'wb_category_id'
+    )
+    list_filter = (
+        ('root', admin.filters.AllValuesFieldListFilter),
+        'is_visible_on_main',
+        'is_prohibited')
+    search_fields = ('name', 'wb_category_id')
     empty_value_display = '-пусто-'
     inlines = (
         CategoryBranchesInline,
@@ -67,10 +78,13 @@ class ProductAdmin(admin.ModelAdmin):
         'id',
         'name',
         'slug',
+        # 'description',
         'price',
         'brand',
         'category',
         'code',
+        'vendor_code',
+        'imt_id',
         'wb_urls',
         'quantity',
         'is_deleted',
@@ -84,8 +98,10 @@ class ProductAdmin(admin.ModelAdmin):
         'wb_urls',
         'quantity',
         'is_deleted',
+        'imt_id',
+        'vendor_code'
     )
-    list_filter = ('name', 'is_deleted')
+    list_filter = ('is_deleted', 'category', 'brand',)
     search_fields = ('name', 'description')
     inlines = (
         ProductImageInline,

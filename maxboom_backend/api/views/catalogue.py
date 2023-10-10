@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+import requests
+from rest_framework import status, viewsets
 
 from api.filters.catalogue import (
     CustomProductSearchFilter,
@@ -8,6 +9,7 @@ from api.serializers.catalogue import (
     BrandSerializer, CategorySerializer,
     CategoryTreeSerializer, ProductSerializer,
 )
+from django.urls import reverse
 from catalogue.models import Brand, Category, Product
 from drf_spectacular.utils import (
     extend_schema, extend_schema_view,
@@ -15,8 +17,131 @@ from drf_spectacular.utils import (
     # OpenApiExample
 )
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.generics import ListAPIView
 from rest_framework import filters
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+
+
+@extend_schema(
+    tags=["Catalogue"],
+)
+@extend_schema_view(
+    list=extend_schema(
+        summary='Поиск в категориях и товарах',
+        description="""
+        Получение списка категорий и товаров,
+         удовлетворяющих условиям поиска, параметр search.
+         Поиск работает по частичным совпадениям без учёта регистра,
+         можно искать по нескольким совпадениям:
+         в запросе их надо разделить запятыми, без пробелов.
+         Применение параметра ordering позволяет
+         упорядочить список категорий по  имени (name),
+         список товаров по имени, цене, коду товара (name, price, code).
+         Применение параметра category  позволяет
+         отфильтровать товары определенной (по id) категории.
+         Дополнительно параметром sub_category = False можно
+         ограничить фильтрацию определенной категорией,
+         sub_category = true (true принято по умолчанию) включает в результаты
+         запроса товары из подкатегорий.
+         Применение параметра description = True,
+         позволяет осуществлять поиск в описаниях товара.
+         Применение параметра limit определяет количество товаров на странице.
+         Применение параметра offset определяет,
+         с какого по счёту товара начать отсчёт.
+        """,
+        parameters=[
+            OpenApiParameter(
+                name='search',
+                location=OpenApiParameter.QUERY,
+                description='поиск по наименованию',
+                required=False,
+                type=str
+            ),
+            OpenApiParameter(
+                name='description',
+                location=OpenApiParameter.QUERY,
+                description='поиск в описаниях товаров',
+                required=False,
+                type=bool
+            ),
+            OpenApiParameter(
+                name='category',
+                location=OpenApiParameter.QUERY,
+                description='id категории, товары которой необходимо получить',
+                required=False,
+                type=int
+            ),
+            OpenApiParameter(
+                name='sub_category',
+                location=OpenApiParameter.QUERY,
+                description='отображать товары подкатегорий',
+                required=False,
+                type=bool
+            ),
+            OpenApiParameter(
+                name='category_tree',
+                location=OpenApiParameter.QUERY,
+                description='отображение дерева категорий',
+                required=False,
+                type=bool
+            ),
+            OpenApiParameter(
+                name='ordering',
+                location=OpenApiParameter.QUERY,
+                description='способ сортировки',
+                required=False,
+                type=str
+            ),
+            OpenApiParameter(
+                name='limit',
+                location=OpenApiParameter.QUERY,
+                description='количество товаров на странице',
+                required=False,
+                type=int
+            ),
+            OpenApiParameter(
+                name='offset',
+                location=OpenApiParameter.QUERY,
+                description='определяет с какого товара начать отсчёт',
+                required=False,
+                type=int
+            ),
+            OpenApiParameter(
+                name='brand',
+                location=OpenApiParameter.QUERY,
+                description=(
+                    'id производителя, товары которого необходимо получить'
+                ),
+                required=False,
+                type=int
+            ),
+        ]
+    )
+)
+class SearchView(ListAPIView):
+    """Поиск в категориях и товарах"""
+
+    def list(self, request, *args, **kwargs):
+        resp_category = requests.get(
+            request.build_absolute_uri(reverse('catalogue:category-list')),
+            params=request.query_params,
+        )
+        resp_product = requests.get(
+            request.build_absolute_uri(reverse('catalogue:product-list')),
+            params=request.query_params)
+        data = []
+        if (
+            resp_category.status_code == status.HTTP_400_BAD_REQUEST
+            and resp_product.status_code == status.HTTP_400_BAD_REQUEST
+        ):
+            return Response(
+                'Поиск не возможен', status=status.HTTP_400_BAD_REQUEST)
+        if resp_category.content:
+            data.append({'category': resp_category.json()})
+        if resp_product.content:
+            data.append({'product': resp_product.json()})
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
 @extend_schema(
@@ -35,6 +160,11 @@ from rest_framework.pagination import LimitOffsetPagination
          Применение параметра category_tree  позволяет
          получить отображение категорий с учетом их
          вложенности (false принято по умолчанию).
+         Применение параметра search осуществляет поиск по наименованию
+         категории.
+         Поиск работает по частичным совпадениям без учёта регистра,
+         можно искать по нескольким совпадениям:
+         в запросе их надо разделить запятыми, без пробелов.
         """,
         parameters=[
             OpenApiParameter(
@@ -202,12 +332,13 @@ class BrandViewSet(viewsets.ReadOnlyModelViewSet):
         Применение параметра category  позволяет
         отфильтровать товары определенной (по id) категории.
         Дополнительно параметром sub_category = False можно
-        ограничить фильтрацию определенной категории,
+        ограничить фильтрацию определенной категорией,
         sub_category = true (true принято по умолчанию) включает в результаты
         запроса товары из подкатегорий.
         Применение параметра brand  позволяет
         отфильтровать товары определенного (по id) производителя.
-        Применение параметра search осуществляет поиск в наименованиях товара.
+        Применение параметра search осуществляет поиск по наименованию товара,
+        коду товара, наименованию категории товара.
         Поиск работает по частичным совпадениям без учёта регистра,
         можно искать по нескольким совпадениям:
         в запросе их надо разделить запятыми, без пробелов.

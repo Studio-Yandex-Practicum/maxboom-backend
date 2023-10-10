@@ -50,8 +50,10 @@ class BrandModelTest(TestCase):
                     getattr(brand, field), expected_value,
                     f'Ошибка в поле {field} '
                 )
-        self.assertEqual(brand.image.name, 'brand-images/'
-                         + BrandModelTest.uploaded.name)
+        self.assertEqual(
+            brand.image.name,
+            f'brand-images/{brand.slug}/{BrandModelTest.uploaded.name}'
+        )
 
     def test_delete_image_file(self):
         uploaded = SimpleUploadedFile(
@@ -145,12 +147,14 @@ class CategoryModelTest(TestCase):
         super().setUpClass()
         cls.category_root = Category.objects.create(
             name='Категория тестовая',
+            wb_category_id=12345
         )
         cls.category = Category.objects.create(
             name='Категория1',
             is_visible_on_main=True,
             is_prohibited=True,
             root=cls.category_root,
+            wb_category_id=12346
         )
 
     def test_add_slug(self):
@@ -158,7 +162,8 @@ class CategoryModelTest(TestCase):
         category = CategoryModelTest.category
         category_new = Category.objects.create(
             name='Категория2',
-            root=category
+            root=category,
+            wb_category_id=12347
         )
         self.assertEqual(
             category_new.slug, slugify(category_new.name)[:200]
@@ -224,6 +229,7 @@ class ProductModelTest(TestCase):
         cls.category = Category.objects.create(
             name='Категория1',
             slug='category1',
+            wb_category_id=12348
         )
         cls.product = Product.objects.create(
             name='Пусковое зарядное устройство 2',
@@ -232,6 +238,7 @@ class ProductModelTest(TestCase):
             brand=cls.brand,
             category=cls.category,
             code=169110394,
+            vendor_code='артикул 1',
             wb_urls='https://www.wildberries.ru/catalog/169110394/detail.aspx',
             is_deleted=True,
         )
@@ -266,10 +273,12 @@ class ProductModelTest(TestCase):
             description='Хороший продукт для',
             price=180,
             code=1691103945,
+            vendor_code='артикул 2',
             wb_urls='https://www.wildberries.ru/catalog/1691103945/detail.aspx'
         )
         self.assertEqual(
-            product.slug, slugify(product.name)[:200]
+            product.slug,
+            f'{slugify(product.name)}-{slugify(product.vendor_code)}'
         )
 
     def test_models_have_correct_object_name(self):
@@ -316,7 +325,8 @@ class ProductImageModelTest(TestCase):
             description='Хороший продукт',
             price=180,
             code=1689782771,
-            wb_urls='https://www.wildberries.ru/catalog/168978277/detail.aspx'
+            wb_urls='https://www.wildberries.ru/catalog/168978277/detail.aspx',
+            vendor_code='артикул 3'
         )
         cls.small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x02\x00'
@@ -349,8 +359,11 @@ class ProductImageModelTest(TestCase):
                     getattr(image, field), expected_value,
                     f'Ошибка в поле {field} '
                 )
-        self.assertEqual(image.image.name, 'products-images/'
-                         + ProductImageModelTest.uploaded.name)
+        self.assertEqual(
+            image.image.name,
+            f'product-images/{image.product.slug}/'
+            f'{ProductImageModelTest.uploaded.name}'
+        )
 
     def test_update_image_file(self):
         '''удаление файла изображения при обновлении объекта модели'''
@@ -384,6 +397,7 @@ class ProductImageModelTest(TestCase):
             description='Хороший продукт',
             price=180,
             code=16897827713,
+            vendor_code='артикул 4',
             wb_urls=('https://www.wildberries.ru/catalog/'
                      '16897827713/detail.aspx')
         )
@@ -409,7 +423,7 @@ class ProductImageModelTest(TestCase):
     def test_models_have_correct_object_name(self):
         '''корректное строчное представление объекта модели'''
         image = ProductImageModelTest.image
-        expected_str = 'products-images/small.gif'
+        expected_str = f'product-images/{image.product.slug}/small.gif'
         self.assertEqual(
             expected_str, str(image)
         )
