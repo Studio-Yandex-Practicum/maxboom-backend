@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from api.views.core import (
+from api.views.core_views import (
     AboutViewSet, ContactsViewSet, DeliveryInformationViewSet,
     TermsViewSet, PrivacyViewSet, BaseElementsView
 )

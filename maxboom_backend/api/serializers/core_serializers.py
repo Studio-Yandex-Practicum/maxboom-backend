@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from drf_spectacular.utils import extend_schema_field
+
 from core.models import (
     About, Privacy, DeliveryInformation,
     Contacts, Requisite, MainShop, OurShop,
@@ -137,10 +139,16 @@ class ContactsSerializer(BaseCoreSerializer):
     class Meta(BaseCoreSerializer.Meta):
         model = Contacts
 
+    @extend_schema_field(
+        field=RequisiteSerializer(many=True)
+    )
     def get_requisites(self, value):
         requisites = value.requisites.all()
         return RequisiteSerializer(requisites, many=True).data
 
+    @extend_schema_field(
+        field=MainShopSerializer
+    )
     def get_main_shop(self, value):
         try:
             main_shop = value.main_shop.all()[0]
@@ -148,6 +156,9 @@ class ContactsSerializer(BaseCoreSerializer):
             return "Отсутствует основной магазин!"
         return MainShopSerializer(main_shop).data
 
+    @extend_schema_field(
+        field=MailContactFormSerializer
+    )
     def get_mail_form(self, value):
         try:
             mail_form = value.mail_form.all()[0]
@@ -155,6 +166,9 @@ class ContactsSerializer(BaseCoreSerializer):
             return "Отсутствуют поля формы обращения!"
         return MailContactFormSerializer(mail_form).data
 
+    @extend_schema_field(
+        field=OurShopSerializer(many=True)
+    )
     def get_our_shops(self, value):
         our_shops = value.our_shops.all()
         return OurShopSerializer(
@@ -165,11 +179,10 @@ class MailContactSerializer(serializers.Serializer):
     """
     Сериализатор объектов вопросов к магазину.
     """
-
     id = serializers.SerializerMethodField(read_only=True)
-    person_name = serializers.CharField(read_only=True)
-    person_email = serializers.EmailField(read_only=True)
-    message = serializers.CharField(read_only=True)
+    person_name = serializers.CharField()
+    person_email = serializers.EmailField()
+    message = serializers.CharField()
 
     class Meta:
         model = MailContact
@@ -215,6 +228,9 @@ class HeaderSerializer(BaseCoreSerializer):
     class Meta(BaseCoreSerializer.Meta):
         model = Header
 
+    @extend_schema_field(
+        field=LogoSerializer
+    )
     def get_main_logo(self, value):
         try:
             main_logo = value.main_logo.all()[0]
@@ -222,6 +238,9 @@ class HeaderSerializer(BaseCoreSerializer):
             return "Отсутствует основной логотип!"
         return LogoSerializer(main_logo, context=self.context).data
 
+    @extend_schema_field(
+        field=SupportSerializer
+    )
     def get_support(self, value):
         try:
             support = value.support.all()[0]
@@ -246,6 +265,9 @@ class FooterSerializer(BaseCoreSerializer):
     class Meta(BaseCoreSerializer.Meta):
         model = Footer
 
+    @extend_schema_field(
+        field=LogoSerializer
+    )
     def get_main_logo(self, value):
         try:
             main_logo = value.main_logo.all()[0]
@@ -254,14 +276,28 @@ class FooterSerializer(BaseCoreSerializer):
         context = self.context
         return LogoSerializer(main_logo, context=context).data
 
+    @extend_schema_field(
+        field=LogoSerializer(many=True)
+    )
     def get_additional_logos(self, value):
         additional_logos = value.additional_logos.all()
         context = self.context
         return LogoSerializer(additional_logos, context=context, many=True).data
 
+    @extend_schema_field(
+        field=SupportSerializer
+    )
     def get_support(self, value):
         try:
             support = value.support.all()[0]
         except IndexError:
             return "Отсутствует информация о поддержке!"
         return SupportSerializer(support).data
+
+
+class BaseSerializer(serializers.Serializer):
+    """
+    Отдельный сериализатор для отображения в документации.
+    """
+    header = HeaderSerializer()
+    footer = FooterSerializer()
