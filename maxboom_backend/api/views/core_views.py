@@ -1,21 +1,25 @@
-from rest_framework import viewsets, status, views
+from rest_framework import viewsets, status, views, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from drf_spectacular.utils import (extend_schema, OpenApiExample,
+                                   OpenApiResponse, PolymorphicProxySerializer)
 
 from core.models import (
     About, Contacts, MailContact, Privacy, Terms,
     DeliveryInformation, Header, Footer
 )
-from api.serializers.core import (
+from api.serializers.core_serializers import (
     AboutSerializer, DeliveryInformationSerializer,
     PrivacySerializer, TermsSerializer, ContactsSerializer,
-    MailContactSerializer, HeaderSerializer, FooterSerializer
+    MailContactSerializer, HeaderSerializer, FooterSerializer,
+    BaseSerializer
 )
-from api.permissions.core import IsAdminOrPostOnly
+from api.permissions.core_permissions import IsAdminOrPostOnly
 
 
-class BaseInfoViewSet(viewsets.ReadOnlyModelViewSet):
+class BaseInfoViewSet(mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
     """
     Базовый класс для информационных моделей. Ограничивает
     от создания и редактирования на уровне вью.
@@ -24,7 +28,7 @@ class BaseInfoViewSet(viewsets.ReadOnlyModelViewSet):
 
 class AboutViewSet(BaseInfoViewSet):
     """
-    Вьюсет страницы "О нас".
+    Страница "О нас".
     """
 
     queryset = About.objects.all()
@@ -33,7 +37,7 @@ class AboutViewSet(BaseInfoViewSet):
 
 class DeliveryInformationViewSet(BaseInfoViewSet):
     """
-    Вьюсет страницы "Информация о доставке".
+    Страница "Информация о доставке".
     """
 
     queryset = DeliveryInformation.objects.all()
@@ -42,7 +46,7 @@ class DeliveryInformationViewSet(BaseInfoViewSet):
 
 class PrivacyViewSet(BaseInfoViewSet):
     """
-    Вьюсет страницы "Политика безопасности".
+    Страница "Политика безопасности".
     """
 
     queryset = Privacy.objects.all()
@@ -51,7 +55,7 @@ class PrivacyViewSet(BaseInfoViewSet):
 
 class TermsViewSet(BaseInfoViewSet):
     """
-    Вьюсет страницы "Условия соглашения".
+    Страница "Условия соглашения".
     """
 
     queryset = Terms.objects.all()
@@ -60,7 +64,7 @@ class TermsViewSet(BaseInfoViewSet):
 
 class ContactsViewSet(BaseInfoViewSet):
     """
-    Вьюсет страницы "Контакты".
+    Страница "Контакты".
     """
 
     queryset = Contacts.objects.all()
@@ -69,6 +73,20 @@ class ContactsViewSet(BaseInfoViewSet):
     # Отдельный эндпоинт позволяет по get-запросу получить
     # все запросы на обращение через e-mail и по post-запросу
     # отправить новое.
+    @extend_schema(
+        description='Получить текущие запросы обратной связи',
+        responses={status.HTTP_200_OK: MailContactSerializer(many=True)},
+        methods=['get']
+    )
+    @extend_schema(
+        methods=['post'],
+        request=MailContactSerializer,
+        description='Отправить запрос обратной связи',
+        responses={
+            status.HTTP_201_CREATED: MailContactSerializer,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(description='Bad request')
+        },
+    )
     @action(methods=['get', 'post'], detail=False,
             url_path='mail', permission_classes=[IsAdminOrPostOnly])
     def get_mail(self, request):
@@ -87,9 +105,14 @@ class ContactsViewSet(BaseInfoViewSet):
 
 class BaseElementsView(views.APIView):
     """
-    Общая вью для хэдера и футера.
+    Общее представление для хэдера и футера.
     """
 
+    @extend_schema(
+        responses={
+            status.HTTP_200_OK: BaseSerializer
+        }
+    )
     def get(self, request):
         try:
             header = Header.objects.all()[0]
