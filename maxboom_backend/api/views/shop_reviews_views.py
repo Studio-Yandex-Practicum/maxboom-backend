@@ -17,7 +17,7 @@ from shop_reviews.models import ReplayToReview, ShopReviews
 
 
 @extend_schema(
-    tags=["Shop reviews"],
+    tags=["Отзывы о магазине"],
 )
 @extend_schema_view(
     list=extend_schema(
@@ -26,7 +26,7 @@ from shop_reviews.models import ReplayToReview, ShopReviews
             OpenApiParameter(
                 name='review_id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
@@ -38,7 +38,7 @@ from shop_reviews.models import ReplayToReview, ShopReviews
             OpenApiParameter(
                 name='review_id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
@@ -51,27 +51,27 @@ from shop_reviews.models import ReplayToReview, ShopReviews
             ),
         ]
     ),
-    post=extend_schema(
+    create=extend_schema(
         summary='Запись ответа на отзыв',
         description='Запись ответа на отзыв, доступна только администратору',
         parameters=[
             OpenApiParameter(
                 name='review_id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
         ]
     ),
-    put=extend_schema(
+    update=extend_schema(
         summary='Замена ответа на отзыв',
         description='Замена ответа на отзыв, доступна только администратору',
         parameters=[
             OpenApiParameter(
                 name='review_id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
@@ -84,7 +84,7 @@ from shop_reviews.models import ReplayToReview, ShopReviews
             ),
         ]
     ),
-    patch=extend_schema(
+    partial_update=extend_schema(
         summary='Частичная замена ответа на отзыв',
         description='''
         Частичная замена ответа на отзыв, доступна только администратору
@@ -93,7 +93,7 @@ from shop_reviews.models import ReplayToReview, ShopReviews
             OpenApiParameter(
                 name='review_id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
@@ -106,14 +106,14 @@ from shop_reviews.models import ReplayToReview, ShopReviews
             ),
         ]
     ),
-    delete=extend_schema(
+    destroy=extend_schema(
         summary='Удаление ответа на отзыв',
         description='Удаление ответа на отзыв, доступна только администратору',
         parameters=[
             OpenApiParameter(
                 name='review_id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
@@ -149,7 +149,7 @@ class ReplayToReviewViewSet(viewsets.ModelViewSet):
 
 
 @extend_schema(
-    tags=["Shop reviews"],
+    tags=["Отзывы о магазине"],
     summary='Отзывы о магазине'
 )
 @extend_schema_view(
@@ -162,25 +162,25 @@ class ReplayToReviewViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name='id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
         ]
     ),
-    post=extend_schema(
+    create=extend_schema(
         summary='Запись отзыва о магазине',
         parameters=[
             OpenApiParameter(
                 name='id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
         ]
     ),
-    put=extend_schema(
+    update=extend_schema(
         summary='Замена отзыва о магазине',
         description='''
         Замена отзыва о магазине, доступна только администратору
@@ -189,13 +189,13 @@ class ReplayToReviewViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name='id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
         ]
     ),
-    patch=extend_schema(
+    partial_update=extend_schema(
         summary='Частичная замена отзыва о магазине',
         description='''
         Частичная замена отзыва о магазине, доступна только администратору
@@ -204,13 +204,13 @@ class ReplayToReviewViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name='id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),
         ]
     ),
-    delete=extend_schema(
+    destroy=extend_schema(
         summary='Удаление отзыва о магазине',
         description='''
         Удаление отзыва о магазине, доступна только администратору
@@ -219,7 +219,7 @@ class ReplayToReviewViewSet(viewsets.ModelViewSet):
             OpenApiParameter(
                 name='id',
                 location=OpenApiParameter.PATH,
-                description='id отзыва',
+                description='id отзыва о магазине',
                 required=True,
                 type=int
             ),

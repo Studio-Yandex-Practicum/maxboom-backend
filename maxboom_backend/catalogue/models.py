@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_slug(instance):
-    if type(instance) in [Brand, Category]:
+    if type(instance) is Brand:
         name = instance.name.replace('   ', ' ').replace('  ', ' ')
         slug_n = slugify(name)[:200]
         i = 1
@@ -24,15 +24,24 @@ def get_slug(instance):
             i += 1
         return slug_n
 
+    if type(instance) is Category:
+        name = instance.name.replace('   ', ' ').replace('  ', ' ')
+        slug_n = slugify(name)[:200]
+        i = 1
+        while Category.objects.filter(slug=slug_n).exists():
+            if len(slug_n) == 200:
+                slug_n = slug_n[:-1]
+            slug_n = slug_n + str(i)
+            i += 1
+        return slug_n
+
     if type(instance) is Product:
         name = instance.name.replace('   ', ' ').replace('  ', ' ')
-        vendor_code = instance.vendor_code.replace(
-            '   ', ' ').replace('  ', ' ')
-        slug_vendor_code = slugify(vendor_code)
-        slug_n = (slugify(name)[:199 - len(slug_vendor_code)]
-                  + '-' + slug_vendor_code)
+        code = str(instance.code)
+        slug_n = (slugify(name)[:199 - len(code)]
+                  + '-' + code)
         i = 1
-        while Brand.objects.filter(slug=slug_n).exists():
+        while Product.objects.filter(slug=slug_n).exists():
             if len(slug_n) == 200:
                 slug_n = slug_n[:-1]
             slug_n = slug_n + str(i)

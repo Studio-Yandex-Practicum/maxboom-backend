@@ -17,38 +17,39 @@ from drf_spectacular.utils import (
     # OpenApiExample
 )
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import RetrieveAPIView
 from rest_framework import filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 
 @extend_schema(
-    tags=["Catalogue"],
+    tags=["Каталог"],
 )
-@extend_schema_view(
-    list=extend_schema(
+class SearchView(RetrieveAPIView):
+    """Поиск в категориях и товарах"""
+
+    @extend_schema(
         summary='Поиск в категориях и товарах',
-        description="""
-        Получение списка категорий и товаров,
-         удовлетворяющих условиям поиска, параметр search.
-         Поиск работает по частичным совпадениям без учёта регистра,
-         можно искать по нескольким совпадениям:
-         в запросе их надо разделить запятыми, без пробелов.
-         Применение параметра ordering позволяет
-         упорядочить список категорий по  имени (name),
-         список товаров по имени, цене, коду товара (name, price, code).
-         Применение параметра category  позволяет
-         отфильтровать товары определенной (по id) категории.
-         Дополнительно параметром sub_category = False можно
-         ограничить фильтрацию определенной категорией,
-         sub_category = true (true принято по умолчанию) включает в результаты
-         запроса товары из подкатегорий.
-         Применение параметра description = True,
-         позволяет осуществлять поиск в описаниях товара.
-         Применение параметра limit определяет количество товаров на странице.
-         Применение параметра offset определяет,
-         с какого по счёту товара начать отсчёт.
+        description="""Получение списка категорий и товаров,
+        удовлетворяющих условиям поиска, параметр search.
+        Поиск работает по частичным совпадениям без учёта регистра,
+        можно искать по нескольким совпадениям:
+        в запросе их надо разделить запятыми, без пробелов.
+        Применение параметра ordering позволяет
+        упорядочить список категорий по  имени (name),
+        список товаров по имени, цене, коду товара (name, price, code).
+        Применение параметра category позволяет
+        провести поиск товара в определенной (по id) категории.
+        Дополнительно параметром sub_category = False можно
+        ограничить поиск товара определенной категорией (без подкатегорий),
+        sub_category = true (true принято по умолчанию) включает в результаты
+        запроса товары из подкатегорий.
+        Применение параметра description = True,
+        позволяет осуществлять поиск в описаниях товара.
+        Применение параметра limit определяет количество товаров на странице.
+        Применение параметра offset определяет,
+        с какого по счёту товара начать отсчёт.
         """,
         parameters=[
             OpenApiParameter(
@@ -68,21 +69,14 @@ from rest_framework.response import Response
             OpenApiParameter(
                 name='category',
                 location=OpenApiParameter.QUERY,
-                description='id категории, товары которой необходимо получить',
+                description='id категории, в которой провести поиск товаров',
                 required=False,
                 type=int
             ),
             OpenApiParameter(
                 name='sub_category',
                 location=OpenApiParameter.QUERY,
-                description='отображать товары подкатегорий',
-                required=False,
-                type=bool
-            ),
-            OpenApiParameter(
-                name='category_tree',
-                location=OpenApiParameter.QUERY,
-                description='отображение дерева категорий',
+                description='провести поиск в подкатегориях',
                 required=False,
                 type=bool
             ),
@@ -107,22 +101,9 @@ from rest_framework.response import Response
                 required=False,
                 type=int
             ),
-            OpenApiParameter(
-                name='brand',
-                location=OpenApiParameter.QUERY,
-                description=(
-                    'id производителя, товары которого необходимо получить'
-                ),
-                required=False,
-                type=int
-            ),
         ]
     )
-)
-class SearchView(ListAPIView):
-    """Поиск в категориях и товарах"""
-
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         resp_category = requests.get(
             request.build_absolute_uri(reverse('catalogue:category-list')),
             params=request.query_params,
@@ -137,34 +118,39 @@ class SearchView(ListAPIView):
         ):
             return Response(
                 'Поиск не возможен', status=status.HTTP_400_BAD_REQUEST)
-        if resp_category.content:
+        if (resp_category.status_code == status.HTTP_200_OK
+                and resp_category.content):
             data.append({'category': resp_category.json()})
-        if resp_product.content:
+        else:
+            data.append({'category': []})
+        if (resp_product.status_code == status.HTTP_200_OK
+                and resp_product.content):
             data.append({'product': resp_product.json()})
+        else:
+            data.append({'product': []})
         return Response(data=data, status=status.HTTP_200_OK)
 
 
 @extend_schema(
-    tags=["Catalogue"],
+    tags=["Каталог"],
 )
 @extend_schema_view(
     list=extend_schema(
         summary='Получение списка категорий',
-        description="""
-        Получение списка категорий, либо одной категории.
-         Применение параметра ordering позволяет
-         упорядочить список по  имени (name).
-         Применение параметра is_visible_on_main  позволяет
-         отфильтровать категории, которые должны отображаться
-         на главной странице.
-         Применение параметра category_tree  позволяет
-         получить отображение категорий с учетом их
-         вложенности (false принято по умолчанию).
-         Применение параметра search осуществляет поиск по наименованию
-         категории.
-         Поиск работает по частичным совпадениям без учёта регистра,
-         можно искать по нескольким совпадениям:
-         в запросе их надо разделить запятыми, без пробелов.
+        description="""Получение списка категорий.
+        Применение параметра ordering позволяет
+        упорядочить список по  имени (name).
+        Применение параметра is_visible_on_main  позволяет
+        отфильтровать категории, которые должны отображаться
+        на главной странице.
+        Применение параметра category_tree  позволяет
+        получить отображение категорий с учетом их
+        вложенности (false принято по умолчанию).
+        Применение параметра search осуществляет поиск по наименованию
+        категории.
+        Поиск работает по частичным совпадениям без учёта регистра,
+        можно искать по нескольким совпадениям:
+        в запросе их надо разделить запятыми, без пробелов.
         """,
         parameters=[
             OpenApiParameter(
@@ -211,17 +197,6 @@ class SearchView(ListAPIView):
     )
 )
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    11 Получение списка категорий, либо одной категории.
-     Применение параметра ordering позволяет
-     упорядочить список по  имени (name).
-     Применение параметра is_visible_on_main  позволяет
-     отфильтровать категории, которые должны отображаться на главной странице.
-     Применение параметра category_tree  позволяет
-     получить отображение категорий с учетом их
-     вложенности (false принято по умолчанию).
-    """
-
     lookup_field = 'slug'
     queryset = Category.objects.all().prefetch_related(
         'products', 'root', 'root__root', 'root__root__root',
@@ -249,18 +224,17 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @extend_schema(
-    tags=["Catalogue"],
+    tags=["Каталог"],
 )
 @extend_schema_view(
     list=extend_schema(
         summary='Получение списка производителей',
-        description="""
-        Получение списка производителей, либо одного производителя.
-         Применение параметра ordering позволяет
-         упорядочить список по  имени (name).
-         Применение параметра is_visible_on_main  позволяет
-         отфильтровать производителей, которые должны отображаться
-         на главной странице.
+        description="""Получение списка производителей,
+        Применение параметра ordering позволяет
+        упорядочить список по  имени (name).
+        Применение параметра is_visible_on_main  позволяет
+        отфильтровать производителей, которые должны отображаться
+        на главной странице.
         """,
         parameters=[
             OpenApiParameter(
@@ -293,14 +267,6 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     )
 )
 class BrandViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    11 Получение списка производителей, либо одного производителя.
-     Применение параметра ordering позволяет
-     упорядочить список по  имени (name).
-     Применение параметра is_visible_on_main  позволяет
-     отфильтровать производителей, которые должны отображаться
-     на главной странице.
-    """
     lookup_field = 'slug'
     queryset = Brand.objects.all().filter(
         is_prohibited=False)
@@ -317,13 +283,13 @@ class BrandViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 @extend_schema(
-    tags=["Catalogue"],
+    tags=["Каталог"],
     summary='Каталог',
 )
 @extend_schema_view(
     list=extend_schema(
         summary='Получение списка товаров',
-        description="""Получение списка товаров, либо одного товара.
+        description="""Получение списка товаров.
         Применение параметра limit определяет количество товаров на странице.
         Применение параметра offset определяет,
         с какого по счёту товара начать отсчёт.
@@ -420,28 +386,6 @@ class BrandViewSet(viewsets.ReadOnlyModelViewSet):
     )
 )
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    11 Получение списка товаров, либо одного товара.
-    Применение параметра limit определяет количество товаров на странице.
-    Применение параметра offset определяет,
-    с какого по счёту товара начать отсчёт.
-    Применение параметра ordering позволяет
-    упорядочить список по  имени, цене, коду товара ('name', 'price', 'code').
-    Применение параметра category  позволяет
-    отфильтровать товары определенной (по id) категории.
-    Дополнительно параметром sub_category = False можно
-    ограничить фильтрацию определенной категории,
-    sub_category = true (true принято по умолчанию) включает в результаты
-    запроса товары из подкатегорий.
-    Применение параметра brand  позволяет
-    отфильтровать товары определенного (по id) производителя.
-    Применение параметра search осуществляет поиск в наименованиях товара.
-    Поиск работает по частичным совпадениям без учёта регистра,
-    можно искать по нескольким совпадениям:
-    в запросе их надо разделить запятыми, без пробелов.
-    Применение параметра description = True,
-    позволяет осуществлять поиск в описаниях товара.
-    """
     lookup_field = 'slug'
     queryset = Product.objects.all().prefetch_related(
         'category', 'category__branches',

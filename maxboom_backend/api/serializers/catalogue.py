@@ -19,7 +19,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('__all__')
+        # fields = ('__all__')
+        exclude = ('vendor_code', 'imt_id')
 
     def get_price(self, obj):
         if self.context['request'].user.is_authenticated:
