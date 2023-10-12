@@ -81,6 +81,7 @@ class CatalogueURLTests(TestCase):
         category_root = CatalogueURLTests.category_root
         product = CatalogueURLTests.product
         status_pages = {
+            '/api/search/': HTTPStatus.OK,
             '/api/catalogue/brand/': HTTPStatus.OK,
             f'/api/catalogue/brand/{brand.slug}/': HTTPStatus.OK,
             '/api/catalogue/category/': HTTPStatus.OK,

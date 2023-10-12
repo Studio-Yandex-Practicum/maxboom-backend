@@ -1,5 +1,5 @@
-import requests
 from rest_framework import status, viewsets
+from rest_framework.decorators import api_view
 
 from api.filters.catalogue import (
     CustomProductSearchFilter,
@@ -9,7 +9,6 @@ from api.serializers.catalogue import (
     BrandSerializer, CategorySerializer,
     CategoryTreeSerializer, ProductSerializer,
 )
-from django.urls import reverse
 from catalogue.models import Brand, Category, Product
 from drf_spectacular.utils import (
     extend_schema, extend_schema_view,
@@ -17,118 +16,9 @@ from drf_spectacular.utils import (
     # OpenApiExample
 )
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.generics import RetrieveAPIView
 from rest_framework import filters
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
-
-
-@extend_schema(
-    tags=["Каталог"],
-)
-class SearchView(RetrieveAPIView):
-    """Поиск в категориях и товарах"""
-
-    @extend_schema(
-        summary='Поиск в категориях и товарах',
-        description="""Получение списка категорий и товаров,
-        удовлетворяющих условиям поиска, параметр search.
-        Поиск работает по частичным совпадениям без учёта регистра,
-        можно искать по нескольким совпадениям:
-        в запросе их надо разделить запятыми, без пробелов.
-        Применение параметра ordering позволяет
-        упорядочить список категорий по  имени (name),
-        список товаров по имени, цене, коду товара (name, price, code).
-        Применение параметра category позволяет
-        провести поиск товара в определенной (по id) категории.
-        Дополнительно параметром sub_category = False можно
-        ограничить поиск товара определенной категорией (без подкатегорий),
-        sub_category = true (true принято по умолчанию) включает в результаты
-        запроса товары из подкатегорий.
-        Применение параметра description = True,
-        позволяет осуществлять поиск в описаниях товара.
-        Применение параметра limit определяет количество товаров на странице.
-        Применение параметра offset определяет,
-        с какого по счёту товара начать отсчёт.
-        """,
-        parameters=[
-            OpenApiParameter(
-                name='search',
-                location=OpenApiParameter.QUERY,
-                description='поиск по наименованию',
-                required=False,
-                type=str
-            ),
-            OpenApiParameter(
-                name='description',
-                location=OpenApiParameter.QUERY,
-                description='поиск в описаниях товаров',
-                required=False,
-                type=bool
-            ),
-            OpenApiParameter(
-                name='category',
-                location=OpenApiParameter.QUERY,
-                description='id категории, в которой провести поиск товаров',
-                required=False,
-                type=int
-            ),
-            OpenApiParameter(
-                name='sub_category',
-                location=OpenApiParameter.QUERY,
-                description='провести поиск в подкатегориях',
-                required=False,
-                type=bool
-            ),
-            OpenApiParameter(
-                name='ordering',
-                location=OpenApiParameter.QUERY,
-                description='способ сортировки',
-                required=False,
-                type=str
-            ),
-            OpenApiParameter(
-                name='limit',
-                location=OpenApiParameter.QUERY,
-                description='количество товаров на странице',
-                required=False,
-                type=int
-            ),
-            OpenApiParameter(
-                name='offset',
-                location=OpenApiParameter.QUERY,
-                description='определяет с какого товара начать отсчёт',
-                required=False,
-                type=int
-            ),
-        ]
-    )
-    def get(self, request, *args, **kwargs):
-        resp_category = requests.get(
-            request.build_absolute_uri(reverse('catalogue:category-list')),
-            params=request.query_params,
-        )
-        resp_product = requests.get(
-            request.build_absolute_uri(reverse('catalogue:product-list')),
-            params=request.query_params)
-        data = []
-        if (
-            resp_category.status_code == status.HTTP_400_BAD_REQUEST
-            and resp_product.status_code == status.HTTP_400_BAD_REQUEST
-        ):
-            return Response(
-                'Поиск не возможен', status=status.HTTP_400_BAD_REQUEST)
-        if (resp_category.status_code == status.HTTP_200_OK
-                and resp_category.content):
-            data.append({'category': resp_category.json()})
-        else:
-            data.append({'category': []})
-        if (resp_product.status_code == status.HTTP_200_OK
-                and resp_product.content):
-            data.append({'product': resp_product.json()})
-        else:
-            data.append({'product': []})
-        return Response(data=data, status=status.HTTP_200_OK)
 
 
 @extend_schema(
@@ -199,7 +89,7 @@ class SearchView(RetrieveAPIView):
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     lookup_field = 'slug'
     queryset = Category.objects.all().prefetch_related(
-        'products', 'root', 'root__root', 'root__root__root',
+        'root', 'root__root', 'root__root__root',
         'branches__branches__branches',
         'branches__branches', 'branches',
     ).filter(is_prohibited=False)
@@ -421,3 +311,109 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+
+
+@extend_schema(
+    tags=["Каталог"],
+    summary='Поиск в категориях и товарах',
+    description="""Получение списка категорий и товаров,
+    удовлетворяющих условиям поиска, параметр search.
+    Поиск работает по частичным совпадениям без учёта регистра,
+    можно искать по нескольким совпадениям:
+    в запросе их надо разделить запятыми, без пробелов.
+    Применение параметра ordering позволяет
+    упорядочить список категорий по  имени (name),
+    список товаров по имени, цене, коду товара (name, price, code).
+    Применение параметра category позволяет
+    провести поиск товара в определенной (по id) категории.
+    Дополнительно параметром sub_category = False можно
+    ограничить поиск товара определенной категорией (без подкатегорий),
+    sub_category = true (true принято по умолчанию) включает в результаты
+    запроса товары из подкатегорий.
+    Применение параметра description = True,
+    позволяет осуществлять поиск в описаниях товара.
+    Применение параметра limit определяет количество товаров на странице.
+    Применение параметра offset определяет,
+    с какого по счёту товара начать отсчёт.
+    """,
+    parameters=[
+        OpenApiParameter(
+            name='search',
+            location=OpenApiParameter.QUERY,
+            description='поиск по наименованию',
+            required=False,
+            type=str
+        ),
+        OpenApiParameter(
+            name='description',
+            location=OpenApiParameter.QUERY,
+            description='поиск в описаниях товаров',
+            required=False,
+            type=bool
+        ),
+        OpenApiParameter(
+            name='category',
+            location=OpenApiParameter.QUERY,
+            description='id категории, в которой провести поиск товаров',
+            required=False,
+            type=int
+        ),
+        OpenApiParameter(
+            name='sub_category',
+            location=OpenApiParameter.QUERY,
+            description='провести поиск в подкатегориях',
+            required=False,
+            type=bool
+        ),
+        OpenApiParameter(
+            name='ordering',
+            location=OpenApiParameter.QUERY,
+            description='способ сортировки',
+            required=False,
+            type=str
+        ),
+        OpenApiParameter(
+            name='limit',
+            location=OpenApiParameter.QUERY,
+            description='количество товаров на странице',
+            required=False,
+            type=int
+        ),
+        OpenApiParameter(
+            name='offset',
+            location=OpenApiParameter.QUERY,
+            description='определяет с какого товара начать отсчёт',
+            required=False,
+            type=int
+        ),
+    ]
+)
+@api_view(('GET',))
+def search(request, *args, **kwargs):
+    resp_category = CategoryViewSet.as_view(
+        actions={'get': 'list'},
+    )(request=request._request, *args, **kwargs)
+    resp_product = ProductViewSet.as_view(
+        actions={'get': 'list'},
+    )(request=request._request, *args, **kwargs)
+    data = {}
+    if (
+        resp_category.status_code == status.HTTP_400_BAD_REQUEST
+        and resp_product.status_code == status.HTTP_400_BAD_REQUEST
+    ):
+        return Response(
+            'Поиск не возможен', status=status.HTTP_400_BAD_REQUEST)
+    if (resp_category.status_code == status.HTTP_200_OK):
+        data['category'] = resp_category.render().data
+    else:
+        data['category'] = []
+    if (resp_product.status_code == status.HTTP_200_OK):
+        data['product'] = resp_product.render().data
+    else:
+        data['product'] = {
+            'count': 0,
+            'next': None,
+            'previous': None,
+            'results': []
+        }
+    return Response(data=data, status=status.HTTP_200_OK,)

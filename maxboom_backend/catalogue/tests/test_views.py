@@ -193,6 +193,32 @@ class CatalogueViewsTests(TestCase):
         self.assertEqual(1, products_count,
                          'Не найден товар по фразе из описания')
 
+    def test_common_search(self):
+        """
+        поиск товаров по наименованию
+        """
+        address = '/api/search/?search=ка'
+        response = self.user_client.get(address)
+        print(response.json())
+        category_count = len(response.data.get('category'))
+        self.assertEqual(2, category_count,
+                         'Пользователь не получил'
+                         ' категорий')
+        products_count = len(response.data.get('product').get('results'))
+        self.assertEqual(3, products_count,
+                         'Пользователь не получил товары')
+
+    def test_search_in_description_(self):
+        """
+        поиск товаров по наименованию и описанию
+        """
+        address = ('/api/search/?search='
+                   'description%20search&description=true')
+        response = self.user_client.get(address)
+        products_count = len(response.data.get('product').get('results'))
+        self.assertEqual(1, products_count,
+                         'Не найден товар по фразе из описания')
+
     def test_products_search_in_category_without_sub_category(self):
         """
         поиск товаров по наименованию среди товаров определенной
@@ -394,7 +420,7 @@ class CatalogueViewsTests(TestCase):
                             'http://testserver/media/'
                             'product-images/'
                             'puskovoe-zaryadnoe-ustrojstvo-2'
-                            '-dlya-poiska-artikul-6/'
+                            '-dlya-poiska-169110394/'
                             'prod_img.gif'
                         )
                     }
@@ -402,7 +428,7 @@ class CatalogueViewsTests(TestCase):
                 'price': price,
                 'name': 'Пусковое зарядное устройство 2 для поиска',
                 'slug': 'puskovoe-zaryadnoe-ustrojstvo-2'
-                        '-dlya-poiska-artikul-6',
+                        '-dlya-poiska-169110394',
                 'description': 'Хороший продукт для description search',
                 'code': 169110394,
                 'wb_urls': 'https://www.wildberries.ru/'
@@ -417,7 +443,7 @@ class CatalogueViewsTests(TestCase):
                 'images': [],
                 'price': price,
                 'name': 'Пусковое зарядное устройство 4',
-                'slug': 'puskovoe-zaryadnoe-ustrojstvo-4-artikul-8',
+                'slug': 'puskovoe-zaryadnoe-ustrojstvo-4-1691103959',
                 'description': 'Хороший продукт для 4',
                 'code': 1691103959,
                 'wb_urls': 'https://www.wildberries.ru/'
@@ -432,7 +458,7 @@ class CatalogueViewsTests(TestCase):
                 'images': [],
                 'price': price,
                 'name': 'Пусковое зарядное устройство 5',
-                'slug': 'puskovoe-zaryadnoe-ustrojstvo-5-artikul-9',
+                'slug': 'puskovoe-zaryadnoe-ustrojstvo-5-1691103945',
                 'description': 'Хороший продукт для',
                 'code': 1691103945,
                 'wb_urls': 'https://www.wildberries.ru/'
@@ -459,13 +485,13 @@ class CatalogueViewsTests(TestCase):
                     'image': 'http://testserver/media/'
                              'product-images/'
                              'puskovoe-zaryadnoe-ustrojstvo-2'
-                             '-dlya-poiska-artikul-6/'
+                             '-dlya-poiska-169110394/'
                              'prod_img.gif'
                 }
             ],
             'price': price,
             'name': 'Пусковое зарядное устройство 2 для поиска',
-            'slug': 'puskovoe-zaryadnoe-ustrojstvo-2-dlya-poiska-artikul-6',
+            'slug': 'puskovoe-zaryadnoe-ustrojstvo-2-dlya-poiska-169110394',
             'description': 'Хороший продукт для description search',
             'code': 169110394,
             'wb_urls': 'https://www.wildberries.ru/'
@@ -490,13 +516,13 @@ class CatalogueViewsTests(TestCase):
                     'image': 'http://testserver/media/'
                              'product-images/'
                              'puskovoe-zaryadnoe-ustrojstvo-2'
-                             '-dlya-poiska-artikul-6/'
+                             '-dlya-poiska-169110394/'
                              'prod_img.gif'
                 }
             ],
             'price': price,
             'name': 'Пусковое зарядное устройство 2 для поиска',
-            'slug': 'puskovoe-zaryadnoe-ustrojstvo-2-dlya-poiska-artikul-6',
+            'slug': 'puskovoe-zaryadnoe-ustrojstvo-2-dlya-poiska-169110394',
             'description': 'Хороший продукт для description search',
             'code': 169110394,
             'wb_urls': 'https://www.wildberries.ru/'

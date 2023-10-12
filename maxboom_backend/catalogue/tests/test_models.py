@@ -278,7 +278,7 @@ class ProductModelTest(TestCase):
         )
         self.assertEqual(
             product.slug,
-            f'{slugify(product.name)}-{slugify(product.vendor_code)}'
+            f'{slugify(product.name)}-{slugify(product.code)}'
         )
 
     def test_models_have_correct_object_name(self):
