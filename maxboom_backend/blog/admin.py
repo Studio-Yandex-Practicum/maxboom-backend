@@ -124,7 +124,7 @@ class CommentsAdmin(admin.ModelAdmin):
     @admin.display(description='Опубликовать выбранные комментарии')
     def make_published(self, request, queryset):
         """
-        Действие: публикация комментария в админке.
+        Действие: публикация комментария.
         """
 
         updated = queryset.update(is_published=True)
@@ -142,7 +142,7 @@ class CommentsAdmin(admin.ModelAdmin):
     @admin.display(description='Снять с публикации выбранные комментарии')
     def make_unpublished(self, request, queryset):
         """
-        Действие: Снять с публикации комментарий в админке.
+        Действие: cнять с публикации комментарий.
         """
 
         updated = queryset.update(is_published=False)
