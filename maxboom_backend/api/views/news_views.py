@@ -10,7 +10,7 @@ from drf_spectacular.utils import (extend_schema,
 
 
 @extend_schema(
-    tags=['Shopnews'],
+    tags=['Новости'],
     description='Эндпоинт для доступа к новостям',
 )
 @extend_schema_view(

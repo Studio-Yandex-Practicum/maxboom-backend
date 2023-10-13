@@ -31,3 +31,4 @@ class NewsAdmin(admin.ModelAdmin):
     list_filter = (
         'title',
         'pub_date',)
+    search_fields = ('title',)
