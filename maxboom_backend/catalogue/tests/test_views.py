@@ -199,7 +199,6 @@ class CatalogueViewsTests(TestCase):
         """
         address = '/api/search/?search=ка'
         response = self.user_client.get(address)
-        print(response.json())
         category_count = len(response.data.get('category'))
         self.assertEqual(2, category_count,
                          'Пользователь не получил'
