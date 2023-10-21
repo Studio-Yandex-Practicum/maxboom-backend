@@ -17,6 +17,7 @@ urlpatterns = [
     path('api/', include('api.urls.accounts_urls')),
     path('api/', include('api.urls.core_urls')),
     path('api/', include('api.urls.shop_reviews_urls')),
+    path('api/', include('api.urls.catalogue')),
     path('api/', include('api.urls.news_urls')),
     path('api/', include('api.urls.blog_urls')),
     path('api/', include('api.urls.stories_urls')),

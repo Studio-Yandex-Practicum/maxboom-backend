@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from shop_reviews.models import (
-    ShopReviews, ReplayToReview
-)
+
+from shop_reviews.models import ReplayToReview, ShopReviews
 
 
 class ReplayToReviewSerializer(serializers.ModelSerializer):
