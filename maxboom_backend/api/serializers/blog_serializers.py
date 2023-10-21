@@ -60,8 +60,7 @@ class PostLightSerializer(serializers.ModelSerializer):
             return 'Администратор'
 
     def get_comments_quantity(self, obj):
-        comments = Comments.objects.select_related(
-            'post').filter(
+        comments = Comments.objects.filter(
                 post=obj,
                 is_published=True)
         return comments.count()
