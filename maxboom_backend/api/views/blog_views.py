@@ -21,7 +21,7 @@ from drf_spectacular.utils import (extend_schema,
 )
 @extend_schema_view(
     list=extend_schema(
-        summary='Получить список постов',
+        summary='Получение списка постов',
         responses={
             status.HTTP_200_OK: PostSerializer(many=True),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
@@ -38,7 +38,7 @@ from drf_spectacular.utils import (extend_schema,
         ],
     ),
     retrieve=extend_schema(
-        summary='Получить отдельный пост',
+        summary='Получение отдельного поста',
         responses={
             status.HTTP_200_OK: PostSerializer,
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
@@ -81,7 +81,7 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
 )
 @extend_schema_view(
     list=extend_schema(
-        summary='Получить список категорий',
+        summary='Получение списка категорий',
         responses={
             status.HTTP_200_OK: CategoryListSerializer(many=True),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
@@ -98,7 +98,7 @@ class PostViewSet(viewsets.ReadOnlyModelViewSet):
         ],
     ),
     retrieve=extend_schema(
-        summary='Получить отдельную категорию',
+        summary='Получение отдельной категории',
         responses={
             status.HTTP_200_OK: CategoryDetailSerializer,
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
@@ -138,7 +138,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 )
 @extend_schema_view(
     list=extend_schema(
-        summary='Получить список комментариев',
+        summary='Получение списка комментариев',
         responses={
             status.HTTP_200_OK: CommentSerializer(many=True),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
@@ -162,7 +162,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
             ],
         ),
     create=extend_schema(
-        summary='Создание нового поста',
+        summary='Создание комментария для поста',
         responses={
             status.HTTP_201_CREATED: CommentPostSerializer,
             status.HTTP_404_NOT_FOUND: OpenApiResponse(
