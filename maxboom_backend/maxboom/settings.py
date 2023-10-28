@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'payment',
     'shop_reviews',
     'stories.apps.StoriesConfig',
+    'cart',
 ]
 
 MIDDLEWARE = [
