@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from cart.models import Cart, ProductCart
 
@@ -31,10 +32,35 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ('products', 'cart_id', 'cart_full_price')
+        fields = ('id', 'products', 'user', 'cart_full_price')
 
 
 class ProductCartCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductCart
+        fields = ('product', 'cart', 'amount')
+
+    def create(self, validated_data):
+        if products := ProductCart.objects.filter(
+                cart=validated_data['cart'],
+                product=validated_data['product']
+        ):
+            product = products[0]
+            product.amount += validated_data['amount']
+            product.save()
+            return product
+        else:
+            return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        if products := ProductCart.objects.filter(
+                cart=validated_data['cart'],
+                product=validated_data['product']
+        ):
+            product = products[0]
+            product.amount = validated_data['amount']
+            product.save()
+            return product
+        else:
+            return super().create(validated_data)

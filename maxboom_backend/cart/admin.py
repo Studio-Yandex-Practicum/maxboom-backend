@@ -15,4 +15,3 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(ProductCart)
 class ProductCartAdmin(admin.ModelAdmin):
     ...
-
