@@ -62,11 +62,14 @@ INSTALLED_APPS = [
     'api',
     'blog',
     'catalogue',
+    'sorl.thumbnail',
+    'django_filters',
     'core',
     'news',
     'payment',
     'shop_reviews',
     'stories.apps.StoriesConfig',
+    'cart',
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,5 @@
 from django.test import TestCase
-from shop_reviews.models import ShopReviews, ReplayToReview
+from shop_reviews.models import ReplayToReview, ShopReviews
 
 
 class ShopReviewsModelTest(TestCase):
@@ -62,14 +62,14 @@ class ShopReviewsModelTest(TestCase):
         review = ShopReviewsModelTest.review
         scores = [review.delivery_speed_score,
                   review.price_score, review.quality_score]
-        expected_scores_avg = round(sum(scores)/len(scores), 1)
+        expected_scores_avg = round(sum(scores) / len(scores), 1)
         self.assertEqual(
             expected_scores_avg, review.average_score
         )
 
     @classmethod
     def tearDownClass(cls):
-        super().setUpClass()
+        super().tearDownClass()
 
 
 class ReplayToReviewModelTest(TestCase):
@@ -126,4 +126,4 @@ class ReplayToReviewModelTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().setUpClass()
+        super().tearDownClass()

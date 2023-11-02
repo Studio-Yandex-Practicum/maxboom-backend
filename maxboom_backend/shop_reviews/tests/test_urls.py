@@ -1,10 +1,9 @@
 from http import HTTPStatus
+
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.test import APIClient
-from shop_reviews.models import ShopReviews, ReplayToReview
-# from django.contrib.auth.models import User
-from django.contrib.auth import get_user_model
-
+from shop_reviews.models import ReplayToReview, ShopReviews
 
 User = get_user_model()
 
@@ -42,9 +41,9 @@ class ShopReviewsURLTests(TestCase):
             '/api/': HTTPStatus.OK,
             '/api/store-reviews/': HTTPStatus.OK,
             f'/api/store-reviews/{review.pk}/': HTTPStatus.OK,
-            f'/api/store-reviews/{review.pk}/replay/': HTTPStatus.UNAUTHORIZED,  #cHTTPStatus.FORBIDDEN,
+            f'/api/store-reviews/{review.pk}/replay/': HTTPStatus.UNAUTHORIZED,
             '/api/store-reviews/'
-            f'{review.pk}/replay/{replay.pk}/': HTTPStatus.UNAUTHORIZED, # HTTPStatus.FORBIDDEN,
+            f'{review.pk}/replay/{replay.pk}/': HTTPStatus.UNAUTHORIZED,
             '/unexisting_page': HTTPStatus.NOT_FOUND
         }
         for address, code in status_pages.items():
@@ -72,4 +71,4 @@ class ShopReviewsURLTests(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().setUpClass()
+        super().tearDownClass()
