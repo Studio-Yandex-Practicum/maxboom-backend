@@ -1,4 +1,5 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.utils.translation import ngettext
 from django.utils.html import format_html
 
 from .models import Category, Post, Tag, Comments
@@ -33,6 +34,7 @@ class PostAdmin(admin.ModelAdmin):
     )
     filter_horizontal = ('tags',)
     empty_value_display = '-пусто-'
+    search_fields = ('title',)
 
     @admin.display(description='Изображение')
     def image_preview(self, obj):
@@ -54,8 +56,7 @@ class PostAdmin(admin.ModelAdmin):
 
     @admin.display(description='Комментарии')
     def show_comments(self, obj):
-        comments = Comments.objects.select_related(
-            'post').filter(post=obj, is_published=True)
+        comments = Comments.objects.filter(post=obj, is_published=True)
         return comments.count()
 
 
@@ -76,6 +77,7 @@ class CategoryAdmin(admin.ModelAdmin):
         'title',
     )
     empty_value_display = '-пусто-'
+    search_fields = ('title',)
 
 
 @admin.register(Tag)
@@ -90,6 +92,7 @@ class TagAdmin(admin.ModelAdmin):
     list_filter = (
         'name',
     )
+    search_fields = ('name',)
 
 
 @admin.register(Comments)
@@ -111,7 +114,45 @@ class CommentsAdmin(admin.ModelAdmin):
         'pub_date',
         'is_published',
     )
+    search_fields = ('author', 'author',)
+    actions = ('make_published', 'make_unpublished',)
 
     @admin.display(description='Комментарии')
     def short_comment_view(self, obj):
         return obj.text[:50] + '...' if len(obj.text) > 50 else obj.text[:50]
+
+    @admin.display(description='Опубликовать выбранные комментарии')
+    def make_published(self, request, queryset):
+        """
+        Действие: публикация комментария.
+        """
+
+        updated = queryset.update(is_published=True)
+        self.message_user(
+            request,
+            ngettext(
+                '%d комментарий был успешно опубликован.',
+                '%d комментарии были успешно опубликованы.',
+                updated,
+            )
+            % updated,
+            messages.SUCCESS,
+        )
+
+    @admin.display(description='Снять с публикации выбранные комментарии')
+    def make_unpublished(self, request, queryset):
+        """
+        Действие: cнять с публикации комментарий.
+        """
+
+        updated = queryset.update(is_published=False)
+        self.message_user(
+            request,
+            ngettext(
+                '%d комментарий был успешно снят с публикации.',
+                '%d комментарии были успешно сняты с публикации.',
+                updated,
+            )
+            % updated,
+            messages.SUCCESS,
+        )
