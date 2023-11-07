@@ -12,11 +12,13 @@ class MetaDataModel(models.Model):
 
     meta_title = models.CharField(
         verbose_name='Мета-название страницы',
+        help_text='Мета-название страницы для SEO',
         max_length=255,
         blank=True,
         null=True)
     meta_description = models.CharField(
         verbose_name='Мета-описание страницы',
+        help_text='Мета-описание страницы для SEO',
         max_length=255,
         blank=True,
         null=True)
@@ -32,11 +34,13 @@ class Category(MetaDataModel):
 
     title = models.CharField(
         max_length=250,
-        verbose_name='Название категории')
+        verbose_name='Название категории',
+        help_text='Название категории')
     slug = models.SlugField(
         unique=True,
         max_length=50,
-        verbose_name='Слаг')
+        verbose_name='Слаг',
+        help_text='Слаг для категории')
 
     class Meta:
         verbose_name = 'Категория'
@@ -54,6 +58,7 @@ class Tag(models.Model):
 
     name = models.CharField(
         verbose_name='Название',
+        help_text='Название тега',
         max_length=200)
 
     class Meta:
@@ -72,20 +77,25 @@ class Post(MetaDataModel):
 
     title = models.CharField(
         verbose_name='Заголовок',
+        help_text='Заголовок поста',
         max_length=255)
     text = models.TextField(
-        verbose_name='Текст')
+        verbose_name='Текст',
+        help_text='Текст поста')
     author = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        verbose_name='Автор')
+        verbose_name='Автор',
+        help_text='Автор поста')
     pub_date = models.DateField(
         verbose_name='Дата публикации',
+        help_text='Дата создания поста',
         auto_now_add=True)
     image = models.ImageField(
         verbose_name='Изображение',
+        help_text='Изображние для поста',
         upload_to='blog/',
         blank=True,
         null=True)
@@ -93,21 +103,25 @@ class Post(MetaDataModel):
         Category,
         on_delete=models.SET_NULL,
         verbose_name='Категория',
+        help_text='Категория, к которой относится пост',
         related_name='posts',
         blank=True,
         null=True)
     tags = models.ManyToManyField(
         Tag,
         verbose_name='Теги',
+        help_text='Теги для поста.',
         related_name='posts',
         blank=True)
     views = models.PositiveIntegerField(
         verbose_name='Количество просмотров',
+        help_text='Количество просмотров пользователями данного поста',
         default=0)
     slug = models.SlugField(
         unique=True,
         max_length=50,
-        verbose_name='Слаг')
+        verbose_name='Слаг',
+        help_text='Слаг для поста')
 
     class Meta:
         verbose_name = 'Пост'
@@ -137,19 +151,24 @@ class Comments(models.Model):
 
     author = models.CharField(
         max_length=200,
-        verbose_name='Имя')
+        verbose_name='Имя',
+        help_text='Автор комментария')
     post = models.ForeignKey(
         Post,
         verbose_name='Пост',
+        help_text='Комментарий для данного поста',
         on_delete=models.CASCADE,
         related_name='comments')
     text = models.TextField(
-        verbose_name='Комментарий')
+        verbose_name='Комментарий',
+        help_text='Текст комментария')
     pub_date = models.DateField(
         verbose_name='Дата создания',
+        help_text='Дата создания комментария',
         auto_now_add=True)
     is_published = models.BooleanField(
         verbose_name='Опубликован',
+        help_text='Статус публикации комментария',
         default=False)
 
     class Meta:

@@ -30,6 +30,7 @@ class Cart(models.Model):
 
     @property
     def cart_full_price(self):
+        """Высчитывает полную стоимость корзины."""
         products = self.products.through.objects.filter(cart=self)
         prices = [
             round(product.full_price, 2) for product in products
@@ -64,6 +65,7 @@ class ProductCart(models.Model):
 
     @property
     def full_price(self):
+        """Высчитывает полную стоимость продукта в корзине."""
         price = self.product.price
         return round(price * self.amount, 2)
 
