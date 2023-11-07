@@ -2,8 +2,9 @@ from rest_framework import viewsets, status, views, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from drf_spectacular.utils import (extend_schema, OpenApiExample,
-                                   OpenApiResponse, PolymorphicProxySerializer)
+from drf_spectacular.utils import (
+    extend_schema, OpenApiResponse,
+)
 
 from core.models import (
     About, Contacts, MailContact, Privacy, Terms,
@@ -18,14 +19,21 @@ from api.serializers.core_serializers import (
 from api.permissions.core_permissions import IsAdminOrPostOnly
 
 
+@extend_schema(
+    tags=["Статика"],
+)
 class BaseInfoViewSet(mixins.ListModelMixin,
                       viewsets.GenericViewSet):
     """
     Базовый класс для информационных моделей. Ограничивает
     от создания и редактирования на уровне вью.
     """
+    pagination_class = None
 
 
+@extend_schema(
+    summary="О нас"
+)
 class AboutViewSet(BaseInfoViewSet):
     """
     Страница "О нас".
@@ -35,6 +43,9 @@ class AboutViewSet(BaseInfoViewSet):
     serializer_class = AboutSerializer
 
 
+@extend_schema(
+    summary="Информация о доставке"
+)
 class DeliveryInformationViewSet(BaseInfoViewSet):
     """
     Страница "Информация о доставке".
@@ -44,6 +55,9 @@ class DeliveryInformationViewSet(BaseInfoViewSet):
     serializer_class = DeliveryInformationSerializer
 
 
+@extend_schema(
+    summary="Политика безопасности"
+)
 class PrivacyViewSet(BaseInfoViewSet):
     """
     Страница "Политика безопасности".
@@ -53,6 +67,9 @@ class PrivacyViewSet(BaseInfoViewSet):
     serializer_class = PrivacySerializer
 
 
+@extend_schema(
+    summary="Условия соглашения"
+)
 class TermsViewSet(BaseInfoViewSet):
     """
     Страница "Условия соглашения".
@@ -62,6 +79,9 @@ class TermsViewSet(BaseInfoViewSet):
     serializer_class = TermsSerializer
 
 
+@extend_schema(
+    summary="Контакты"
+)
 class ContactsViewSet(BaseInfoViewSet):
     """
     Страница "Контакты".
@@ -74,17 +94,19 @@ class ContactsViewSet(BaseInfoViewSet):
     # все запросы на обращение через e-mail и по post-запросу
     # отправить новое.
     @extend_schema(
-        description='Получить текущие запросы обратной связи',
+        summary="Обратная связь",
+        description="Получить текущие запросы обратной связи",
+        methods=['get'],
         responses={status.HTTP_200_OK: MailContactSerializer(many=True)},
-        methods=['get']
     )
     @extend_schema(
+        summary="Отправить запрос обратной связи",
         methods=['post'],
+        description="Отправить запрос обратной связи",
         request=MailContactSerializer,
-        description='Отправить запрос обратной связи',
         responses={
             status.HTTP_201_CREATED: MailContactSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiResponse(description='Bad request')
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(description="Bad request")
         },
     )
     @action(methods=['get', 'post'], detail=False,
@@ -103,12 +125,17 @@ class ContactsViewSet(BaseInfoViewSet):
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+@extend_schema(
+    tags=["Элементы страницы"]
+)
 class BaseElementsView(views.APIView):
     """
     Общее представление для хэдера и футера.
     """
 
     @extend_schema(
+        summary="Хэдер и футер",
+        description="Получить информацию в хэдере и футере",
         responses={
             status.HTTP_200_OK: BaseSerializer
         }
