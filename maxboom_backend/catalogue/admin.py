@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from sorl.thumbnail.admin import AdminImageMixin
 
 from .models import Brand, Category, Product, ProductImage
@@ -12,6 +11,7 @@ class ProductImageAdmin(AdminImageMixin, admin.ModelAdmin):
     list_editable = ('product',)
     search_fields = ('product__name',)
     ordering = ('product',)
+    list_per_page = 10
 
 
 @admin.register(Brand)
@@ -46,7 +46,8 @@ class CategoryAdmin(admin.ModelAdmin):
     """Админка категорий"""
     list_display = (
         'id', 'slug', 'name', 'root',
-        'is_visible_on_main', 'is_prohibited', 'wb_category_id'
+        'is_visible_on_main', 'is_prohibited', 'wb_category_id',
+        'img_preview'
     )
     list_editable = (
         'name', 'root', 'is_prohibited', 'is_visible_on_main', 'wb_category_id'
@@ -88,6 +89,7 @@ class ProductAdmin(admin.ModelAdmin):
         'wb_urls',
         'quantity',
         'is_deleted',
+        'wholesale'
     )
     list_editable = (
         'name',
@@ -99,7 +101,8 @@ class ProductAdmin(admin.ModelAdmin):
         'quantity',
         'is_deleted',
         'imt_id',
-        'vendor_code'
+        'vendor_code',
+        'wholesale'
     )
     list_filter = ('is_deleted', 'category', 'brand',)
     search_fields = ('name', 'description')
@@ -107,3 +110,4 @@ class ProductAdmin(admin.ModelAdmin):
         ProductImageInline,
     )
     empty_value_display = '-пусто-'
+    list_per_page = 10

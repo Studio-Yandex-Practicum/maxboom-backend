@@ -1,5 +1,7 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import OpenApiParameter  # OpenApiExample
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
@@ -8,11 +10,6 @@ from api.permissions.shop_reviews_permissions import IsAdminOrAnyUser
 from api.serializers.shop_reviews_serializers import (
     ReplayToReviewAdminSerializer, ShopReviewsAdminSerializer,
     ShopReviewsSerializer)
-from drf_spectacular.utils import (
-    extend_schema, extend_schema_view,
-    OpenApiParameter,
-    # OpenApiExample
-)
 from shop_reviews.models import ReplayToReview, ShopReviews
 
 

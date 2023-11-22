@@ -2,11 +2,12 @@ import os
 import shutil
 import tempfile
 
-from catalogue.models import Brand, Category, Product, ProductImage
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from pytils.translit import slugify
+
+from catalogue.models import Brand, Category, Product, ProductImage
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -258,6 +259,8 @@ class ProductModelTest(TestCase):
             'wb_urls': ('https://www.wildberries.ru/'
                         'catalog/169110394/detail.aspx'),
             'is_deleted': True,
+            'wholesale': 0
+
         }
         for field, expected_value in expected_data.items():
             with self.subTest(field=field):
@@ -303,6 +306,7 @@ class ProductModelTest(TestCase):
             'wb_urls': 'Ссылка на WB',
             'quantity': 'Количество',
             'is_deleted': 'Удаленный товар',
+            'wholesale': 'Количество в оптовой партии'
         }
         for field, expected_value in field_verboses.items():
             with self.subTest(field=field):

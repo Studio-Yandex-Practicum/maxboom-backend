@@ -56,6 +56,10 @@ def image_upload_path(instance, filename):
         )
     if type(instance) is ProductImage:
         return os.path.join('product-images', instance.product.slug, filename)
+    if type(instance) is Category:
+        return os.path.join(
+            'category-images', instance.slug, filename
+        )
 
 
 class Brand(models.Model):
@@ -172,6 +176,13 @@ class Category(models.Model):
         null=True,
         verbose_name='Родительская категория'
     )
+    image = ImageField(
+        upload_to=image_upload_path,
+        max_length=1000,
+        verbose_name='Эскиз',
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = 'Категория'
@@ -184,6 +195,37 @@ class Category(models.Model):
     def save(self, *args, **kwargs):
         self.slug = get_slug(self)
         super().save(*args, **kwargs)
+
+    def img_preview(self):
+        value = self.image
+        if value and hasattr(value, 'url'):
+            ext = 'JPEG'
+            try:
+                aux_ext = str(value).split('.')
+                if aux_ext[len(aux_ext) - 1].lower() == 'png':
+                    ext = 'PNG'
+                elif aux_ext[len(aux_ext) - 1].lower() == 'gif':
+                    ext = 'GIF'
+            except Exception:
+                pass
+            try:
+                mini = get_thumbnail(value, 'x80', upscale=False, format=ext)
+            except Exception as e:
+                logger.warning("Unable to get the thumbnail", exc_info=e)
+            else:
+                try:
+                    output = (
+                        '<div style="float:left">'
+                        '<a style="width:%spx;display:block;margin:0 0 10px" '
+                        'class="thumbnail" '
+                        'target="_blank" href="%s">'
+                        '<img src="%s"></a></div>'
+                    ) % (mini.width, value.url, mini.url, )
+                except (AttributeError, TypeError):
+                    return None
+            return mark_safe(output)
+        return None
+    img_preview.short_description = 'Эскиз'
 
 
 class Product(models.Model):
@@ -230,6 +272,10 @@ class Product(models.Model):
     is_deleted = models.BooleanField(
         verbose_name='Удаленный товар',
         default=False,
+    )
+    wholesale = models.IntegerField(
+        verbose_name='Количество в оптовой партии',
+        default=0
     )
 
     class Meta:
@@ -306,6 +352,7 @@ def image_model_delete(sender, instance, **kwargs):
         delete(instance.image)
 
 
+@receiver(pre_save, sender=Category)
 @receiver(pre_save, sender=Brand)
 @receiver(pre_save, sender=ProductImage)
 def image_model_update(sender, instance, **kwargs):

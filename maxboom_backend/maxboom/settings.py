@@ -1,10 +1,10 @@
 # flake8: noqa
 import os
-
+from decimal import Decimal
 from pathlib import Path
 
 from dotenv import load_dotenv
-
+from yookassa import Configuration
 
 load_dotenv()
 
@@ -69,7 +69,9 @@ INSTALLED_APPS = [
     'payment',
     'shop_reviews',
     'stories.apps.StoriesConfig',
+    'phonenumber_field',
     'cart',
+    'order',
 ]
 
 MIDDLEWARE = [
@@ -217,3 +219,26 @@ DJOSER = {
         'current_user': ['rest_framework.permissions.IsAuthenticated'],
     },
 }
+# Минимальное количество товара в заказе
+MIN_AMOUNT_PRODUCT = 1
+# Скидка авторизованного пользователя
+DISCOUNT_USER = Decimal('0.5')
+DISCOUNT_ANONYM = Decimal('0.8')
+
+# Конфигурация yookassa
+Configuration.configure(os.getenv('Y_SHOP_ID'), os.getenv('Y_SECRET_KEY'))
+
+"""
+Коды ставок НДС:
+КОД	    СТАВКА НДС
+1	    Без НДС
+2	    НДС по ставке 0%
+3	    НДС по ставке 10%
+4	    НДС чека по ставке 20%
+5	    НДС чека по расчетной ставке 10/110
+6	    НДС чека по расчетной ставке 20/120
+"""
+VAT_CODE = '1'
+
+# WB API
+WB_API = os.getenv('AUTHORIZATION')

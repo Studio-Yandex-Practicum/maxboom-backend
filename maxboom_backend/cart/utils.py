@@ -22,7 +22,7 @@ def get_session(request: Request) -> str:
         return session
     else:
         request.session['anonymous_id'] = str(uuid.uuid4())
-        return session
+        return request.session['anonymous_id']
 
 
 def create_cart(request: Request, active=False) -> Cart:

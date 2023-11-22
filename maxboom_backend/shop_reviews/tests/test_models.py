@@ -1,4 +1,5 @@
 from django.test import TestCase
+
 from shop_reviews.models import ReplayToReview, ShopReviews
 
 
