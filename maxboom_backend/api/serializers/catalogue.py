@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from catalogue.models import Brand, Category, Product, ProductImage
+from maxboom.settings import DISCOUNT_ANONYM, DISCOUNT_USER
 
 
 class ImageThumbnailSerializer(serializers.ModelSerializer):
@@ -23,9 +24,10 @@ class ProductSerializer(serializers.ModelSerializer):
         exclude = ('vendor_code', 'imt_id')
 
     def get_price(self, obj):
-        if self.context['request'].user.is_authenticated:
-            return round(float(obj.price) * 0.5, 2)
-        return round(float(obj.price) * 0.8, 2)
+        user = self.context['request'].user
+        if user.is_authenticated and user.userprofile.is_vendor:
+            return round(obj.price * DISCOUNT_USER, 2)
+        return round(obj.price * DISCOUNT_ANONYM, 2)
 
 
 class BrandSerializer(serializers.ModelSerializer):

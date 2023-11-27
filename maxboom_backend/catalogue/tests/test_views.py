@@ -1,12 +1,14 @@
 import shutil
 import tempfile
+# from http import HTTPStatus
 
-from catalogue.models import Brand, Category, Product, ProductImage
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
+
+from catalogue.models import Brand, Category, Product, ProductImage
 
 User = get_user_model()
 
@@ -139,12 +141,26 @@ class CatalogueViewsTests(TestCase):
         )
         cls.user = User.objects.create_user(
             'user_new@example.com', 'test_pass')
+        cls.user.userprofile.is_vendor = True
+        cls.user.userprofile.save()
+        cls.admin = User.objects.create_superuser(
+            'admin1@example.com', 'admin1')
 
     def setUp(self):
         self.user_client = APIClient()
         self.user_authorized_client = APIClient()
         self.user_authorized_client.force_authenticate(
             CatalogueViewsTests.user)
+        self.admin_client = APIClient()
+        self.admin_client.force_login(CatalogueViewsTests.admin)
+
+    # def test_update_db(self):
+    #     """Загрузка полной БД с WB по API """
+    #     address = '/api/update/'
+    #     response = self.admin_client.get(address)
+    #     print(response.status_code)
+    #     print(response.data)
+    #     self.assertEqual(response.status_code, HTTPStatus.OK,)
 
     def test_user_get_list_products_filtered_by_category(self):
         """

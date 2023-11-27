@@ -1,24 +1,18 @@
-from rest_framework import status, viewsets
-from rest_framework.decorators import api_view
-
-from api.filters.catalogue import (
-    CustomProductSearchFilter,
-    ProductFilterSet
-)
-from api.serializers.catalogue import (
-    BrandSerializer, CategorySerializer,
-    CategoryTreeSerializer, ProductSerializer,
-)
-from catalogue.models import Brand, Category, Product
-from drf_spectacular.utils import (
-    extend_schema, extend_schema_view,
-    OpenApiParameter,
-    # OpenApiExample
-)
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from drf_spectacular.utils import OpenApiParameter  # OpenApiExample
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
+
+from api.filters.catalogue import CustomProductSearchFilter, ProductFilterSet
+from api.serializers.catalogue import (BrandSerializer, CategorySerializer,
+                                       CategoryTreeSerializer,
+                                       ProductSerializer)
+from catalogue.models import Brand, Category, Product
+from catalogue.services.update_catalogue import update_catalogue
 
 
 @extend_schema(
@@ -417,3 +411,21 @@ def search(request, *args, **kwargs):
             'results': []
         }
     return Response(data=data, status=status.HTTP_200_OK,)
+
+
+@extend_schema(
+    tags=["Каталог"],
+    summary='Обновление каталога с WB',
+)
+@api_view(('GET',))
+@permission_classes((IsAdminUser,))
+def update(request, *args, **kwargs):
+    if update_catalogue():
+        return Response(
+            data={'тест': 'загрузка ОК'},
+            status=status.HTTP_200_OK,
+        )
+    return Response(
+        data={'тест': 'загрузка не удалась'},
+        status=status.HTTP_400_BAD_REQUEST,
+    )
