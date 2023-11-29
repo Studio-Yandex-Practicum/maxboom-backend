@@ -42,7 +42,7 @@ class CategoryBranchesInline(admin.TabularInline):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(AdminImageMixin, admin.ModelAdmin):
     """Админка категорий"""
     list_display = (
         'id', 'slug', 'name', 'root',
