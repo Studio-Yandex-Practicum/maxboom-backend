@@ -345,10 +345,11 @@ class ProductImage(models.Model):
     img_preview.short_description = 'Изображение'
 
 
+@receiver(pre_delete, sender=Category)
 @receiver(pre_delete, sender=Brand)
 @receiver(pre_delete, sender=ProductImage)
 def image_model_delete(sender, instance, **kwargs):
-    if instance.image.name:
+    if instance.image and instance.image.name:
         delete(instance.image)
 
 
@@ -359,5 +360,5 @@ def image_model_update(sender, instance, **kwargs):
     pk = instance.pk
     if sender.objects.filter(pk=pk).exists():
         old_item = sender.objects.get(pk=pk)
-        if old_item.image.name != instance.image.name:
+        if old_item.image and old_item.image.name != instance.image.name:
             delete(old_item.image.name)

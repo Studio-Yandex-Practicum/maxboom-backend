@@ -1,0 +1,13 @@
+#!/bin/bash
+if test -f "/var/lib/docker/volumes/maxboom-rel-1_media/_data/update/start"
+  then echo yes  Start update
+    echo $(date) >> /var/lib/docker/volumes/maxboom-rel-1_media/_data/cron/update_by_cron.log
+    sudo rm /var/lib/docker/volumes/maxboom-rel-1_media/_data/update/start
+    sudo touch /var/lib/docker/volumes/maxboom-rel-1_media/_data/update/realization
+    echo $(sudo docker exec maxboom-rel-1-backend-1 ./update_catalogue_script.py) >> /var/lib/docker/volumes/maxboom-rel-1_media/_data/cron/update_by_cron.log
+    echo $(date) >> /var/lib/docker/volumes/maxboom-rel-1_media/_data/cron/update_by_cron.log
+    sudo rm /var/lib/docker/volumes/maxboom-rel-1_media/_data/update/realization
+  else echo no
+  echo $(date) >> /var/lib/docker/volumes/maxboom-rel-1_media/_data/cron/testcron.log
+fi
+
