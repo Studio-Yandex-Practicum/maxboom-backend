@@ -79,7 +79,8 @@ class CategorySerializer(serializers.ModelSerializer):
             'id', 'name', 'slug',
             'branches',
             'root', 'is_prohibited',
-            'is_visible_on_main'
+            'is_visible_on_main',
+            'image'
         )
         read_only_fields = ('branches', 'root')
 
@@ -121,6 +122,7 @@ class CategoryTreeSerializer(CategorySerializer):
             'id', 'name', 'slug',
             'branches',
             'root', 'is_prohibited',
-            'is_visible_on_main'
+            'is_visible_on_main',
+            'image'
         )
         read_only_fields = ('branches', 'root')

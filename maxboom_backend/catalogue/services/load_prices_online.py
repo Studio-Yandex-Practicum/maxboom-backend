@@ -3,6 +3,7 @@
 # Файл должен лежать в папе проекта (рядом с manage.py)
 import json
 import os
+from decimal import Decimal
 
 import django
 
@@ -82,7 +83,7 @@ def update_db(data):
         code = item.get('nmId')
         price = item.get('price')
         discount = item.get('discount')
-        price = price * (1 - discount / 100)
+        price = round(Decimal(price * (1 - discount / 100)), 2)
 
         if not Product.objects.filter(code=code).exists():
             logging.info(f'Нет товара с кодом: {code}')
