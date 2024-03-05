@@ -435,8 +435,8 @@ def check_possibility_start_update():
     if not os.path.exists(os.path.join(MEDIA_ROOT, 'update')):
         os.mkdir(os.path.join(MEDIA_ROOT, 'update'))
     if (
-        os.path.exists(os.path.join(MEDIA_ROOT, 'update', 'realization')) or
-        os.path.exists(os.path.join(MEDIA_ROOT, 'update', 'start'))
+        os.path.exists(os.path.join(MEDIA_ROOT, 'update', 'realization'))
+        or os.path.exists(os.path.join(MEDIA_ROOT, 'update', 'start'))
     ):
         raise ValidationError(
             'Обновление запущено, дождитесь окончания запущенного процесса.')
