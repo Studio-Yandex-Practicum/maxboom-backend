@@ -512,7 +512,9 @@ class CatalogueViewsTests(TestCase):
             'wb_urls': 'https://www.wildberries.ru/'
                        'catalog/169110394/detail.aspx',
             'quantity': 999999.0,
-            'is_deleted': False
+            'is_deleted': False,
+            'label_hit': False,
+            'label_popular': False
         }
         self.check_fields(response=response.data, expected_data=expected_data)
 

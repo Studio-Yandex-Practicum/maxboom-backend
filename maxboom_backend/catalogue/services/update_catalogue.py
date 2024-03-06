@@ -85,10 +85,12 @@ def card_data(s, url, headers, auth, nm_id=None, updated_at=None):
                 return data
             elif response.status_code == HTTPStatus.UNAUTHORIZED:
                 logging.info('Не получен список номенклатур товара'
-                             f' {response.status_code}')
+                             f'Код ответа: {response.status_code}'
+                             f'Текст ответа: {response.text}')
                 exit()
-            logging.info('Не получен список номенклатур товара'
-                         f' {response.status_code}')
+            logging.info('Не получен список номенклатур товара.'
+                         f'Код ответа: {response.status_code}'
+                         f'Текст ответа: {response.text}')
             time.sleep(1)
     logging.info('Превышено количество попыток получить номенклатуры товара')
     exit()

@@ -7,7 +7,7 @@ from .models import Brand, Category, Product, ProductImage
 @admin.register(ProductImage)
 class ProductImageAdmin(AdminImageMixin, admin.ModelAdmin):
     """Админка изображений"""
-    list_display = ('id', 'product', 'image', 'img_preview')
+    list_display = ('id', 'product', 'image', 'img_preview',)
     list_editable = ('product',)
     search_fields = ('product__name',)
     ordering = ('product',)
@@ -89,7 +89,9 @@ class ProductAdmin(admin.ModelAdmin):
         'wb_urls',
         'quantity',
         'is_deleted',
-        'wholesale'
+        'wholesale',
+        'label_hit',
+        'label_popular'
     )
     list_editable = (
         'name',
@@ -102,7 +104,9 @@ class ProductAdmin(admin.ModelAdmin):
         'is_deleted',
         'imt_id',
         'vendor_code',
-        'wholesale'
+        'wholesale',
+        'label_hit',
+        'label_popular'
     )
     list_filter = ('is_deleted', 'category', 'brand',)
     search_fields = ('name', 'description')
