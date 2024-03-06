@@ -277,6 +277,14 @@ class Product(models.Model):
         verbose_name='Количество в оптовой партии',
         default=0
     )
+    label_hit = models.BooleanField(
+        verbose_name='Ярлык Хит',
+        default=False,
+    )
+    label_popular = models.BooleanField(
+        verbose_name='Ярлык Популярный',
+        default=False,
+    )
 
     class Meta:
         verbose_name = 'Товар'
