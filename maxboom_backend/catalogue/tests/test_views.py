@@ -516,7 +516,6 @@ class CatalogueViewsTests(TestCase):
             'label_hit': False,
             'label_popular': False
         }
-        print(response.json())
         self.check_fields(response=response.data, expected_data=expected_data)
 
     def test_user_authorized_get_item_product(self):
