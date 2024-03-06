@@ -129,7 +129,7 @@ def get_full_cards(s, headers, auth, vendor_code_part):
 
 def get_data_wb(path):
     auth = WB_API
-    logging.info('Получен WB API token')
+    logging.info(f'Получен WB API token {auth}')
     if auth is False:
         logging.info('Необходимо добавить в .env WB API token'
                      '"AUTHORIZATION="')
@@ -140,8 +140,8 @@ def get_data_wb(path):
     url = ('https://suppliers-api.wildberries.ru/content/v1/cards/cursor/list')
     s = SaveHeadersSession()
     data = card_data(s, url, headers, auth)
-    # cards = data.get('cards')[:22]
-    cards = data.get('cards')
+    cards = data.get('cards')[:22]
+    # cards = data.get('cards')
     f_name = os.path.join(path, 'cards_nm_online_wb.json')
     with open(f_name, 'w', encoding='utf-8') as f:
         json.dump(cards, f, ensure_ascii=False, indent=2)
@@ -157,7 +157,7 @@ def get_data_wb(path):
             vendor_code_part.append(cards[j].get('vendorCode'))
         cards_with_description += get_full_cards(
             s, headers, auth, vendor_code_part)
-        time.sleep(1)
+        # time.sleep(1)
     name = 'cards_full_online_wb.json'
     save_cards(cards=cards_with_description, path=path, name=name)
     return cards_with_description
@@ -322,7 +322,7 @@ def add_image(image_url, product):
     image.save()
     logging.info(
         f'Создано изображение "{image.image.name}" к товару "{product.name}"')
-    time.sleep(0.25)
+    # time.sleep(0.25)
 
 
 def get_path():
