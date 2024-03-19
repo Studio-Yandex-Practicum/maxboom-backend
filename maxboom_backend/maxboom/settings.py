@@ -120,19 +120,19 @@ WSGI_APPLICATION = 'maxboom.wsgi.application'
 
 DATABASES = {
     # SQLite default database settings.
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-    # PostgreSQL default database settings.
     # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': os.getenv('POSTGRES_DB', 'django'),
-    #     'USER': os.getenv('POSTGRES_USER', 'django'),
-    #     'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-    #     'HOST': os.getenv('DB_HOST', ''),
-    #     'POST': os.getenv('DB_PORT', 5432)
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
+    # PostgreSQL default database settings.
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'django'),
+        'USER': os.getenv('POSTGRES_USER', 'django'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'POST': os.getenv('DB_PORT', 5432)
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -176,7 +176,18 @@ AUTHENTICATION_BACKENDS = (
     'rest_framework.authentication.TokenAuthentication',
 )
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
