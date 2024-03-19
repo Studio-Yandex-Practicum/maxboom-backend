@@ -9,7 +9,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
-    userprofile = UserProfileSerializer(source='userprofile_set', read_only=True)
+    userprofile = UserProfileSerializer(
+        source='userprofile_set', read_only=True)
 
     class Meta:
         model = User

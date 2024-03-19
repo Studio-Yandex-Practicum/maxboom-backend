@@ -70,7 +70,7 @@ class TagModelTest(TestCase):
         super().setUpClass()
         cls.tag = Tag.objects.create(
             name='Тестовый тег'
-            )
+        )
 
     def test_model_have_correct_object_name(self):
         """

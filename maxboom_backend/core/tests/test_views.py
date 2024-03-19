@@ -130,7 +130,7 @@ class InfoModelsViewsTest(TestCase):
             'meta_description': 'Тест-мета-описание "О нас"'
         }
         response = self.user_client.get(url)
-        response_data = response.data['results'][0]
+        response_data = response.data[0]
         for key, value in expected_data.items():
             with self.subTest(key=key, value=value):
                 self.assertEqual(
@@ -147,7 +147,7 @@ class InfoModelsViewsTest(TestCase):
             'meta_description': 'Тест-мета-описание "Доставка"'
         }
         response = self.user_client.get(url)
-        response_data = response.data['results'][0]
+        response_data = response.data[0]
         for key, value in expected_data.items():
             with self.subTest(key=key, value=value):
                 self.assertEqual(
@@ -164,7 +164,7 @@ class InfoModelsViewsTest(TestCase):
             'meta_description': 'Тест-мета-описание "Политика"'
         }
         response = self.user_client.get(url)
-        response_data = response.data['results'][0]
+        response_data = response.data[0]
         for key, value in expected_data.items():
             with self.subTest(key=key, value=value):
                 self.assertEqual(
@@ -181,7 +181,7 @@ class InfoModelsViewsTest(TestCase):
             'meta_description': 'Тест-мета-описание "Условия"'
         }
         response = self.user_client.get(url)
-        response_data = response.data['results'][0]
+        response_data = response.data[0]
         for key, value in expected_data.items():
             with self.subTest(key=key, value=value):
                 self.assertEqual(
@@ -244,7 +244,7 @@ class InfoModelsViewsTest(TestCase):
             }
         }
         response = self.user_client.get(url)
-        response_data = response.data['results'][0]
+        response_data = response.data[0]
         for key, value in expected_data.items():
             with self.subTest(key=key, value=value):
                 self.assertEqual(
@@ -359,13 +359,13 @@ class BaseElementsTestCase(TestCase):
                 'support': {
                     'name': 'Тестовая поддержка',
                     'phone_number': '1234567890',
-                    },
+                },
                 'main_logo': {
                     'image':
                         image_url + BaseElementsTestCase.main_logo.image.url,
                     'url': 'https://test.com'
-                    },
                 },
+            },
             'footer': {
                 'company_info': 'Тестовая компания',
                 'disclaimer': 'Ваши тесты защищены',
@@ -387,8 +387,8 @@ class BaseElementsTestCase(TestCase):
                     },
                     {
                         'image': (
-                                image_url +
-                                BaseElementsTestCase.add_logo_2.image.url
+                            image_url +
+                            BaseElementsTestCase.add_logo_2.image.url
                         ),
                         'url': 'https://test3.com'
                     }

@@ -17,8 +17,8 @@ class ShopReviewsViewTests(TestCase):
             text='Новый тестовый текст',
             author_name='Василий Иванович',
             author_email='Ivan_test@mail.ru',
-            delivery_speed_score=4,
-            quality_score=3,
+            delivery_speed_score=1,
+            quality_score=2,
             price_score=3,
             is_published=True
         )
@@ -141,9 +141,9 @@ class ShopReviewsViewTests(TestCase):
                 'text': 'Новый тестовый текст',
                 'author_name': 'Василий Иванович',
                 'author_email': 'Ivan_test@mail.ru',
-                'average_score': 3.3,
-                'delivery_speed_score': 4,
-                'quality_score': 3,
+                'average_score': 2.0,
+                'delivery_speed_score': 1,
+                'quality_score': 2,
                 'price_score': 3,
                 'replay': None
             },
@@ -360,6 +360,22 @@ class ShopReviewsViewTests(TestCase):
             with self.subTest(key=key):
                 self.assertEqual(
                     response.data.get(key), expected_value, f'{key}')
+
+    def test_user_get_shop_average_rate(self):
+        """получение общего среднего рейтинга магазина"""
+        address = '/api/store-reviews/average-rate/'
+        response = self.user_client.get(address)
+        expected_value = {
+            'delivery_speed_score__avg': 2.5,
+            'quality_score__avg': 2.5,
+            'price_score__avg': 3.0,
+            'average_score__avg': 2.7
+        }
+        self.assertEqual(response.status_code, HTTPStatus.OK,
+                         'Не получен общий средний рейтинг магазина')
+        self.assertEqual(response.data, expected_value,
+                         'Значения общего среднего рейтинга магазина'
+                         'ожидаемым значениям.')
 
     @classmethod
     def tearDownClass(cls):

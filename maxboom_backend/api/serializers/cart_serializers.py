@@ -33,7 +33,7 @@ class ProductCartListSerializer(serializers.ModelSerializer):
         field=serializers.FloatField
     )
     def get_price(self, obj) -> float:
-        price = obj.product.price
+        price = obj.price_with_discount
         return price
 
 

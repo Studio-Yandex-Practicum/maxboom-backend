@@ -1,7 +1,10 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-from accounts.models import User
 from catalogue.models import Product
+from maxboom.settings import DISCOUNT_ANONYM, DISCOUNT_USER
+
+User = get_user_model()
 
 
 class Cart(models.Model):
@@ -64,9 +67,17 @@ class ProductCart(models.Model):
         ]
 
     @property
+    def price_with_discount(self):
+        if self.cart.is_active and self.cart.user.userprofile.is_vendor:
+            discount = DISCOUNT_USER
+        else:
+            discount = DISCOUNT_ANONYM
+        return round(self.product.price * discount, 2)
+
+    @property
     def full_price(self):
         """Высчитывает полную стоимость продукта в корзине."""
-        price = self.product.price
+        price = self.price_with_discount
         return round(price * self.amount, 2)
 
     def __str__(self):

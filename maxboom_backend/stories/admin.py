@@ -16,8 +16,8 @@ class StoryAdmin(admin.ModelAdmin):
     def image_preview(self, obj):
         print(obj.pictures.all())
         pictures = [
-            f'<img src="{pic.image.url}" style="max-width:100px; ' \
-            'max-height:100px"/>' for pic in obj.pictures.all()
+            (f'<img src="{pic.image.url}" style="max-width:100px; '
+             'max-height:100px"/>') for pic in obj.pictures.all()
         ]
 
         result = '; '.join(pictures)

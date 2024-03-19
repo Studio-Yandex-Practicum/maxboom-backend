@@ -53,11 +53,13 @@ class FilterBranchesCategorySerializer(serializers.ListSerializer):
 
 class BranchSerializer(serializers.ModelSerializer):
     """Сериализатор для подкатегорий"""
+    products_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
         fields = (
             'id', 'name', 'slug',
+            'products_count',
             'branches',
         )
         list_serializer_class = FilterBranchesCategorySerializer
@@ -66,6 +68,9 @@ class BranchSerializer(serializers.ModelSerializer):
         self.fields['branches'] = BranchSerializer(
             read_only=True, many=True,)
         return super().to_representation(instance)
+
+    def get_products_count(self, obj):
+        return obj.products.count()
 
 
 class CategorySerializer(serializers.ModelSerializer):

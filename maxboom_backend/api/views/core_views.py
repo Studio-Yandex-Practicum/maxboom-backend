@@ -106,7 +106,8 @@ class ContactsViewSet(BaseInfoViewSet):
         request=MailContactSerializer,
         responses={
             status.HTTP_201_CREATED: MailContactSerializer,
-            status.HTTP_400_BAD_REQUEST: OpenApiResponse(description="Bad request")
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                description="Bad request")
         },
     )
     @action(methods=['get', 'post'], detail=False,
@@ -155,9 +156,10 @@ class BaseElementsView(views.APIView):
         footer_serializer = FooterSerializer(
             footer, context={'request': request}
         )
-        return Response({
-            "header": header_serializer.data,
-            "footer": footer_serializer.data
+        return Response(
+            {
+                "header": header_serializer.data,
+                "footer": footer_serializer.data
             },
             status=status.HTTP_200_OK
         )
