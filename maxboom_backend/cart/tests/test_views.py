@@ -42,7 +42,7 @@ class CartViewsTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create(
+        cls.user = User.objects.create_user(
             **cls.user_data
         )
         cls.superuser = User.objects.create_superuser(
@@ -122,13 +122,13 @@ class CartViewsTestCase(TestCase):
                 {
                     'name': 'test_product_1',
                     'image': image_url + image,
-                    'price': 100.00,
+                    'price': 80.0,
                     'amount': 10,
-                    'full_price': 1000.00
+                    'full_price': 800.0
                 }
             ],
             'user': 2,
-            'cart_full_price': 1000.00
+            'cart_full_price': 800.0
         }
         self.assertEqual(response.data, expected_data)
 
@@ -178,7 +178,7 @@ class CartViewsTestCase(TestCase):
         data = {
             'product': 1,
         }
-        self.admin_client.post(add_url, data)
+        self.admin_client.put(add_url, data)
         response = self.admin_client.get(cart_url)
         expected_data = {
             'id': 2,
@@ -186,13 +186,13 @@ class CartViewsTestCase(TestCase):
                 {
                     'name': 'test_product_1',
                     'image': image_url + image,
-                    'price': 100.00,
+                    'price': 80.00,
                     'amount': 11,
-                    'full_price': 1100.00
+                    'full_price': 880.00
                 }
             ],
             'user': 2,
-            'cart_full_price': 1100.00
+            'cart_full_price': 880.00
         }
         self.assertEqual(response.data, expected_data)
 
@@ -204,7 +204,7 @@ class CartViewsTestCase(TestCase):
         data = {
             'product': 1,
         }
-        self.admin_client.post(dec_url, data)
+        self.admin_client.put(dec_url, data)
         response = self.admin_client.get(cart_url)
         expected_data = {
             'id': 2,
@@ -212,13 +212,13 @@ class CartViewsTestCase(TestCase):
                 {
                     'name': 'test_product_1',
                     'image': image_url + image,
-                    'price': 100.00,
+                    'price': 80.0,
                     'amount': 9,
-                    'full_price': 900.00
+                    'full_price': 720.0
                 }
             ],
             'user': 2,
-            'cart_full_price': 900.00
+            'cart_full_price': 720.0
         }
         self.assertEqual(response.data, expected_data)
 

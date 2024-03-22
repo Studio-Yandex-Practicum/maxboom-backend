@@ -40,8 +40,8 @@ class PostAdmin(admin.ModelAdmin):
     def image_preview(self, obj):
         try:
             return format_html(
-                '<img src="{}" style="max-width:100px; max-height:100px"/>'.format(
-                    obj.image.url))
+                '<img src="{}" style="max-width:100px; max-height:100px"/>'.
+                format(obj.image.url))
         except ValueError:
             pass
 

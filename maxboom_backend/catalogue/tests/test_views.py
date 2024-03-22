@@ -173,6 +173,78 @@ class CatalogueViewsTests(TestCase):
         self.assertEqual(3, products_count,
                          'Пользователь не получил товары'
                          ' из подкатегорий')
+        expected_data = {
+            'category_name': 'Корневая категория',
+            'count': 3,
+            'next': None,
+            'previous': None,
+            'results': [
+                {
+                    'id': 1,
+                    'category':
+                    'Категория1',
+                    'brand': 'Бренд',
+                    'images': [
+                        {
+                            'image': ('http://testserver/media/product-images/'
+                                      'puskovoe-zaryadnoe-ustrojstvo-2-dlya-p'
+                                      'oiska-169110394/prod_img.gif')
+                        }
+                    ],
+                    'price': 144.0,
+                    'name': 'Пусковое зарядное устройство 2 для поиска',
+                    'slug': ('puskovoe-zaryadnoe-ustrojstvo-2-dlya-p'
+                             'oiska-169110394'),
+                    'description': 'Хороший продукт для description search',
+                    'code': 169110394,
+                    'wb_urls': ('https://www.wildberries.ru/catalog/16911'
+                                '0394/detail.aspx'),
+                    'quantity': 999999.0,
+                    'is_deleted': False,
+                    'wholesale': 0,
+                    'label_hit': False,
+                    'label_popular': False
+                },
+                {
+                    'id': 3,
+                    'category': 'Корневая категория',
+                    'brand': 'Бренд',
+                    'images': [],
+                    'price': 144.0,
+                    'name': 'Пусковое зарядное устройство 4',
+                    'slug': 'puskovoe-zaryadnoe-ustrojstvo-4-1691103959',
+                    'description': 'Хороший продукт для 4',
+                    'code': 1691103959,
+                    'wb_urls': ('https://www.wildberries.ru/catalog/16911'
+                                '03959/detail.aspx'),
+                    'quantity': 999999.0,
+                    'is_deleted': False,
+                    'wholesale': 0,
+                    'label_hit': False,
+                    'label_popular': False
+                },
+                {
+                    'id': 4,
+                    'category':
+                    'Подкатегория',
+                    'brand': 'Бренд',
+                    'images': [],
+                    'price': 144.0,
+                    'name': 'Пусковое зарядное устройство 5',
+                    'slug': 'puskovoe-zaryadnoe-ustrojstvo-5-1691103945',
+                    'description': 'Хороший продукт для',
+                    'code': 1691103945,
+                    'wb_urls': ('https://www.wildberries.ru/catalog/16911'
+                                '03945/detail.aspx'),
+                    'quantity': 999999.0,
+                    'is_deleted': False,
+                    'wholesale': 0,
+                    'label_hit': False,
+                    'label_popular': False
+                }
+            ]
+        }
+        self.check_fields(response=response.data, expected_data=expected_data)
 
     def test_list_products_filtered_by_category_without_sub_category(self):
         """
@@ -312,11 +384,13 @@ class CatalogueViewsTests(TestCase):
                         'id': 3,
                         'name': 'Подкатегория',
                         'slug': 'podkategoriya',
+                        'products_count': 1,
                         'branches': [
                             {
                                 'id': 4,
                                 'name': 'Категория1',
                                 'slug': 'kategoriya1',
+                                'products_count': 2,
                                 'branches': []
                             }
                         ]

@@ -244,7 +244,6 @@ class Commodity(models.Model):
             discount = DISCOUNT_USER
         else:
             discount = DISCOUNT_ANONYM
-        self.price = self.product.price * discount
         self.price = round(self.product.price * discount, 2)
         self.full_clean()
         super().save(*args, **kwargs)

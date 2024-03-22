@@ -18,4 +18,3 @@ def clean(obj):
             f'Может быть только один объект '
             f'"{obj._meta.verbose_name}"!'
         )
-

@@ -282,7 +282,8 @@ class FooterSerializer(BaseCoreSerializer):
     def get_additional_logos(self, value):
         additional_logos = value.additional_logos.all()
         context = self.context
-        return LogoSerializer(additional_logos, context=context, many=True).data
+        return LogoSerializer(
+            additional_logos, context=context, many=True).data
 
     @extend_schema_field(
         field=SupportSerializer

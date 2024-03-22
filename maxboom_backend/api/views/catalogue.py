@@ -4,12 +4,12 @@ from drf_spectacular.utils import OpenApiParameter  # OpenApiExample
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 from api.filters.catalogue import CustomProductSearchFilter, ProductFilterSet
+from api.paginations.catalogue_paginations import CustomLimitOffsetPagination
 from api.serializers.catalogue import (BrandSerializer, CategorySerializer,
                                        CategoryTreeSerializer,
                                        ProductSerializer)
@@ -78,6 +78,13 @@ from maxboom.settings import MEDIA_ROOT
                 description='slug категории',
                 required=True,
                 type=str
+            ),
+            OpenApiParameter(
+                name='category_tree',
+                location=OpenApiParameter.QUERY,
+                description='отображение дерева категорий',
+                required=False,
+                type=bool
             ),
         ]
     )
@@ -278,7 +285,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
         'category__branches__branches', 'images',
     ).filter(is_deleted=False, category__is_prohibited=False)
     serializer_class = ProductSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = CustomLimitOffsetPagination
     filter_backends = (
         filters.OrderingFilter,
         DjangoFilterBackend,
@@ -337,7 +344,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
             name='search',
             location=OpenApiParameter.QUERY,
             description='поиск по наименованию',
-            required=False,
+            required=True,
             type=str
         ),
         OpenApiParameter(

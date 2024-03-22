@@ -158,9 +158,9 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
                 description='slug поста',
                 required=True,
                 type=str
-                ),
-            ],
-        ),
+            ),
+        ],
+    ),
     create=extend_schema(
         summary='Создание комментария для поста',
         responses={

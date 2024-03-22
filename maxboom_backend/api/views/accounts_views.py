@@ -43,7 +43,8 @@ class ActivateUser(APIView):
         domain = request.get_host()
 
         url = f"http://{domain}/api/users/activation/"
-        response = requests.post(url, data=json.dumps(payload), headers=headers)
+        response = requests.post(
+            url, data=json.dumps(payload), headers=headers)
 
         if response.status_code == 204:
             return Response(
@@ -60,7 +61,8 @@ class UserProfileUpdateView(APIView):
 
     def put(self, request, *args, **kwargs):
         user_profile = self.request.user.userprofile
-        serializer = UserProfileUpdateSerializer(user_profile, data=request.data, partial=True)
+        serializer = UserProfileUpdateSerializer(
+            user_profile, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()

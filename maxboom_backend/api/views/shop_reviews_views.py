@@ -1,10 +1,14 @@
 from django.db import transaction
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from drf_spectacular.utils import OpenApiParameter  # OpenApiExample
+from drf_spectacular.utils import OpenApiParameter, OpenApiExample
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
 
 from api.permissions.shop_reviews_permissions import IsAdminOrAnyUser
 from api.serializers.shop_reviews_serializers import (
@@ -167,15 +171,6 @@ class ReplayToReviewViewSet(viewsets.ModelViewSet):
     ),
     create=extend_schema(
         summary='Запись отзыва о магазине',
-        parameters=[
-            OpenApiParameter(
-                name='id',
-                location=OpenApiParameter.PATH,
-                description='id отзыва о магазине',
-                required=True,
-                type=int
-            ),
-        ]
     ),
     update=extend_schema(
         summary='Замена отзыва о магазине',
@@ -222,6 +217,25 @@ class ReplayToReviewViewSet(viewsets.ModelViewSet):
             ),
         ]
     ),
+    average_rate=extend_schema(
+        summary='Среднее значение рейтинга',
+        description='''
+        Получение средней оценки магазина
+        ''',
+        examples=[
+            OpenApiExample(
+                'Среднее значение рейтинга',
+                value={
+                    'delivery_speed_score__avg': 2.5,
+                    'quality_score__avg': 2.5,
+                    'price_score__avg': 3.0,
+                    'average_score__avg': 2.7
+                },
+                status_codes=[str(status.HTTP_200_OK)],
+                response_only=True,
+            ),
+        ],
+    )
 )
 class ShopReviewsViewSet(viewsets.ModelViewSet):
     """Отзыв о магазине"""
@@ -243,3 +257,14 @@ class ShopReviewsViewSet(viewsets.ModelViewSet):
         return ShopReviews.objects.prefetch_related(
             'replay'
         ).all().filter(is_published=True)
+
+    @action(methods=['get'], url_path='average-rate', detail=False)
+    def average_rate(self, request):
+        data = self.get_queryset().aggregate(
+            Avg('delivery_speed_score'), Avg('quality_score'),
+            Avg('price_score')
+        )
+        for key, val in data.items():
+            data[key] = round(val, 2)
+        data['average_score__avg'] = round(sum(data.values()) / 3, 1)
+        return Response(data=data)

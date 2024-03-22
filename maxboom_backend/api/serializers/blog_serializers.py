@@ -61,8 +61,9 @@ class PostLightSerializer(serializers.ModelSerializer):
 
     def get_comments_quantity(self, obj):
         comments = Comments.objects.filter(
-                post=obj,
-                is_published=True)
+            post=obj,
+            is_published=True
+        )
         return comments.count()
 
 

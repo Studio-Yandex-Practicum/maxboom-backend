@@ -11,6 +11,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from catalogue.models import Product, ProductImage, Brand, Category
 from cart.models import Cart, ProductCart
+from maxboom.settings import DISCOUNT_ANONYM, DISCOUNT_USER
 
 
 User = get_user_model()
@@ -29,7 +30,7 @@ class CartTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create(
+        cls.user = User.objects.create_user(
             **cls.user_data
         )
         cls.brand_1 = Brand.objects.create(
@@ -115,7 +116,8 @@ class CartTestCase(TestCase):
         cart = CartTestCase.cart
         product_price = 100
         product_amount = 10
-        expected_full_price = round(product_price * product_amount, 2)
+        expected_full_price = round(
+            product_price * DISCOUNT_ANONYM * product_amount, 2)
         self.assertEqual(cart.cart_full_price, expected_full_price)
 
     @classmethod
@@ -135,7 +137,7 @@ class ProductCartTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create(
+        cls.user = User.objects.create_user(
             **cls.user_data
         )
         cls.brand_1 = Brand.objects.create(
@@ -256,7 +258,8 @@ class ProductCartTestCase(TestCase):
         product_cart = CartTestCase.product_1_cart
         product_price = 100
         product_amount = 10
-        expected_full_price = round(product_price * product_amount, 2)
+        expected_full_price = round(
+            product_price * DISCOUNT_ANONYM * product_amount, 2)
         self.assertEqual(product_cart.full_price, expected_full_price)
 
     @classmethod

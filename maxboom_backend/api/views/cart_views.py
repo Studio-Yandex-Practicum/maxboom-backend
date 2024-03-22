@@ -94,7 +94,7 @@ class CartViewSet(mixins.ListModelMixin,
         request=ProductCartChangeSerializer,
         responses={status.HTTP_206_PARTIAL_CONTENT: ProductCartListSerializer},
     )
-    @action(methods=['PUT'], url_path='add', detail=False)
+    @action(methods=['put'], url_path='add', detail=False)
     def increase_product_cart(self, request):
         """Отдельный эндпоинт для увеличения количества товара на единицу."""
         product = change_product_cart_amount(request)
@@ -109,7 +109,7 @@ class CartViewSet(mixins.ListModelMixin,
             status.HTTP_204_NO_CONTENT: None
         },
     )
-    @action(methods=['PUT'], url_path='subtract', detail=False)
+    @action(methods=['put'], url_path='subtract', detail=False)
     def decrease_product_cart(self, request):
         """Отдельный эндпоинт для уменьшения количества товара на единицу."""
         product = change_product_cart_amount(request)
