@@ -29,9 +29,9 @@ services:
   nginx:
     build: ./nginx/
     env_file: .env
-    restart: unless-stopped    
+    restart: unless-stopped
     ports:
-      - 8000:80
+      - 9000:80
     volumes:
       - media:/app/media
       - static:/static/
