@@ -4,37 +4,17 @@ from drf_spectacular.utils import (
 )
 from rest_framework.exceptions import ValidationError
 
+from api.serializers.catalogue import ProductSerializer
 from cart.models import Cart, ProductCart
 
 
 class ProductCartListSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-    image = serializers.SerializerMethodField()
-    price = serializers.SerializerMethodField()
     full_price = serializers.FloatField()
+    product = ProductSerializer(read_only=True)
 
     class Meta:
         model = ProductCart
-        fields = ('name', 'image', 'price', 'amount', 'full_price')
-
-    def get_name(self, obj) -> str:
-        name = obj.product.name
-        return name
-
-    @extend_schema_field(
-        field=serializers.ImageField
-    )
-    def get_image(self, obj) -> str:
-        request = self.context.get('request')
-        image_url = obj.product.images.all()[0].image.url
-        return request.build_absolute_uri(image_url)
-
-    @extend_schema_field(
-        field=serializers.FloatField
-    )
-    def get_price(self, obj) -> float:
-        price = obj.price_with_discount
-        return price
+        fields = ('amount', 'product', 'full_price')
 
 
 class CartSerializer(serializers.ModelSerializer):

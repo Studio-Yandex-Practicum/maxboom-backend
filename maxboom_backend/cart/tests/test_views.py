@@ -120,9 +120,27 @@ class CartViewsTestCase(TestCase):
             'id': 2,
             'products': [
                 {
-                    'name': 'test_product_1',
-                    'image': image_url + image,
-                    'price': 80.0,
+                    'product': {
+                        'id': 1,
+                        'category': 'test_category_1',
+                        'brand': 'test_brand_1',
+                        'images': [
+                            {
+                                'image': image_url + image
+                            }
+                        ],
+                        'price': 80.0,
+                        'name': 'test_product_1',
+                        'slug': 'testproduct1-123456789',
+                        'description': 'Test product description',
+                        'code': 123456789,
+                        'wb_urls': 'https://www.test_url.test',
+                        'quantity': 999999.0,
+                        'is_deleted': True,
+                        'wholesale': 0,
+                        'label_hit': False,
+                        'label_popular': False
+                    },
                     'amount': 10,
                     'full_price': 800.0
                 }
@@ -184,9 +202,27 @@ class CartViewsTestCase(TestCase):
             'id': 2,
             'products': [
                 {
-                    'name': 'test_product_1',
-                    'image': image_url + image,
-                    'price': 80.00,
+                    'product': {
+                        'id': 1,
+                        'category': 'test_category_1',
+                        'brand': 'test_brand_1',
+                        'images': [
+                            {
+                                'image':  image_url + image
+                            }
+                        ],
+                        'price': 80.0,
+                        'name': 'test_product_1',
+                        'slug': 'testproduct1-123456789',
+                        'description': 'Test product description',
+                        'code': 123456789,
+                        'wb_urls': 'https://www.test_url.test',
+                        'quantity': 999999.0,
+                        'is_deleted': True,
+                        'wholesale': 0,
+                        'label_hit': False,
+                        'label_popular': False
+                    },
                     'amount': 11,
                     'full_price': 880.00
                 }
@@ -210,9 +246,27 @@ class CartViewsTestCase(TestCase):
             'id': 2,
             'products': [
                 {
-                    'name': 'test_product_1',
-                    'image': image_url + image,
-                    'price': 80.0,
+                    'product': {
+                        'id': 1,
+                        'category': 'test_category_1',
+                        'brand': 'test_brand_1',
+                        'images': [
+                            {
+                                'image':  image_url + image
+                            }
+                        ],
+                        'price': 80.0,
+                        'name': 'test_product_1',
+                        'slug': 'testproduct1-123456789',
+                        'description': 'Test product description',
+                        'code': 123456789,
+                        'wb_urls': 'https://www.test_url.test',
+                        'quantity': 999999.0,
+                        'is_deleted': True,
+                        'wholesale': 0,
+                        'label_hit': False,
+                        'label_popular': False
+                    },
                     'amount': 9,
                     'full_price': 720.0
                 }
