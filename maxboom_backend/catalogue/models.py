@@ -285,6 +285,12 @@ class Product(models.Model):
         verbose_name='Ярлык Популярный',
         default=False,
     )
+    weight = models.DecimalField(
+        verbose_name='Вес товара, кг.',
+        max_digits=7,
+        decimal_places=3,
+        default=0,
+    )
 
     class Meta:
         verbose_name = 'Товар'

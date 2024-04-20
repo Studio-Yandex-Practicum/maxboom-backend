@@ -5,6 +5,7 @@ from cart.models import Cart, ProductCart
 
 class ProductCartInline(admin.StackedInline):
     model = ProductCart
+    extra = 0
 
 
 @admin.register(Cart)

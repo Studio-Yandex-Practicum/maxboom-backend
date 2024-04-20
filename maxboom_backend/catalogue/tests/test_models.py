@@ -306,7 +306,8 @@ class ProductModelTest(TestCase):
             'wb_urls': 'Ссылка на WB',
             'quantity': 'Количество',
             'is_deleted': 'Удаленный товар',
-            'wholesale': 'Количество в оптовой партии'
+            'wholesale': 'Количество в оптовой партии',
+            'weight': 'Вес товара, кг.'
         }
         for field, expected_value in field_verboses.items():
             with self.subTest(field=field):
