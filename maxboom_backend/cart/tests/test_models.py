@@ -3,6 +3,7 @@ import tempfile
 import shutil
 import uuid
 
+from decimal import Decimal
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction, IntegrityError
@@ -52,6 +53,7 @@ class CartTestCase(TestCase):
             vendor_code='article_1',
             wb_urls='https://www.test_url.test',
             is_deleted=True,
+            weight=1.45
         )
         cls.cart = Cart.objects.create(
             user=cls.user,
@@ -119,6 +121,13 @@ class CartTestCase(TestCase):
         expected_full_price = round(
             product_price * DISCOUNT_ANONYM * product_amount, 2)
         self.assertEqual(cart.cart_full_price, expected_full_price)
+
+    def test_cart_full_weight(self):
+        cart = CartTestCase.cart
+        product_weight = Decimal('1.45')
+        product_amount = 10
+        expected_full_weight = product_weight * product_amount
+        self.assertEqual(cart.cart_full_weight, expected_full_weight)
 
     @classmethod
     def tearDownClass(cls):

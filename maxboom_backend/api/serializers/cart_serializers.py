@@ -10,20 +10,23 @@ from cart.models import Cart, ProductCart
 
 class ProductCartListSerializer(serializers.ModelSerializer):
     full_price = serializers.FloatField()
+    full_weight = serializers.FloatField()
     product = ProductSerializer(read_only=True)
 
     class Meta:
         model = ProductCart
-        fields = ('amount', 'product', 'full_price')
+        fields = ('amount', 'product', 'full_price', 'full_weight')
 
 
 class CartSerializer(serializers.ModelSerializer):
     products = ProductCartListSerializer(many=True, source='productcart_set')
     cart_full_price = serializers.FloatField()
+    cart_full_weight = serializers.FloatField()
 
     class Meta:
         model = Cart
-        fields = ('id', 'products', 'user', 'cart_full_price')
+        fields = ('id', 'products', 'user',
+                  'cart_full_price', 'cart_full_weight')
 
 
 class ProductCartCreateSerializer(serializers.ModelSerializer):

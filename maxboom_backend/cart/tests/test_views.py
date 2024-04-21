@@ -67,6 +67,7 @@ class CartViewsTestCase(TestCase):
             vendor_code='article_1',
             wb_urls='https://www.test_url.test',
             is_deleted=True,
+            weight=1.45
         )
         cls.product_1_image = ProductImage.objects.create(
             product=cls.product_1,
@@ -106,7 +107,8 @@ class CartViewsTestCase(TestCase):
             'id': 3,
             'products': [],
             'user': None,
-            'cart_full_price': 0
+            'cart_full_price': 0,
+            'cart_full_weight': 0
         }
         response_data = response.data
         self.assertEqual(response_data, expected_data)
@@ -139,14 +141,17 @@ class CartViewsTestCase(TestCase):
                         'is_deleted': True,
                         'wholesale': 0,
                         'label_hit': False,
-                        'label_popular': False
+                        'label_popular': False,
+                        'weight': '1.450'
                     },
                     'amount': 10,
-                    'full_price': 800.0
+                    'full_price': 800.0,
+                    'full_weight': 14.5
                 }
             ],
             'user': 2,
-            'cart_full_price': 800.0
+            'cart_full_price': 800.0,
+            'cart_full_weight': 14.5
         }
         self.assertEqual(response.data, expected_data)
 
@@ -221,14 +226,17 @@ class CartViewsTestCase(TestCase):
                         'is_deleted': True,
                         'wholesale': 0,
                         'label_hit': False,
-                        'label_popular': False
+                        'label_popular': False,
+                        'weight': '1.450'
                     },
                     'amount': 11,
-                    'full_price': 880.00
+                    'full_price': 880.00,
+                    'full_weight': 15.95
                 }
             ],
             'user': 2,
-            'cart_full_price': 880.00
+            'cart_full_price': 880.00,
+            'cart_full_weight': 15.95
         }
         self.assertEqual(response.data, expected_data)
 
@@ -265,14 +273,17 @@ class CartViewsTestCase(TestCase):
                         'is_deleted': True,
                         'wholesale': 0,
                         'label_hit': False,
-                        'label_popular': False
+                        'label_popular': False,
+                        'weight': '1.450'
                     },
                     'amount': 9,
-                    'full_price': 720.0
+                    'full_price': 720.0,
+                    'full_weight': 13.05
                 }
             ],
             'user': 2,
-            'cart_full_price': 720.0
+            'cart_full_price': 720.0,
+            'cart_full_weight': 13.05
         }
         self.assertEqual(response.data, expected_data)
 

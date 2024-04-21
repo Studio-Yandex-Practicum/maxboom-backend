@@ -40,6 +40,15 @@ class Cart(models.Model):
         ]
         return round(sum(prices), 2)
 
+    @property
+    def cart_full_weight(self):
+        """Высчитывает полный вес корзины."""
+        products = self.products.through.objects.filter(cart=self)
+        weights = [
+            round(product.full_weight, 2) for product in products
+        ]
+        return sum(weights)
+
     def __str__(self):
         return f"Корзина пользователя: {self.user}"
 
@@ -79,6 +88,11 @@ class ProductCart(models.Model):
         """Высчитывает полную стоимость продукта в корзине."""
         price = self.price_with_discount
         return round(price * self.amount, 2)
+
+    @property
+    def full_weight(self):
+        """Высчитывает полный вес продукта в корзине."""
+        return self.product.weight * self.amount
 
     def __str__(self):
         return (f"Продукт {self.product.name} "
