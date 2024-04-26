@@ -76,13 +76,13 @@ class CartViewSet(mixins.ListModelMixin,
             context=self.get_serializer_context(),
         )
 
-    def put(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         return process_cart_product(
             request,
             context=self.get_serializer_context(),
         )
 
-    def delete(self, request, *args, **kwargs):
+    def destroy(self, request, *args, **kwargs):
         cart = get_cart(request)
         cart.delete()
         return Response(
