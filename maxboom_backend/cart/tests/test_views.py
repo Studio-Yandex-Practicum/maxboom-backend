@@ -1,6 +1,7 @@
 # flake8: noqa
 import tempfile
 import shutil
+from http import HTTPStatus
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -99,6 +100,9 @@ class CartViewsTestCase(TestCase):
         self.client = APIClient()
         self.admin_client = APIClient()
         self.admin_client.force_login(user=self.superuser)
+        self.authorized_client = APIClient()
+        self.authorized_client.force_authenticate(
+            self.user)
 
     def test_get_cart_anonymous_viewset(self):
         url = '/api/cart/'
@@ -154,6 +158,36 @@ class CartViewsTestCase(TestCase):
             'cart_full_weight': 14.5
         }
         self.assertEqual(response.data, expected_data)
+
+    def test_put_cart_authorized_viewset(self):
+        id = self.cart.id
+        url = f'/api/cart/{id}/'
+        data = {
+            'product': 1,
+            'amount': 4,
+        }
+        response = self.authorized_client.put(url, data)
+        self.assertEquals(
+            response.status_code, HTTPStatus.PARTIAL_CONTENT,
+            'Не соответствие кода ответа при обновлении корзины'
+        )
+        expected_data = {
+            'product': 1,
+            'cart': 1,
+            'amount': 4
+        }
+        self.assertEqual(response.data, expected_data)
+
+    def test_delete_cart_authorized_viewset(self):
+        id = self.cart.id
+        url = f'/api/cart/{id}/'
+        response = self.authorized_client.delete(url)
+        self.assertEquals(
+            response.status_code, HTTPStatus.NO_CONTENT,
+            'Не соответствие кода ответа при удалении корзины'
+        )
+        cart = Cart.objects.filter(user=self.user).exists()
+        self.assertFalse(cart, 'Корзина не удалена из базы')
 
     def test_post_cart_anonymous_viewset(self):
         url = '/api/cart/'
