@@ -119,15 +119,28 @@ class CategoryTreeSerializer(CategorySerializer):
 
     branches = BranchSerializer(many=True, read_only=True)
     root = RootSerializer(read_only=True)
+    total_count = serializers.SerializerMethodField()
 
     class Meta:
         list_serializer_class = FilterRootCategorySerializer
         model = Category
         fields = (
             'id', 'name', 'slug',
+            'total_count',
             'branches',
             'root', 'is_prohibited',
             'is_visible_on_main',
             'image'
         )
         read_only_fields = ('branches', 'root')
+
+    def get_total_count(self, obj):
+        total_count = obj.products.count()
+        query_categories = Category.objects.all().prefetch_related(
+            'root', 'root__root', 'root__root__root',
+            'branches__branches__branches',
+            'branches__branches', 'branches',).filter(is_prohibited=False
+                                                      ).filter(root=obj)
+        for category in query_categories:
+            total_count += category.products.count()
+        return total_count

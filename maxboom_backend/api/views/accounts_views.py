@@ -1,6 +1,7 @@
 """Views для пользователей."""
-import requests
-import json
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -8,6 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from drf_spectacular.utils import extend_schema
+
+from accounts.models import User
 
 from api.serializers.accounts_serializers import UserProfileUpdateSerializer
 
@@ -35,24 +38,21 @@ class ActivateUser(APIView):
         responses={status.HTTP_204_NO_CONTENT: None}
     )
     def get(self, request, uid, token, format=None):
-        payload = {'uid': uid, 'token': token}
-        headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
-        domain = request.get_host()
+        try:
+            uid = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
 
-        url = f"http://{domain}/api/users/activation/"
-        response = requests.post(
-            url, data=json.dumps(payload), headers=headers)
-
-        if response.status_code == 204:
-            return Response(
-                {'detail': 'Активация прошла успешно!'},
-                response.status_code
-            )
+        if user is not None and default_token_generator.check_token(user,
+                                                                    token):
+            user.is_active = True
+            user.save()
+            return Response({'detail': 'Activation successful!'},
+                            status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response(response.json(), response.status_code)
+            return Response({"detail": "Invalid activation link."},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserProfileUpdateView(APIView):
