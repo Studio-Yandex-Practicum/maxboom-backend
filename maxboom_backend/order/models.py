@@ -8,6 +8,89 @@ from catalogue.models import Product
 from maxboom.settings import DISCOUNT_ANONYM, DISCOUNT_USER, MIN_AMOUNT_PRODUCT
 
 User = get_user_model()
+REASONS = (
+    ('erroneous order', 'Ошибочный заказ'),
+    ('another reason',
+     'Другое (другая причина), пожалуйста укажите/приложите подробности'),
+    ('error', 'Ошибка, пожалуйста укажите/приложите подробности'),
+    ('wrong product', 'Получен не тот (ошибочный) товар'),
+    ('damaged product', 'Получен/доставлен неисправным (сломан)'),
+)
+SELECT = (
+    (True, 'Да'),
+    (False, 'Нет'),
+)
+
+
+class OrderReturn(models.Model):
+    order_refund = models.OneToOneField(
+        'OrderRefund',
+        on_delete=models.CASCADE,
+        verbose_name='возврат',
+        related_name='returns',
+        help_text='id возврата',
+        blank=True,
+        null=True
+    )
+    first_name = models.CharField(
+        max_length=255, verbose_name='имя', help_text='имя')
+    last_name = models.CharField(
+        max_length=255, verbose_name='фамилия', help_text='фамилия')
+    email = models.EmailField(
+        verbose_name='почта',
+        max_length=255,
+        help_text='электронная почта'
+    )
+    phone = PhoneNumberField(
+        verbose_name='телефон',
+        help_text='номер телефона'
+    )
+    order_id = models.IntegerField(
+        verbose_name='номер заказа', help_text='id заказа')
+    order_date = models.DateField(
+        verbose_name='дата заказа',
+        help_text='дата заказа',
+        blank=True,
+        null=True
+    )
+    product_name = models.CharField(
+        verbose_name='наименование продукта', max_length=500,
+        help_text='наименование товара')
+    product_id = models.IntegerField(
+        verbose_name='код товара',
+        help_text='id товара'
+    )
+    quantity = models.PositiveSmallIntegerField(
+        verbose_name='Количество',
+        validators=(MinValueValidator(MIN_AMOUNT_PRODUCT),),
+        help_text='количество'
+    )
+    reason = models.CharField(
+        verbose_name='причина возврата',
+        max_length=17, choices=REASONS
+    )
+    is_unpacked = models.BooleanField(
+        verbose_name='товар распакован',
+        choices=SELECT,
+        help_text='укажите был ли распакован товар'
+    )
+    defect_description = models.TextField(
+        verbose_name='описание дефектов',
+        blank=True,
+        help_text='укажите выявленные дефекты товара'
+    )
+    created = models.DateTimeField(
+        verbose_name='Дата создания',
+        auto_now_add=True,
+        help_text='дата создания'
+    )
+
+    class Meta:
+        verbose_name = 'Бланк возврата'
+        verbose_name_plural = 'Бланки возвратов'
+
+    def __str__(self):
+        return f'Бланк возврата заказа № {self.id}.'
 
 
 class CommodityRefund(models.Model):

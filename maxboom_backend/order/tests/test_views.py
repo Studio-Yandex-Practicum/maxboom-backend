@@ -506,6 +506,199 @@ class OrderViewsTests(TestCase):
              ' не принадлежащего пользователю')
         )
 
+    def test_anonym_add_return(self):
+        cli = APIClient()
+        data_cart = [
+            {
+                'product': 2,
+                'amount': 5,
+            },
+            {
+                'product': 1,
+                'amount': 8,
+            },
+        ]
+        for data in data_cart:
+            resp = cli.post('/api/cart/', data=data)
+            self.assertEqual(resp.status_code, HTTPStatus.CREATED,
+                             'Не создана корзина')
+        data_order = {
+            'address': 'г.Москва, ул. Ленина, д. 41, к. 2',
+            'email': 'mm@mm.mm',
+            'phone': '+79991243584',
+            'comment': 'Срочно',
+        }
+        resp = cli.post('/api/order/', data=data_order)
+        self.assertEqual(resp.status_code, HTTPStatus.CREATED,
+                         'Не создан заказ')
+        self.assertEqual(resp.data.get('status'), 'создан')
+        order_id = resp.data.get('id')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'mm@mm.mm',
+            'phone': '+79991243584',
+            'order_id': order_id + 1,
+            'product_name': 'test',
+            'product_id': 2,
+            'quantity': 1,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST,
+                         'Неверный номер заказа')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'mm@mm.mm',
+            'phone': '+79991243584',
+            'order_id': order_id,
+            'product_name': 'test',
+            'product_id': 3,
+            'quantity': 1,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST,
+                         'Неверный код товара')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'mm@mm.mm',
+            'phone': '+79991243584',
+            'order_id': order_id,
+            'product_name': 'test',
+            'product_id': 2,
+            'quantity': 8,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST,
+                         'Неверное количество товара')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'mm1@mm.mm',
+            'phone': '+79991243584',
+            'order_id': order_id,
+            'product_name': 'test',
+            'product_id': 2,
+            'quantity': 2,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST,
+                         'Неверная почта')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'mm@mm.mm',
+            'phone': '+79991243584',
+            'order_id': order_id,
+            'product_name': 'test',
+            'product_id': 2,
+            'quantity': 2,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.CREATED,
+                         'Не создан возврат')
+
+    def test_user_add_return(self):
+        user = User.objects.create_user('tet1@tt.tu', '123456')
+        cli = APIClient()
+        cli.force_authenticate(user)
+        data_cart = [
+            {
+                'product': 2,
+                'amount': 5,
+            },
+            {
+                'product': 1,
+                'amount': 8,
+            },
+        ]
+        for data in data_cart:
+            resp = cli.post('/api/cart/', data=data)
+            self.assertEqual(resp.status_code, HTTPStatus.CREATED,
+                             'Не создана корзина')
+        data_order = {
+            'address': 'г.Москва, ул. Ленина, д. 41, к. 2',
+            'email': 'tet1@tt.tu',
+            'phone': '+79991243584',
+            'comment': 'Срочно',
+        }
+        resp = cli.post('/api/order/', data=data_order)
+        self.assertEqual(resp.status_code, HTTPStatus.CREATED,
+                         'Не создан заказ')
+        self.assertEqual(resp.data.get('status'), 'создан')
+        order_id = resp.data.get('id')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'tet1@tt.tu',
+            'phone': '+79991243584',
+            'order_id': order_id + 1,
+            'product_name': 'test',
+            'product_id': 2,
+            'quantity': 1,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST,
+                         'Неверный номер заказа')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'tet1@tt.tu',
+            'phone': '+79991243584',
+            'order_id': order_id,
+            'product_name': 'test',
+            'product_id': 3,
+            'quantity': 1,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST,
+                         'Неверный код товара')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'tet1@tt.tu',
+            'phone': '+79991243584',
+            'order_id': order_id,
+            'product_name': 'test',
+            'product_id': 2,
+            'quantity': 8,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.BAD_REQUEST,
+                         'Неверное количество товара')
+        data_return = {
+            'first_name': 'Pit',
+            'last_name': 'Petrov',
+            'email': 'tet1@tt.tu',
+            'phone': '+79991243584',
+            'order_id': order_id,
+            'product_name': 'test',
+            'product_id': 2,
+            'quantity': 2,
+            'reason': 'damaged product',
+            'is_unpacked': True
+        }
+        resp = cli.post('/api/order/add-return/', data=data_return)
+        self.assertEqual(resp.status_code, HTTPStatus.CREATED,
+                         'Не создан возврат')
+
     def check_fields(self, response, expected_data):
         if type(expected_data) is list and expected_data:
             for i in range(len(expected_data)):

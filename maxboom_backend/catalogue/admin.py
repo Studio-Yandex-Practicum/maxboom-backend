@@ -112,6 +112,7 @@ class ProductAdmin(admin.ModelAdmin):
     )
     list_filter = ('is_deleted', 'category', 'brand',)
     search_fields = ('name', 'description')
+    readonly_fields = ('id',)
     inlines = (
         ProductImageInline,
     )
