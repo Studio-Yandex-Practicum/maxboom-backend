@@ -2,7 +2,10 @@ from django.contrib import admin
 
 from payment.models import OrderPayment, Repayment
 
-from .models import Commodity, CommodityRefund, Order, OrderRefund
+from .models import (
+    Commodity, CommodityRefund, Order, OrderRefund,
+    OrderReturn
+)
 
 
 class CommodityInline(admin.TabularInline):
@@ -10,17 +13,18 @@ class CommodityInline(admin.TabularInline):
     model = Commodity
     verbose_name = "Товар"
     verbose_name_plural = "Товары"
-    fields = ('product', 'quantity')
-    readonly_fields = ('price', 'rest')
+    fields = ('product', 'quantity', 'price', 'rest', 'id')
+    readonly_fields = ('price', 'rest', 'id')
     extra = 0
 
 
 class CommodityRefundInline(admin.TabularInline):
-    """Включение товаров в админку заказов"""
+    """Включение товаров в админку возврата заказов"""
     model = CommodityRefund
     verbose_name = "Возвращаемый товар"
     verbose_name_plural = "Возвращаемые товары"
-    fields = ('commodity', 'quantity')
+    fields = ('commodity', 'quantity', 'id',)
+    readonly_fields = ('id',)
     extra = 0
 
 
@@ -29,7 +33,8 @@ class OrderRefundInline(admin.TabularInline):
     model = OrderRefund
     verbose_name = "Возврат"
     verbose_name_plural = "Возвраты"
-    fields = ('order', 'id')
+    fields = ('order', 'id', 'created', 'comment')
+    readonly_fields = ('id', 'created', 'comment')
     extra = 0
 
 
@@ -41,11 +46,30 @@ class OrderPaymentInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(OrderReturn)
+class OrderReturnAdmin(admin.ModelAdmin):
+    """Админка бланков возврата заказа"""
+    list_display = (
+        'id', 'order_refund', 'last_name', 'email', 'phone', 'reason',
+        'created'
+    )
+    list_filter = ('order_refund', 'created')
+    search_fields = ('last_name', 'email', 'phone')
+    list_editable = ('order_refund',)
+    readonly_fields = ('id',)
+    empty_value_display = '-пусто-'
+    list_per_page = 10
+    verbose_name = "Бланк возврата заказа"
+    verbose_name_plural = "Бланки возврата заказов"
+    extra = 0
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     """Админка заказов"""
     list_display = (
-        'id', 'user', 'session_id', 'email', 'status', 'value', 'is_paid'
+        'id', 'user', 'session_id', 'email', 'status', 'value', 'is_paid',
+        'created'
     )
     list_filter = ('status', 'user')
     list_editable = ('status',)
@@ -54,7 +78,7 @@ class OrderAdmin(admin.ModelAdmin):
         CommodityInline, OrderRefundInline, OrderPaymentInline
     )
     list_per_page = 10
-    readonly_fields = ('value', 'is_paid',)
+    readonly_fields = ('value', 'is_paid', 'id', 'created')
 
 
 class OrderRepaymentInline(admin.TabularInline):
@@ -77,7 +101,7 @@ class OrderRefundAdmin(admin.ModelAdmin):
         CommodityRefundInline, OrderRepaymentInline
     )
     list_per_page = 10
-    readonly_fields = ('value', 'is_refunded')
+    readonly_fields = ('id', 'value', 'is_refunded')
 
 
 @admin.register(Commodity)

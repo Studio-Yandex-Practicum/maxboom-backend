@@ -1,12 +1,65 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from rest_framework import serializers
 
 from cart.utils import get_cart
 from catalogue.models import Product
-from order.models import Commodity, CommodityRefund, Order, OrderRefund
+from order.models import (
+    Commodity, CommodityRefund, Order, OrderRefund, OrderReturn
+)
 
 User = get_user_model()
+
+
+class ReturnSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OrderReturn
+        fields = '__all__'
+
+    def validate_order_id(self, value):
+        try:
+            Order.objects.get(pk=value)
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(
+                f'Заказ: {value}, не найден.'
+            )
+        return value
+
+    def validate(self, attrs):
+        order_id = attrs.get('order_id')
+        product_id = attrs.get('product_id')
+        quantity = attrs.get('quantity')
+        email = attrs.get('email')
+        order = Order.objects.get(pk=order_id)
+        try:
+            commodity = order.commodities.get(
+                product__id=product_id
+            )
+        except ObjectDoesNotExist:
+            raise serializers.ValidationError(
+                f'Код товара: {product_id}, не найден.'
+            )
+        if commodity.rest < quantity:
+            raise serializers.ValidationError(
+                f'Количество товара "{commodity.product.name}"'
+                ' превышает оставшееся в заказе количество'
+            )
+        if order.user is None and order.email != email:
+            raise serializers.ValidationError(
+                f'Заказ: {order_id} с email: {email}  не найден.'
+            )
+        user = self.context.get('request').user
+        if (
+            order.user is not None
+            and user.is_authenticated
+            and user != order.user
+        ):
+            raise serializers.ValidationError(
+                f'Заказ: {order_id} клиента: {user}  не найден.'
+            )
+        return super().validate(attrs)
 
 
 class CommodityListSerializer(serializers.ModelSerializer):
@@ -163,41 +216,3 @@ class OrderSerializer(serializers.ModelSerializer):
             else:
                 commodity.save()
         return order
-
-    # @transaction.atomic
-    # def update(self, instance, validated_data):
-    #     if 'commodities' not in self.initial_data:
-    #         for key, value in validated_data.items():
-    #             try:
-    #                 setattr(instance, key, value)
-    #             except Exception as e:
-    #                 raise serializers.ValidationError(f'{e}')
-    #             else:
-    #                 instance.save()
-    #         return instance
-    #     if 'commodities' in self.initial_data and instance.is_paid:
-    #         raise serializers.ValidationError(
-    #             {'commodities': ('Изменение товаров в оплаченных заказах, '
-    #                              'осуществлять через возврат')}
-    #         )
-    #     commodities = validated_data.pop('commodities')
-    #     for key, value in validated_data.items():
-    #         try:
-    #             setattr(instance, key, value)
-    #         except Exception as e:
-    #             raise serializers.ValidationError(f'{e}')
-    #         else:
-    #             instance.save()
-    #     order = instance
-    #     for obj in commodities:
-    #         product = obj.get('product')
-    #         quantity = obj.get('quantity')
-    #         if not order.commodities.filter(product=product).exists():
-    #             commodity = Commodity(order=order, product=product)
-    #         else:
-    #             commodity = order.commodities.get(product=product)
-    #         if (isinstance(quantity, int) and quantity == 0):
-    #             commodity.delete()
-    #         commodity.quantity = quantity
-    #         commodity.save()
-    #     return order

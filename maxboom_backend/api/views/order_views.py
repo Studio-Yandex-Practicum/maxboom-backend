@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import (OpenApiParameter, extend_schema,
@@ -9,9 +10,70 @@ from api.permissions.order_permissions import (IsOwnerOrAdmin,
                                                IsOwnerOrAdminRefund)
 from api.serializers.order_serializers import (CommodityRefundSerializer,
                                                OrderRefundSerializer,
-                                               OrderSerializer)
+                                               OrderSerializer,
+                                               ReturnSerializer)
 from cart.utils import get_cart
 from order.models import CommodityRefund, Order, OrderRefund
+
+
+@extend_schema(
+    tags=["Заказ"],
+)
+@extend_schema_view(
+    create=extend_schema(
+        summary='Возврат товара',
+        description="""Возврат товара для неавторизованного пользователя,
+        заполнение формы возврата товара
+        """,
+    )
+)
+class ReturnViewSet(viewsets.ModelViewSet):
+    http_method_names = ('post', 'head', 'options')
+    pagination_class = None
+    serializer_class = ReturnSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED,
+            headers=headers
+        )
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        order_id = serializer.validated_data.get('order_id')
+        order = Order.objects.get(pk=order_id)
+        order_refund = OrderRefund()
+        order_refund.order = order
+        order_refund.comment = serializer.validated_data.get(
+            'defect_description')
+        try:
+            order_refund.full_clean()
+        except ValidationError:
+            raise serializers.ValidationError(
+                f'Возврат  к заказу: {order_id} не удалось создать.'
+            )
+        order_refund.save()
+        product_id = serializer.validated_data.get('product_id')
+        commodity = order.commodities.get(
+            product__id=product_id
+        )
+        commodity_refund = CommodityRefund()
+        commodity_refund.commodity = commodity
+        commodity_refund.refund = order_refund
+        commodity_refund.quantity = serializer.validated_data.get('quantity')
+        try:
+            commodity_refund.full_clean()
+        except ValidationError:
+            raise serializers.ValidationError(
+                f'Добавить товар {commodity.product.name}'
+                'в возврат не удалось.'
+            )
+        commodity_refund.save()
+        serializer.save(order_refund=order_refund)
 
 
 @extend_schema(
@@ -58,7 +120,6 @@ class OrderCancelViewSet(viewsets.ModelViewSet):
         order.status = 'отменен'
         order.save()
         if not order.is_paid:
-
             serializer = self.get_serializer(order)
             return Response(
                 serializer.data, status=status.HTTP_200_OK
