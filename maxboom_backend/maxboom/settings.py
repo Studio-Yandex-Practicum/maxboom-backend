@@ -222,7 +222,7 @@ DJOSER = {
     'USER_AUTHENTICATION_RULE': 'djoser.email',
     'SERIALIZERS': {
         'user_create': 'djoser.serializers.UserCreateSerializer',
-        'user': 'djoser.serializers.UserSerializer',
+        'user': 'api.serializers.accounts_serializers.CurrentUserSerializer',
         'current_user': 'api.serializers.accounts_serializers.CurrentUserSerializer',
     },
     'PERMISSIONS': {
