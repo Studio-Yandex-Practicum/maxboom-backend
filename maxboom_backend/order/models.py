@@ -224,7 +224,6 @@ class Order(models.Model):
     email = models.EmailField(
         verbose_name='Почта',
         max_length=255,
-        blank=True,
         help_text='электронная почта'
     )
     comment = models.TextField(

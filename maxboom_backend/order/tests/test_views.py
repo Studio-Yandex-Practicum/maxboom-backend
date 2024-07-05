@@ -299,6 +299,7 @@ class OrderViewsTests(TestCase):
         resp = cli.post('/api/order/', data=data_order)
         self.assertEqual(resp.status_code, HTTPStatus.CREATED)
         data_refund = {
+            'comment': 'Товар не подошёл.',
             'commodities': [
                 {'commodity': 2,
                  'quantity': 2
@@ -316,6 +317,7 @@ class OrderViewsTests(TestCase):
         expected_data = {
             'id': 1,
             'order': 2,
+            'comment': 'Товар не подошёл.',
             'commodities': [
                 {
                     'id': 1,
