@@ -202,7 +202,10 @@ class OrderRefundViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         order = get_object_or_404(Order, pk=self.kwargs.get('order'))
         self.check_object_permissions_custom(self.request, obj=order)
-        order_refund = OrderRefund.objects.create(order=order)
+        self.request.data['order'] = order.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        order_refund = serializer.save()
         commodities = request.data.get('commodities', False)
         serializer_commodities = CommodityRefundSerializer(
             data=commodities, many=True, order=order)
@@ -244,6 +247,12 @@ class OrderRefundViewSet(viewsets.ModelViewSet):
 @extend_schema_view(
     create=extend_schema(
         summary='Оформление заказа',
+        description="""Данные о товарах в заказе добавляются автоматически
+        из корзины, заполнять "commodities" не требуется.
+        Идентификатор Session_id добавляется автоматически
+        из корзины, заполнять не требуется. Для авторизованных пользователей
+        email добавляется автоматически из профиля.
+        """,
     ),
     list=extend_schema(
         summary='Просмотр заказов',
@@ -277,6 +286,14 @@ class OrderViewSet(viewsets.ModelViewSet):
                 return order
         session_id = self.request.session.get('anonymous_id')
         return Order.objects.filter(session_id=session_id)
+
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        email = self.request.data.get('email')
+        if email is None and user.is_authenticated:
+            e_mail = user.email
+            self.request.data['email'] = e_mail
+        return super().create(request, *args, **kwargs)
 
     @transaction.atomic
     def perform_create(self, serializer):

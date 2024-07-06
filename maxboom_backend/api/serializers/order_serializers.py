@@ -167,9 +167,9 @@ class CommodityRefundSerializer(serializers.ModelSerializer):
 
 
 class OrderRefundSerializer(serializers.ModelSerializer):
-    order = serializers.PrimaryKeyRelatedField(read_only=True)
+    order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
     commodities = CommodityRefundListSerializer(
-        many=True
+        many=True, read_only=True
     )
 
     class Meta:
@@ -177,6 +177,7 @@ class OrderRefundSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'order',
+            'comment',
             'commodities',
             'value',
             'is_refunded'
